@@ -30,8 +30,8 @@ set( 3DSOFTVIZ_DOMAIN "${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_DOMAIN_SECOND}" )
 
 # Additional CMake scripts
 set( CMAKE_MODULE_PATH
-	"${CMAKE_CURRENT_SOURCE_DIR}/cmake"
-	${CMAKE_MODULE_PATH} )
+		"${CMAKE_CURRENT_SOURCE_DIR}/cmake"
+		${CMAKE_MODULE_PATH} )
 
 # Enable C++11 features
 set(CMAKE_CXX_STANDARD 11)
@@ -44,9 +44,9 @@ if( USE_STRICT_COMPILE_WARNINGS )
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
 		# using Clang
 		set( FLAGS_FOR_DEBUG
-			-Weverything
-			-Wno-c++98-compat -Wno-documentation -Wno-shadow -Wno-padded -Wno-covered-switch-default
-			-pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused -Wno-documentation-unknown-command )
+				-Weverything
+				-Wno-c++98-compat -Wno-documentation -Wno-shadow -Wno-padded -Wno-covered-switch-default
+				-pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused -Wno-documentation-unknown-command )
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)
 		# using GCC
 		set( FLAGS_FOR_DEBUG -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion -Wno-unused-parameter -Wno-unused )
@@ -193,32 +193,32 @@ find_package( OpenGL REQUIRED)
 
 # Find OpenSceneGraph
 find_package( OpenSceneGraph COMPONENTS
-	osgGA
-	osgUtil
-	OpenThreads
-	osg
-	osgAnimation
-	osgDB
-	osgFX
-	#osgIntrospection
-	osgManipulator
-	osgParticle
-	osgShadow
-	osgSim
-	osgTerrain
-	osgText
-	osgVolume
-	osgWidget
-)
+		osgGA
+		osgUtil
+		OpenThreads
+		osg
+		osgAnimation
+		osgDB
+		osgFX
+		#osgIntrospection
+		osgManipulator
+		osgParticle
+		osgShadow
+		osgSim
+		osgTerrain
+		osgText
+		osgVolume
+		osgWidget
+		)
 find_package( osgViewer )
 
 find_package( osgQt )
 
 list( APPEND ALL_SYSTEM_HEADERS
-	${OPENSCENEGRAPH_INCLUDE_DIRS}
-	${OSGVIEWER_INCLUDE_DIR}
-	${OSGQT_INCLUDE_DIR}
-)
+		${OPENSCENEGRAPH_INCLUDE_DIRS}
+		${OSGVIEWER_INCLUDE_DIR}
+		${OSGQT_INCLUDE_DIR}
+		)
 
 if( MSVC )
 	list( APPEND ALL_COMPILE_DEFINITIONS -DOSG_LIBRARY_STATIC )
@@ -412,10 +412,10 @@ if(BUILD_DOCUMENTATION)
 	configure_file(${doxyfile_in} ${doxyfile} @ONLY)
 
 	add_custom_target(doxygen
-		COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
-		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-		COMMENT "Generating API documentation with Doxygen"
-		VERBATIM)
+			COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
+			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+			COMMENT "Generating API documentation with Doxygen"
+			VERBATIM)
 
 	install(DIRECTORY DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/html)
 	install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION share/doc)
@@ -448,32 +448,32 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 	# Build libnoise
 	ExternalProject_Add( dep_libnoise
-		PREFIX libnoise
-		SOURCE_DIR ${DEP_SOURCE}/libnoise
-		BINARY_DIR libnoise
-		CMAKE_ARGS
+			PREFIX libnoise
+			SOURCE_DIR ${DEP_SOURCE}/libnoise
+			BINARY_DIR libnoise
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-		)
+			)
 
 	# add libnoise library
 	add_library( libnoise SHARED IMPORTED )
 	add_dependencies( libnoise dep_libnoise )
 	set_target_properties( libnoise PROPERTIES
-		IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX} )
+			IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX} )
 
 	if( WIN32 )
 		set_target_properties( libnoise PROPERTIES
-			IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX}
-			IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_STATIC_LIBRARY_SUFFIX} )
+				IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX}
+				IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}noise${CMAKE_STATIC_LIBRARY_SUFFIX} )
 
 		if( MSVC )
 			# set "lib" prefix for MSVC, because libnoise.def file requires that the library is named "libnoise"
 			set( MISS_MSVC_PREFIX lib )
 			set_target_properties( libnoise PROPERTIES
-				IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX}
-				IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_STATIC_LIBRARY_SUFFIX} )
+					IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_SHARED_LIBRARY_SUFFIX}
+					IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}${MISS_MSVC_PREFIX}noise${CMAKE_STATIC_LIBRARY_SUFFIX} )
 
 		endif()
 	endif()
@@ -483,58 +483,58 @@ if( USE_BUILTIN_DEPENDENCIES )
 		# Build aruco
 		include( ExternalProject )
 		ExternalProject_Add( dep_aruco
-			PREFIX aruco
-			SOURCE_DIR ${DEP_SOURCE}/aruco
-			BINARY_DIR aruco
-			CMAKE_ARGS
+				PREFIX aruco
+				SOURCE_DIR ${DEP_SOURCE}/aruco
+				BINARY_DIR aruco
+				CMAKE_ARGS
 				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 				-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-			)
+				)
 
 		add_library( aruco SHARED IMPORTED )
 		add_dependencies( aruco dep_aruco )
 		set_target_properties( aruco PROPERTIES
-			IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX} )
+				IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX} )
 
 		if( WIN32 AND MSVC )
 			set_target_properties( aruco PROPERTIES
-				IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX}
-				IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_STATIC_LIBRARY_SUFFIX} )
+					IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_SHARED_LIBRARY_SUFFIX}
+					IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}aruco${CMAKE_STATIC_LIBRARY_SUFFIX} )
 		endif()
 	endif() # OpenCV_FOUND
 
 
 	# Build osgModeling
 	ExternalProject_Add( dep_osgModeling
-		PREFIX osgModeling
-		SOURCE_DIR ${DEP_SOURCE}/osgModeling
-		BINARY_DIR osgModeling
-		CMAKE_ARGS
+			PREFIX osgModeling
+			SOURCE_DIR ${DEP_SOURCE}/osgModeling
+			BINARY_DIR osgModeling
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 			-DBUILD_PLUGINS=ON
 			-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-		)
+			)
 
 	add_library( osgModeling SHARED IMPORTED )
 	add_dependencies( osgModeling dep_osgModeling )
 	set_target_properties( osgModeling PROPERTIES
-		IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_SHARED_LIBRARY_SUFFIX} )
+			IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_SHARED_LIBRARY_SUFFIX} )
 
 	if( WIN32 AND MSVC )
 		set_target_properties( osgModeling PROPERTIES
-			IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_SHARED_LIBRARY_SUFFIX}
-			IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_STATIC_LIBRARY_SUFFIX} )
+				IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_SHARED_LIBRARY_SUFFIX}
+				IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_STATIC_LIBRARY_SUFFIX} )
 	endif()
 
 
 	# Build igloo
 	ExternalProject_Add( dep_igloo
-		PREFIX igloo
-		SOURCE_DIR ${DEP_SOURCE}/igloo
-		BINARY_DIR igloo
-		CMAKE_ARGS
+			PREFIX igloo
+			SOURCE_DIR ${DEP_SOURCE}/igloo
+			BINARY_DIR igloo
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 			-DBUILD_TESTS=ON
@@ -545,7 +545,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 			BUILD_COMMAND ""
 			# force building the install_unity target
 			INSTALL_COMMAND "${CMAKE_COMMAND}" --build . --target install_unity# -- "-j${N}"
-		)
+			)
 
 	add_library( igloo INTERFACE IMPORTED )
 	add_dependencies( igloo dep_igloo )
@@ -555,25 +555,25 @@ if( USE_BUILTIN_DEPENDENCIES )
 	if ( MSVC OR APPLE )
 		# Build Lua
 		ExternalProject_Add ( dep_lua
-			PREFIX lua
-			SOURCE_DIR ${DEP_SOURCE}/lua
-			BINARY_DIR lua
-			CMAKE_ARGS
+				PREFIX lua
+				SOURCE_DIR ${DEP_SOURCE}/lua
+				BINARY_DIR lua
+				CMAKE_ARGS
 				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 				-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-			)
+				)
 
 		# add lua library
 		add_library( lua SHARED IMPORTED )
 		add_dependencies( lua dep_lua )
 		set_target_properties( lua PROPERTIES
-			IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
+				IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
 
 		if( WIN32 AND MSVC )
 			set_target_properties( lua PROPERTIES
-				IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX}
-				IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_STATIC_LIBRARY_SUFFIX} )
+					IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX}
+					IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_STATIC_LIBRARY_SUFFIX} )
 		endif()
 
 	else ()
@@ -581,25 +581,25 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 		# Build LuaJIT
 		ExternalProject_Add ( dep_luajit
-			PREFIX luajit
-			SOURCE_DIR ${DEP_SOURCE}/luajit
-			BINARY_DIR luajit
-			CMAKE_ARGS
+				PREFIX luajit
+				SOURCE_DIR ${DEP_SOURCE}/luajit
+				BINARY_DIR luajit
+				CMAKE_ARGS
 				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 				-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
-			)
+				)
 
 		# add lua library
 		add_library( lua SHARED IMPORTED )
 		add_dependencies( lua dep_luajit )
 		set_target_properties( lua PROPERTIES
-			IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
+				IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX} )
 
 		if( WIN32 AND MSVC )
 			set_target_properties( lua PROPERTIES
-				IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX}
-				IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_STATIC_LIBRARY_SUFFIX} )
+					IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_SHARED_LIBRARY_SUFFIX}
+					IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}lua${CMAKE_STATIC_LIBRARY_SUFFIX} )
 		endif()
 	endif()
 
@@ -608,213 +608,213 @@ if( USE_BUILTIN_DEPENDENCIES )
 
 		# Build Diluculum
 		ExternalProject_Add ( dep_diluculum
-			PREFIX diluculum
-			SOURCE_DIR ${DEP_SOURCE}/diluculum
-			BINARY_DIR diluculum
-			CMAKE_ARGS
+				PREFIX diluculum
+				SOURCE_DIR ${DEP_SOURCE}/diluculum
+				BINARY_DIR diluculum
+				CMAKE_ARGS
 				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-			)
+				)
 
 		# add diluculum library
 		add_library( diluculum SHARED IMPORTED )
 		add_dependencies( diluculum dep_diluculum )
 		set_target_properties( diluculum PROPERTIES
-			IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
+				IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX} )
 
 		if( WIN32 AND MSVC )
 			set_target_properties( diluculum PROPERTIES
-				IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX}
-				IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_STATIC_LIBRARY_SUFFIX} )
+					IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_SHARED_LIBRARY_SUFFIX}
+					IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}diluculum${CMAKE_STATIC_LIBRARY_SUFFIX} )
 		endif()
 	endif()
 
 	# Build lpeg
 	ExternalProject_Add ( dep_lpeg
-		PREFIX lpeg
-		SOURCE_DIR ${DEP_SOURCE}/lpeg
-		BINARY_DIR lpeg
-		CMAKE_ARGS
+			PREFIX lpeg
+			SOURCE_DIR ${DEP_SOURCE}/lpeg
+			BINARY_DIR lpeg
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 	# Build leg
 	ExternalProject_Add ( dep_leg
-		PREFIX leg
-		SOURCE_DIR ${DEP_SOURCE}/leg
-		BINARY_DIR leg
-		CMAKE_ARGS
+			PREFIX leg
+			SOURCE_DIR ${DEP_SOURCE}/leg
+			BINARY_DIR leg
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 	# Build luametrics
 	ExternalProject_Add ( dep_luametrics
-		PREFIX luametrics
-		SOURCE_DIR ${DEP_SOURCE}/luametrics
-		BINARY_DIR luametrics
-		CMAKE_ARGS
+			PREFIX luametrics
+			SOURCE_DIR ${DEP_SOURCE}/luametrics
+			BINARY_DIR luametrics
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 	# Build luafilesystem
 	ExternalProject_Add ( dep_luafilesystem
-		PREFIX luafilesystem
-		SOURCE_DIR ${DEP_SOURCE}/luafilesystem
-		BINARY_DIR luafilesystem
-		CMAKE_ARGS
+			PREFIX luafilesystem
+			SOURCE_DIR ${DEP_SOURCE}/luafilesystem
+			BINARY_DIR luafilesystem
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 	# Build lualogging
 	ExternalProject_Add ( dep_lualogging
-		PREFIX lualogging
-		SOURCE_DIR ${DEP_SOURCE}/lualogging
-		BINARY_DIR lualogging
-		CMAKE_ARGS
+			PREFIX lualogging
+			SOURCE_DIR ${DEP_SOURCE}/lualogging
+			BINARY_DIR lualogging
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 	# Build StackTracePlus
 	ExternalProject_Add ( dep_StackTracePlus
-		PREFIX StackTracePlus
-		SOURCE_DIR ${DEP_SOURCE}/StackTracePlus
-		BINARY_DIR StackTracePlus
-		CMAKE_ARGS
+			PREFIX StackTracePlus
+			SOURCE_DIR ${DEP_SOURCE}/StackTracePlus
+			BINARY_DIR StackTracePlus
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 	# Build luasocket
 	ExternalProject_Add ( dep_luasocket
-		PREFIX luasocket
-		SOURCE_DIR ${DEP_SOURCE}/luasocket
-		BINARY_DIR luasocket
-		CMAKE_ARGS
+			PREFIX luasocket
+			SOURCE_DIR ${DEP_SOURCE}/luasocket
+			BINARY_DIR luasocket
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 	# Build mobdebug
 	ExternalProject_Add ( dep_mobdebug
-		PREFIX mobdebug
-		SOURCE_DIR ${DEP_SOURCE}/mobdebug
-		BINARY_DIR mobdebug
-		CMAKE_ARGS
+			PREFIX mobdebug
+			SOURCE_DIR ${DEP_SOURCE}/mobdebug
+			BINARY_DIR mobdebug
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 	# Build luacov
 	ExternalProject_Add ( dep_luacov
-		PREFIX luacov
-		SOURCE_DIR ${DEP_SOURCE}/luacov
-		BINARY_DIR luacov
-		CMAKE_ARGS
+			PREFIX luacov
+			SOURCE_DIR ${DEP_SOURCE}/luacov
+			BINARY_DIR luacov
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 	# Build luacheck
 	ExternalProject_Add ( dep_luacheck
-		PREFIX luacheck
-		SOURCE_DIR ${DEP_SOURCE}/luacheck
-		BINARY_DIR luacheck
-		CMAKE_ARGS
+			PREFIX luacheck
+			SOURCE_DIR ${DEP_SOURCE}/luacheck
+			BINARY_DIR luacheck
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 	# Build lua_cliargs
 	ExternalProject_Add ( dep_lua_cliargs
-		PREFIX lua_cliargs
-		SOURCE_DIR ${DEP_SOURCE}/lua_cliargs
-		BINARY_DIR lua_cliargs
-		CMAKE_ARGS
+			PREFIX lua_cliargs
+			SOURCE_DIR ${DEP_SOURCE}/lua_cliargs
+			BINARY_DIR lua_cliargs
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 	# Build luasystem
 	ExternalProject_Add ( dep_luasystem
-		PREFIX luasystem
-		SOURCE_DIR ${DEP_SOURCE}/luasystem
-		BINARY_DIR luasystem
-		CMAKE_ARGS
+			PREFIX luasystem
+			SOURCE_DIR ${DEP_SOURCE}/luasystem
+			BINARY_DIR luasystem
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 	# Build dkjson
 	ExternalProject_Add ( dep_dkjson
-		PREFIX dkjson
-		SOURCE_DIR ${DEP_SOURCE}/dkjson
-		BINARY_DIR dkjson
-		CMAKE_ARGS
+			PREFIX dkjson
+			SOURCE_DIR ${DEP_SOURCE}/dkjson
+			BINARY_DIR dkjson
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 	# Build say
 	ExternalProject_Add ( dep_say
-		PREFIX say
-		SOURCE_DIR ${DEP_SOURCE}/say
-		BINARY_DIR say
-		CMAKE_ARGS
+			PREFIX say
+			SOURCE_DIR ${DEP_SOURCE}/say
+			BINARY_DIR say
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 	# Build luassert
 	ExternalProject_Add ( dep_luassert
-		PREFIX luassert
-		SOURCE_DIR ${DEP_SOURCE}/luassert
-		BINARY_DIR luassert
-		CMAKE_ARGS
+			PREFIX luassert
+			SOURCE_DIR ${DEP_SOURCE}/luassert
+			BINARY_DIR luassert
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 	# Build lua-term
 	ExternalProject_Add ( dep_lua-term
-		PREFIX lua-term
-		SOURCE_DIR ${DEP_SOURCE}/lua-term
-		BINARY_DIR lua-term
-		CMAKE_ARGS
+			PREFIX lua-term
+			SOURCE_DIR ${DEP_SOURCE}/lua-term
+			BINARY_DIR lua-term
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 	# Build penlight
 	ExternalProject_Add ( dep_penlight
-		PREFIX penlight
-		SOURCE_DIR ${DEP_SOURCE}/penlight
-		BINARY_DIR penlight
-		CMAKE_ARGS
+			PREFIX penlight
+			SOURCE_DIR ${DEP_SOURCE}/penlight
+			BINARY_DIR penlight
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 	# Build mediator_lua
 	ExternalProject_Add ( dep_mediator_lua
-		PREFIX mediator_lua
-		SOURCE_DIR ${DEP_SOURCE}/mediator_lua
-		BINARY_DIR mediator_lua
-		CMAKE_ARGS
+			PREFIX mediator_lua
+			SOURCE_DIR ${DEP_SOURCE}/mediator_lua
+			BINARY_DIR mediator_lua
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+			)
 
 	# Build busted
 	ExternalProject_Add ( dep_busted
-		PREFIX busted
-		SOURCE_DIR ${DEP_SOURCE}/busted
-		BINARY_DIR busted
-		CMAKE_ARGS
+			PREFIX busted
+			SOURCE_DIR ${DEP_SOURCE}/busted
+			BINARY_DIR busted
+			CMAKE_ARGS
 			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
 			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
 		)
@@ -922,25 +922,25 @@ file ( GLOB_RECURSE SRC_HANDMODULE "src/Leap/HandModule/*.cpp" )
 
 # MOUSE3D
 set ( SRC_MOUSE3D
-	src/Mouse3d/Connector.cpp
-	src/Mouse3d/LibMouse3d/EventThread.cpp
-	src/Mouse3d/LibMouse3d/Mouse3dDevices.cpp
-)
+		src/Mouse3d/Connector.cpp
+		src/Mouse3d/LibMouse3d/EventThread.cpp
+		src/Mouse3d/LibMouse3d/Mouse3dDevices.cpp
+		)
 
 if( WIN32 )
 	list(APPEND SRC_MOUSE3D
-		src/Mouse3d/LibMouse3d/Windows/Mouse3DInput.cpp
-		src/Mouse3d/LibMouse3d/Windows/MouseParameters.cpp
-		)
+			src/Mouse3d/LibMouse3d/Windows/Mouse3DInput.cpp
+			src/Mouse3d/LibMouse3d/Windows/MouseParameters.cpp
+			)
 elseif( APPLE )
 	list(APPEND SRC_MOUSE3D
-		src/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.cpp
-		)
+			src/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.cpp
+			)
 elseif( UNIX )
 	list(APPEND SRC_MOUSE3D
-		src/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.cpp
-		src/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.cpp
-		)
+			src/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.cpp
+			src/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.cpp
+			)
 endif()
 
 
@@ -1057,26 +1057,26 @@ file( GLOB_RECURSE HEADER_HANDMODULE	"include/Leap/HandModule/*.h" )
 
 # MOUSE3D
 set ( HEADER_MOUSE3D
-	include/Mouse3d/Connector.h
-	include/Mouse3d/LibMouse3d/EventThread.h
-	include/Mouse3d/LibMouse3d/Mouse3dDevices.h
-)
+		include/Mouse3d/Connector.h
+		include/Mouse3d/LibMouse3d/EventThread.h
+		include/Mouse3d/LibMouse3d/Mouse3dDevices.h
+		)
 
 if( WIN32 )
 	list(APPEND HEADER_MOUSE3D
-		include/Mouse3d/LibMouse3d/Windows/Mouse3DInput.h
-		include/Mouse3d/LibMouse3d/Windows/MouseParameters.h
-		include/Mouse3d/LibMouse3d/Windows/I3dMouseParams.h
-		)
+			include/Mouse3d/LibMouse3d/Windows/Mouse3DInput.h
+			include/Mouse3d/LibMouse3d/Windows/MouseParameters.h
+			include/Mouse3d/LibMouse3d/Windows/I3dMouseParams.h
+			)
 elseif( APPLE )
 	list(APPEND HEADER_MOUSE3D
-		include/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.h
-		)
+			include/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.h
+			)
 elseif( UNIX )
 	list(APPEND HEADER_MOUSE3D
-		include/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.h
-		include/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h
-		)
+			include/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.h
+			include/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h
+			)
 endif()
 
 
@@ -1252,10 +1252,10 @@ add_library( parserlib STATIC dependencies/parserlib/source/ast.cpp dependencies
 add_library( gitlib STATIC ${SRC_GITLIB} ${HEADER_GITLIB})
 
 target_include_directories( gitlib
-	SYSTEM PUBLIC
-	include
-	include/Repository/Git
-)
+		SYSTEM PUBLIC
+		include
+		include/Repository/Git
+		)
 
 target_compile_definitions( gitlib PUBLIC -DGITLIB_LIBRARY_STATIC )
 
@@ -1280,10 +1280,10 @@ if( LEAP_FOUND )
 		add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
 
 	target_include_directories( leaplib
-		SYSTEM PUBLIC
-		include
-		include/Leap
-		)
+			SYSTEM PUBLIC
+			include
+			include/Leap
+			)
 
 	target_compile_definitions( leaplib PUBLIC -DLEAPLIB_LIBRARY_STATIC )
 
@@ -1314,8 +1314,8 @@ add_library( ${3DSOFTVIZ_NAME} STATIC ${INCL}  ${SRC} )
 target_compile_options( ${3DSOFTVIZ_NAME} PUBLIC ${FLAGS_FOR_DEBUG} )
 
 target_compile_definitions( ${3DSOFTVIZ_NAME}
-	PUBLIC ${ALL_COMPILE_DEFINITIONS}
-)
+		PUBLIC ${ALL_COMPILE_DEFINITIONS}
+		)
 
 if( OpenCV_FOUND )
 	list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR}/aruco )
@@ -1360,17 +1360,17 @@ if ( Qt4_FOUND )
 endif()
 
 target_link_libraries( ${3DSOFTVIZ_NAME}
-	gitlib
-	lua
-	noiseutils
-	libnoise
-	osgModeling
-	qtcolorpicker
-	parserlib
-	${OPENSCENEGRAPH_LIBRARIES}
-	${OSGVIEWER_LIBRARIES}
-	${OSGQT_LIBRARIES}
-)
+		gitlib
+		lua
+		noiseutils
+		libnoise
+		osgModeling
+		qtcolorpicker
+		parserlib
+		${OPENSCENEGRAPH_LIBRARIES}
+		${OSGVIEWER_LIBRARIES}
+		${OSGQT_LIBRARIES}
+		)
 
 if( UNIX AND NOT APPLE )
 	target_link_libraries( ${3DSOFTVIZ_NAME} mouse3d )
@@ -1407,7 +1407,7 @@ endif()
 #	target_link_libraries( ${3DSOFTVIZ_NAME} ${FGLOVE_LIBRARIES} )
 # endif()
 if ( PCL_FOUND )
-		target_link_libraries( ${3DSOFTVIZ_NAME} ${PCL_COMMON_LIBRARIES} )
+		target_link_libraries( ${3DSOFTVIZ_NAME} ${PCL_LIBRARIES} ) # povodne ${PCL_COMMON_LIBRARIES}
 endif()
 if( LEAP_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} leaplib ${LEAP_LIBRARIES} )
@@ -1533,23 +1533,23 @@ endif()
 
 # 3DSoftviz and data
 install( TARGETS ${3DSOFTVIZ_NAME}_app
-	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
-	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
+		BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
+		RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
 
 install( TARGETS gitlib
-	ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
-	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
+		ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+		LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
 
 if( LEAP_FOUND )
 	install( TARGETS leaplib
-		ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
-		LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
+			ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+			LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
 endif()
 
 # add custom install_unity target
 if( COMMAND cotire )
 	add_custom_target( install_unity
-		COMMAND ${CMAKE_COMMAND} -P "cmake_install.cmake" )
+			COMMAND ${CMAKE_COMMAND} -P "cmake_install.cmake" )
 	add_dependencies( install_unity ${3DSOFTVIZ_NAME}_app_unity )
 	add_dependencies( install_unity gitlib_unity )
 	if( LEAP_FOUND )
@@ -1601,10 +1601,10 @@ endif()
 if( USE_BUILTIN_DEPENDENCIES )
 	# Install all dependencies
 	install( DIRECTORY ${DEP_BIN}/
-		DESTINATION ${INSTALL_DEPS}
-		COMPONENT Dependencies
-		USE_SOURCE_PERMISSIONS
-		)
+			DESTINATION ${INSTALL_DEPS}
+			COMPONENT Dependencies
+			USE_SOURCE_PERMISSIONS
+			)
 endif()
 
 # Include QT libraries in Apple bundle and on Windows
@@ -1613,8 +1613,8 @@ if( WIN32 OR APPLE AND OSX_BUNDLE )
 	if( APPLE AND OSX_BUNDLE )
 		# Install Qt Plugins
 		install( DIRECTORY "${QT_PLUGINS_DIR}/imageformats"
-			DESTINATION ${INSTALL_PLUGIN}/plugins
-			COMPONENT Runtime )
+				DESTINATION ${INSTALL_PLUGIN}/plugins
+				COMPONENT Runtime )
 
 		# Install Qt Config
 		install( CODE "
@@ -1731,8 +1731,8 @@ add_executable( test_gitlib_module ${TEST_RUNNER} ${SRC_GITLIB_TESTS} )
 add_dependencies( test_gitlib_module igloo )
 
 target_include_directories( test_gitlib_module 	PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/include
-	include/Repository/Git 	)
+		${CMAKE_CURRENT_SOURCE_DIR}/include
+		include/Repository/Git 	)
 target_compile_options( test_gitlib_module PUBLIC ${FLAGS_FOR_DEBUG} )
 if ( Qt5Core_FOUND )
 #	qt5_use_modules( test_gitlib_module Core )
@@ -1776,18 +1776,18 @@ if (Sphinx_FOUND)
 	set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/html")
 
 	configure_file(
-		"${CMAKE_CURRENT_SOURCE_DIR}/docs/conf.py.in"
-		"${BINARY_BUILD_DIR}/conf.py"
-		@ONLY)
+			"${CMAKE_CURRENT_SOURCE_DIR}/docs/conf.py.in"
+			"${BINARY_BUILD_DIR}/conf.py"
+			@ONLY)
 
 	add_custom_target(Sphinx_html
-		${SPHINX_EXECUTABLE}
-		-q -b html
-		-c "${BINARY_BUILD_DIR}"
-		-d "${SPHINX_CACHE_DIR}"
-		"${CMAKE_CURRENT_SOURCE_DIR}/docs"
-		"${SPHINX_HTML_DIR}"
-		COMMENT "Building HTML documentation with Sphinx")
+			${SPHINX_EXECUTABLE}
+			-q -b html
+			-c "${BINARY_BUILD_DIR}"
+			-d "${SPHINX_CACHE_DIR}"
+			"${CMAKE_CURRENT_SOURCE_DIR}/docs"
+			"${SPHINX_HTML_DIR}"
+			COMMENT "Building HTML documentation with Sphinx")
 endif()
 
 
@@ -1800,13 +1800,13 @@ find_package(Astyle)
 if (Astyle_FOUND)
 	# Add a custom target
 	add_custom_target( "style" COMMAND
-		"${ASTYLE_EXECUTABLE}"
-		--options=${CMAKE_CURRENT_SOURCE_DIR}/astyle.options
-		${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
-		${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
-		COMMENT "Formating source code with Astyle."
-		VERBATIM
-	)
+			"${ASTYLE_EXECUTABLE}"
+			--options=${CMAKE_CURRENT_SOURCE_DIR}/astyle.options
+			${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
+			${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+			COMMENT "Formating source code with Astyle."
+			VERBATIM
+			)
 endif()
 
 
@@ -1821,26 +1821,26 @@ if( CPPLINT_FOUND )
 	FILE( GLOB_RECURSE ALL_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp )
 	if( WIN32 )
 		add_custom_target( "cpplint"
-			COMMAND
+				COMMAND
 				${CMAKE_CURRENT_SOURCE_DIR}/cpplint.bat	# NOTE: this will probably work only on Linux/OSX
-			WORKING_DIRECTORY
+				WORKING_DIRECTORY
 				"${CMAKE_CURRENT_BINARY_DIR}"
-			COMMENT "Linting code via cpplint.py"
-			VERBATIM
-		)
+				COMMENT "Linting code via cpplint.py"
+				VERBATIM
+				)
 	else()
 		add_custom_target( "cpplint"
-		COMMAND
-			"${PYTHON_EXECUTABLE}"
-			"${CPPLINT_SCRIPT}"
-			${ALL_INCLUDE_FILES}
-			${ALL_SRC_FILES}
-			2>&1 | tee cpplint-report.txt	# NOTE: this will probably work only on Linux/OSX
-		WORKING_DIRECTORY
-			"${CMAKE_CURRENT_BINARY_DIR}"
-		COMMENT "Linting code via cpplint.py"
-		VERBATIM
-	)
+				COMMAND
+				"${PYTHON_EXECUTABLE}"
+				"${CPPLINT_SCRIPT}"
+				${ALL_INCLUDE_FILES}
+				${ALL_SRC_FILES}
+				2>&1 | tee cpplint-report.txt	# NOTE: this will probably work only on Linux/OSX
+				WORKING_DIRECTORY
+				"${CMAKE_CURRENT_BINARY_DIR}"
+				COMMENT "Linting code via cpplint.py"
+				VERBATIM
+				)
 	endif()
 endif()
 
@@ -1854,13 +1854,13 @@ if( cppcheck_FOUND )
 	file( GLOB_RECURSE ALL_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp )
 	if( WIN32 )
 		add_custom_target( cppcheck
-			COMMAND
+				COMMAND
 				${CMAKE_CURRENT_SOURCE_DIR}/run_cppcheck.bat	# NOTE: this will probably work only on Linux/OSX
-			WORKING_DIRECTORY
+				WORKING_DIRECTORY
 				"${CMAKE_CURRENT_BINARY_DIR}"
-			COMMENT "Linting code via cpplint.py"
-			VERBATIM
-		)
+				COMMENT "Linting code via cpplint.py"
+				VERBATIM
+				)
 	else()
 		add_custom_target(
 				cppcheck
@@ -1876,4 +1876,3 @@ if( cppcheck_FOUND )
 		)
 	endif()
 endif()
-

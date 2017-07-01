@@ -94,7 +94,7 @@ public:
 	 * @brief createBase - Creates a geometry with two perpendicular quads and two polygons.
 	 * @return Pointer to created geometry.
 	 */
-	osg::Geode* createBase();
+	osg::Node* createBase();
 
 	/**
 		  *  \fn inline public  reloadConfig
@@ -232,7 +232,7 @@ private:
 		*  osg::Geode* base
 		*  \brief camera that renders model to texture
 		*/
-	osg::Geode* base;
+	osg::Node* base;
 
 
 	/**
