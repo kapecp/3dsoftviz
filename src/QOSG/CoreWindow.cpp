@@ -1325,7 +1325,7 @@ QWidget* CoreWindow::createMoreFeaturesTab( QFrame* line )
 	chb_light = new QCheckBox( "&Custom light" );
 	chb_light->setChecked( false );
 	lMore->addRow( chb_light );
-	connect( chb_light, SIGNAL( clicked() ), this, SLOT( lightClicked() ) );
+	connect( chb_light, SIGNAL( clicked( bool ) ), this, SLOT( lightClicked( bool ) ) );
 
 	chb_shadow = new QCheckBox( "&Shadow" );
 	chb_shadow->setChecked( false );
@@ -5506,10 +5506,20 @@ void CoreWindow::createEvolutionLuaGraph()
 }
 
 //jurik
-void CoreWindow::lightClicked()
+void CoreWindow::lightClicked( bool checked )
 {
 	// chb_light is checked
-	if ( chb_light->isChecked() ) {
+	if ( checked ) {
+		qDebug() << "custom lights on";
+		this->coreGraph->turnOnCustomLights();
+	}
+	else {
+		qDebug() << "custom lights off";
+		this->coreGraph->turnOffCustomLights();
+	}
+
+	// chb_light is checked
+	/*if ( chb_light->isChecked() ) {
 
 		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::OFF );
 		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT1,osg::StateAttribute::ON );
@@ -5518,7 +5528,7 @@ void CoreWindow::lightClicked()
 
 		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0,osg::StateAttribute::ON );
 		this->coreGraph->getScene()->getOrCreateStateSet()->setMode( GL_LIGHT1,osg::StateAttribute::OFF );
-	}
+	}*/
 }
 
 void CoreWindow::shadowClicked()

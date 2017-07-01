@@ -50,8 +50,12 @@
 #include <osgShadow/ShadowedScene>
 #include <osgShadow/ShadowMap>
 #include <osgShadow/SoftShadowMap>
+#include <QOSG/GhostSoftShadowMap.h>
+#include <osg/BlendFunc>
 
 #include <easylogging++.h>
+
+#include <osgDB/FileUtils>
 
 
 class PlaneConstraint : public osgManipulator::Constraint
@@ -654,6 +658,191 @@ void CoreGraph::setClustersShapeBoundary( int value )
 	this->clustersShapeBoundary = value;
 }
 
+void CoreGraph::setLightPosition( int index, osg::Vec3 position )
+{
+	lightTranforms[ index ]->setPosition( position );
+}
+
+void CoreGraph::setLightDiffuseColor( int index, osg::Vec4 color )
+{
+	lightSources[ index ]->getLight()->setDiffuse( color );
+}
+
+void CoreGraph::setLightActive( int index, bool active )
+{
+	getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0 + index , active ? osg::StateAttribute::ON : osg::StateAttribute::OFF );
+}
+
+
+
+int CoreGraph::getOrCreateLight( int index )
+{
+	// already exists
+	if ( lightsGroup->getNumChildren() > index ) {
+		return index;
+	}
+
+	// light
+	osg::Light* pLight = new osg::Light;
+	pLight->setLightNum( uniqueLightNumber++ );
+	pLight->setDiffuse( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
+	pLight->setPosition( osg::Vec4( 0, 0, 0, 1 ) );		// w = 0 directional light
+	// w = 1 point light (position)
+
+	// light source
+	osg::LightSource* pLightSource = new osg::LightSource;
+	pLightSource->setLight( pLight );
+	lightSources[ index ] = pLightSource;
+
+	// ball indicating lights color
+	osg::ref_ptr<osg::AutoTransform> pLightMarker = getSphere( 0, osg::Vec3( 0, 0, 0 ), 50.0, osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
+	pLightMarker->setNodeMask( 0x0 );
+	lightMarkerTransforms[ index ] = pLightMarker;
+
+	osg::ref_ptr< osg::PositionAttitudeTransform > pLightPAT = new osg::PositionAttitudeTransform();
+	pLightPAT->addChild( pLightSource );
+	pLightPAT->addChild( pLightMarker );
+	lightTranforms[ index ] = pLightPAT;
+
+	lightsGroup->addChild( pLightPAT );
+
+	// index of the last child
+	return index;
+}
+
+void CoreGraph::setLightType( int index, bool isPointLight )
+{
+	// seems to be broken
+	lightSources[ index ]->getLight()->setPosition( osg::Vec4( 0, 0, 0, isPointLight ? 1 : 0 ) );
+}
+
+
+/// sphere mapping shader, possible to shade every object by image of a sphere...
+/// designed to grab image from ball tracker and then call dirty to update shader texture
+void CoreGraph::useSphereMappingShader( osg::ref_ptr< osg::StateSet > state )
+{
+
+	/* based on https://www.clicktorelease.com/blog/creating-spherical-environment-mapping-shader/  */
+	/* 1. Load image to be used for sphere mapping */
+	osg::Texture2D* texture = new osg::Texture2D();
+	osg::Image* foo = osgDB::readImageFile( "foo2.jpg" );
+	if ( foo == NULL ) {
+		printf( "Error: Image \"foo2.jpg\" has not been read!\n" );
+	}
+	texture->setImage( foo );
+
+	/* 2. Load the Shaders */
+	osg::ref_ptr<osg::Program> projProg( new osg::Program );
+	const std::string vertexSource =
+//		"#version 400 compatibility\n"
+		"out vec2  vN;\n"
+//		"void DynamicShadow( in vec4 ecPosition );"
+		"void main() \n"
+		"{ \n"
+		"	gl_Position  = ftransform();\n"
+		"	vec3 n       = normalize(gl_NormalMatrix * gl_Normal);\n"
+		"	vec4 p       = gl_ModelViewMatrix * gl_Vertex;\n"
+//		"	DynamicShadow( p );"
+		"	vec3 e       = p.xyz;\n"
+		"	vec3 r       = reflect(e, n);\n"
+		"	float m      = 2.0 * sqrt( pow( r.x, 2. ) + pow( r.y, 2. ) + pow( r.z + 1., 2. ) );\n"
+		"	vN           = r.xy / m + 0.5;\n"
+		"} \n";
+	osg::ref_ptr<osg::Shader> projvertexShader( new osg::Shader(
+				osg::Shader::VERTEX, vertexSource ) );
+
+	const std::string fragmentSource =
+		"#version 400 compatibility\n"
+		"uniform sampler2D tMatCap; \n"
+		"uniform vec3  BaseColor;\n"
+		"uniform float MixRatio;\n"
+		"in vec2 vN; \n"
+		"void main() \n"
+		"{ \n"
+		"	vec3 base = texture2D( tMatCap, vN ).rgb;\n"
+		"	gl_FragColor = vec4( base, 1.0 );\n"
+		"} \n";
+	osg::ref_ptr<osg::Shader> projfragShader( new osg::Shader(
+				osg::Shader::FRAGMENT, fragmentSource ) );
+
+	projProg->addShader( projvertexShader.get() );
+	projProg->addShader( projfragShader.get() );
+	/* 3. Set texture as shader uniform */
+	osg::Uniform* texUniform = new osg::Uniform( osg::Uniform::SAMPLER_2D, "tMatCap" );
+	texUniform->set( 0 );
+	state->addUniform( texUniform );
+	state->setTextureAttributeAndModes( 0,texture,osg::StateAttribute::ON );
+	/* 4. Activate shader for this state set */
+	state->setAttributeAndModes( projProg, osg::StateAttribute::ON );
+}
+
+/// bit unfinished shader that should make reflections based on fisheye image from camera
+/// requires to be rewritten using better projection math - lookup stereographic projection
+void CoreGraph::useSphereMappingDomeShader( osg::ref_ptr< osg::StateSet > state )
+{
+
+	/* based on https://www.clicktorelease.com/blog/creating-spherical-environment-mapping-shader/  */
+	/* 1. Load image to be used for sphere mapping */
+	osg::Texture2D* texture = new osg::Texture2D();
+	osg::Image* foo = osgDB::readImageFile( "foo3.jpg" );
+	if ( foo == NULL ) {
+		printf( "Error: Image \"foo2.jpg\" has not been read!\n" );
+	}
+	texture->setImage( foo );
+
+	/* 2. Load the Shaders */
+	osg::ref_ptr<osg::Program> projProg( new osg::Program );
+	const std::string vertexSource =
+		"#version 400 compatibility\n"
+		"uniform mat4 osg_ViewMatrixInverse;\n"
+		"out vec2  vN;\n"
+		"  "
+		"void main() \n"
+		"{ \n"
+		"	gl_Position  = ftransform();\n"
+		"	vec3 n       = normalize(gl_NormalMatrix * gl_Normal);\n"
+		"	vec4 p       = gl_ModelViewMatrix * gl_Vertex;\n"
+		"	vec3 e       = p.xyz;\n"
+		"	vec3 r       = reflect(e, n);\n"
+		"	r = (osg_ViewMatrixInverse * vec4(r,0)).xyz;\n"
+		"	r = vec3( r.x, r.z, -r.y );\n"
+		"	float m      = 2.0 * sqrt( pow( r.x, 2. ) + pow( r.y + 1, 2. ) + pow( r.z , 2. ) );\n"
+		"	vN           = r.xy / m;\n"
+		"	vN.x        +=  0.5;\n"
+//		"	vN.y         =  vN.y * 0.9 + 0.1;\n"
+		"	if ( vN.y < 0.1 ) {\n"
+//		"		vN.x = 0;\n"
+		"		vN.y *= vN.y * .1 + .1 ;\n"
+		"	}\n"
+		"}\n";
+	osg::ref_ptr<osg::Shader> projvertexShader( new osg::Shader(
+				osg::Shader::VERTEX, vertexSource ) );
+
+	const std::string fragmentSource =
+		"#version 400 compatibility\n"
+		"uniform sampler2D tMatCap; \n"
+		"uniform vec3  BaseColor;\n"
+		"uniform float MixRatio;\n"
+		"in vec2 vN; \n"
+		"void main() \n"
+		"{ \n"
+		"	vec3 base = texture2D( tMatCap, vN ).rgb;\n"
+		"	gl_FragColor = vec4( base, 1.0 );\n"
+		"} \n";
+	osg::ref_ptr<osg::Shader> projfragShader( new osg::Shader(
+				osg::Shader::FRAGMENT, fragmentSource ) );
+
+	projProg->addShader( projvertexShader.get() );
+	projProg->addShader( projfragShader.get() );
+	/* 3. Set texture as shader uniform */
+	osg::Uniform* texUniform = new osg::Uniform( osg::Uniform::SAMPLER_2D, "tMatCap" );
+	texUniform->set( 0 );
+	state->addUniform( texUniform );
+	state->setTextureAttributeAndModes( 0,texture,osg::StateAttribute::ON );
+	/* 4. Activate shader for this state set */
+	state->setAttributeAndModes( projProg, osg::StateAttribute::ON );
+}
+
 Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera )
 {
 	this->graph = graph;
@@ -678,26 +867,40 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	rotationMatrix = rotationMatrix.identity();
 
 	LOG( INFO ) << "EJ";
+	lightsGroup = new osg::Group();
 
-	//jurik
-	//lighting
-	osg::Light* pLight = new osg::Light;
-	pLight->setLightNum( 1 );
-	pLight->setDiffuse( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
-	pLight->setPosition( osg::Vec4( 0,0,1,0 ) );		// w = 0 directional light
-	// w = 1 point light (position)
-	// light source
-	osg::LightSource* pLightSource = new osg::LightSource;
-	pLightSource->setLight( pLight );
-	root->addChild( pLightSource );
+	// default while light from the top
+	int lid = getOrCreateLight( 0 );
+	setLightPosition( lid, osg::Vec3( 0, 0, 100 * baseSize ) );
+	setLightDiffuseColor( lid, osg::Vec4( 1, 1, 1, 1 ) );
+	setLightActive( lid, true );
+
+	root->addChild( lightsGroup );
+
+
+	//*
+	//osg::ref_ptr<osg::AutoTransform> test = getSphere( 0, osg::Vec3( -100, 0, 0 ), 100.0, osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
+	//osg::ref_ptr<osg::AutoTransform> test2 = getSphere( 0, osg::Vec3( 100, 0, 0 ), 100.0, osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
+	//useSphereMappingShader( test->getOrCreateStateSet() );
+	//useSphereMappingDomeShader( test2->getOrCreateStateSet() );
+	//root->addChild( test );
+	//root->addChild( test2 );
+	//*/
+
+
+	root->getOrCreateStateSet()->addUniform( new osg::Uniform( "ghostObject", false ) );
+
+	lightModel = new osg::LightModel();
+	setAmbientLightColor( osg::Vec4( 0.3, 0.3, 0.3, 1 ) );
 
 	//shadow scene
 	//http://trac.openscenegraph.org/projects/osg//wiki/Support/ProgrammingGuide/osgShadow
+
+	ghostSoftShadowMap = new osgShadow::GhostSoftShadowMap();
 	shadowedScene = new osgShadow::ShadowedScene;
 	shadowedScene->setReceivesShadowTraversalMask( 0x1 );
 	shadowedScene->setCastsShadowTraversalMask( 0x2 );
 	root->addChild( shadowedScene );
-
 
 	//node and transform for axes
 	axesGeode = new osg::Geode();
@@ -1742,15 +1945,16 @@ void CoreGraph::addTranslateToGraphRotTransf( osg::Vec3d pos )
 //jurik
 void CoreGraph::turnOnShadows()
 {
-	osg::ref_ptr<osgShadow::SoftShadowMap> sm = new osgShadow::SoftShadowMap;
-	//sm->setBias(0.1);
-	//sm->setSoftnessWidth(0.1);
-	shadowedScene->setShadowTechnique( sm.get() );
+	//osg::ref_ptr<osgShadow::SoftShadowMap> sm = new osgShadow::SoftShadowMap;
+	//sm->setBias(0.01);
+	ghostSoftShadowMap->setSoftnessWidth( 0.012 );
+	shadowedScene->setShadowTechnique( ghostSoftShadowMap.get() );
 }
 
 void CoreGraph::turnOffShadows()
 {
 	shadowedScene->setShadowTechnique( NULL );
+	//ghostSoftShadowMap = NULL;
 }
 
 void CoreGraph::turnOnBase()
@@ -1781,7 +1985,7 @@ void CoreGraph::createBase()
 	//invisible untill checkbox clicked
 	baseGeode->setNodeMask( 0x0 );
 	osg::Material* material = new osg::Material();
-	material->setDiffuse( osg::Material::FRONT,  osg::Vec4( 0.8f, 0.8f, 0.8f, 0.2f ) );
+	material->setDiffuse( osg::Material::FRONT,  osg::Vec4( 0.5f, 0.5f, 0.5f, 1.0f ) );
 	// material->setEmission(osg::Material::FRONT, osg::Vec4(0, 0, 0, 1));
 	baseGeode->getOrCreateStateSet()->setAttribute( material );
 
@@ -1804,9 +2008,15 @@ void CoreGraph::createBase()
 
 	baseGeometry->addPrimitiveSet( base );
 
+	//baseGeode->getOrCreateStateSet()->setRenderingHint( osg::StateSet::OPAQUE_BIN );
+	//baseGeode->getOrCreateStateSet()->setRenderBinDetails( 1, "DepthSortedBin" );
+
+
+	baseGeode->getOrCreateStateSet()->addUniform( new osg::Uniform( "ghostObject", true ) );
 	baseGeode->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
-	baseGeode->getOrCreateStateSet()->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
-	baseGeode->getOrCreateStateSet()->setRenderBinDetails( 1, "DepthSortedBin" );
+
+	//baseGeode->getOrCreateStateSet()->setAttributeAndModes( new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA), osg::StateAttribute::ON );
+	//osg::BlendFunc blendFunc = new
 }
 
 //set aruco modelView matrix
@@ -2315,4 +2525,68 @@ void CoreGraph::reorganizeNodesForModuleCity()
 
 
 //*****
+
+void CoreGraph::turnOnCustomLights()
+{
+	// Detection thread will activate needed lights
+}
+
+// reset scene to basic lighing
+void CoreGraph::turnOffCustomLights()
+{
+
+	// will reset scene to default ligh
+
+	for ( int i = 1; 0 < 8 && i <= uniqueLightNumber; ++i ) {
+		setLightActive( i, false );
+	}
+
+	int lid = getOrCreateLight( 0 );
+	setLightPosition( lid, osg::Vec3( 0, 0, 100 * baseSize ) );
+	setLightDiffuseColor( lid, osg::Vec4( 1, 1, 1, 1 ) );
+	setLightActive( lid, true );
+
+	setAmbientLightColor( osg::Vec4( 0.3, 0.3, 0.3, 1 ) );
+}
+
+// LightDetectionThread updates lights with this
+void CoreGraph::setLightCoords( OpenCV::TrackedLight tlight )
+{
+	//qDebug() << "incoming light id " << tlight.id;
+
+	int lid = getOrCreateLight( tlight.id );
+	setLightActive( lid, tlight.active );
+	setLightPosition( lid, tlight.positionHemisphere()* baseSize * roomSize );
+	setLightDiffuseColor( lid, tlight.color() * tlight.colorIntensity() );
+	if ( lid == 0 ) {
+		ghostSoftShadowMap->setLight( lightSources[0] );
+	}
+}
+
+// show markers indicating lights
+void CoreGraph::setShowLightMarkers( bool set )
+{
+	qDebug() << "show light markers " << set;
+
+	if ( set ) {
+		for ( int i = 0; i < lightsGroup->getNumChildren(); ++i ) {
+			lightMarkerTransforms[i]->setNodeMask( 0x1 );
+		}
+	}
+	else {
+		for ( int i = 0; i < lightsGroup->getNumChildren(); ++i ) {
+			lightMarkerTransforms[i]->setNodeMask( 0x0 );
+		}
+	}
+}
+
+// set ambient light color
+void CoreGraph::setAmbientLightColor( osg::Vec4 color )
+{
+	//qDebug() << "amb color r" << color.r() << " g " << color.g() << " b " << color.b() << " a " << color.a();
+	lightModel->setAmbientIntensity( color );
+	root->getOrCreateStateSet()->setAttributeAndModes( lightModel, osg::StateAttribute::ON );
+	//	shadowedScene->dirty();
+}
+
 }
