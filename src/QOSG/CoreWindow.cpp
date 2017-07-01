@@ -1873,8 +1873,7 @@ void CoreWindow::playPause()
 	}
 }
 
-void CoreWindow::
-noSelectClicked( bool checked )
+void CoreWindow::noSelectClicked( bool checked )
 {
 	viewerWidget->getPickHandler()->setPickMode( Vwr::PickHandler::PickMode::NONE );
 	singleSelect->setChecked( false );

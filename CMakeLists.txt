@@ -24,12 +24,6 @@ set( 3DSOFTVIZ_DOMAIN_FIRST "stuba" )
 set( 3DSOFTVIZ_DOMAIN_SECOND "sk" )
 set( 3DSOFTVIZ_DOMAIN "${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_DOMAIN_SECOND}" )
 
-
-
-
-
-
-
 # --------------
 # Build settings
 # --------------
