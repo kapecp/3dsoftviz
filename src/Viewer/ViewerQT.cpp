@@ -8,7 +8,6 @@
 
 #include <math.h>
 
-
 QOSG::ViewerQT::ViewerQT( const QGLFormat& format, QWidget* parent, const char* name, const QGLWidget* shareWidget, WindowFlags f, Vwr::CoreGraph* cg ):
 	AdapterWidget( format, parent, name, shareWidget, f )
 {

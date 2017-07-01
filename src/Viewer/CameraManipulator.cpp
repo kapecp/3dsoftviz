@@ -260,7 +260,6 @@ bool Vwr::CameraManipulator::handleKeyDownGraph( const GUIEventAdapter& ea, GUIA
 
 bool Vwr::CameraManipulator::handleScroll( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us )
 {
-
 	addMouseEvent( ea );
 	if ( calcMovement() ) {
 		us.requestRedraw();
@@ -272,7 +271,6 @@ bool Vwr::CameraManipulator::handleScroll( const osgGA::GUIEventAdapter& ea, osg
 
 bool Vwr::CameraManipulator::handleRelease( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us )
 {
-
 	if ( ea.getButtonMask()==0 ) {
 
 		double timeSinceLastRecordEvent = _ga_t0.valid() ? ( ea.getTime() - _ga_t0->getTime() ) : DBL_MAX;
@@ -299,7 +297,6 @@ bool Vwr::CameraManipulator::handleRelease( const osgGA::GUIEventAdapter& ea, os
 
 	}
 	else {
-
 		flushMouseEventStack();
 		addMouseEvent( ea );
 		if ( calcMovement() ) {

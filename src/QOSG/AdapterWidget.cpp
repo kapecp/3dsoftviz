@@ -8,14 +8,11 @@
 
 namespace QOSG {
 
-
 AdapterWidget::AdapterWidget( const QGLFormat& format, QWidget* parent, const char* name, const QGLWidget* shareWidget, WindowFlags f ) :
 #if QT_VERSION > 0x050000
 	QOpenGLWidget( parent, f )
 #elif QT_VERSION > 0x040000
 	QGLWidget( format, parent, shareWidget, f )
-
-
 #else
 	QGLWidget( parent, shareWidget, f )
 #endif
@@ -62,7 +59,6 @@ void AdapterWidget::initializeGL()
 
 void AdapterWidget::resizeGL( int width, int height )
 {
-
 	// FIX: for HiDPI displays
 	// without this fix, OpenGL context on retina displays is small,
 	// causing to display a small OpenGL context only in the lower-left corner

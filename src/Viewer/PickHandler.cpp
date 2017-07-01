@@ -36,7 +36,6 @@ namespace Vwr {
 
 PickHandler::PickHandler( Vwr::CameraManipulator* cameraManipulator, Vwr::CoreGraph* coreGraph )
 {
-
 	//vytvorenie timera a vynulovanie premennych
 	timer = new QTimer();
 	connect( timer,SIGNAL( timeout() ), this, SLOT( mouseTimerTimeout() ) );

@@ -2918,7 +2918,6 @@ void CoreWindow::setRestriction_Sphere()
 		osg::ref_ptr<Data::Node> centerNode;
 		osg::ref_ptr<Data::Node> surfaceNode;
 
-
 		QString name_centerNode = "center";
 		QString name_sufraceNode = "surface";
 		osg::Vec3 positionNode1 = position;
@@ -5584,10 +5583,8 @@ void CoreWindow::createProjARWindow()
 	QOSG::ProjectiveARCore::getInstance( NULL, this )->init( );
 }
 
-
 void CoreWindow::forceOnChange()
 {
 	this->onChange();
 }
-
 } // namespace QOSG

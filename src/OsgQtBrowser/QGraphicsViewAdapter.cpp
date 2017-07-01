@@ -54,8 +54,6 @@ QGraphicsViewAdapter::QGraphicsViewAdapter( osg::Image* image, QWidget* widget )
 	_qtKeyModifiers( Qt::NoModifier ),
 	_backgroundColor( 255,255,255 )
 {
-
-
 	// make sure we have a valid QApplication before we start creating widgets.
 	this->getOrCreateQApplication();
 
@@ -105,7 +103,6 @@ void QGraphicsViewAdapter::repaintRequestedSlot( const QList<QRectF>& )
 
 void QGraphicsViewAdapter::customEvent( QEvent* event )
 {
-
 	if ( event->type()==MYQKEYEVENT ) {
 		MyQKeyEvent* keyEvent = ( MyQKeyEvent* )event;
 		handleKeyEvent( keyEvent->_key, keyEvent->_down );
@@ -280,8 +277,6 @@ bool QGraphicsViewAdapter::handlePointerEvent( int x, int y, int buttonMask )
 		( middleButtonPressed ? Qt::MidButton : Qt::NoButton ) |
 		( rightButtonPressed ? Qt::RightButton : Qt::NoButton );
 
-
-
 	if ( buttonMask != _previousButtonMask ) {
 
 		Qt::MouseButton qtButton = Qt::NoButton;
@@ -305,7 +300,6 @@ bool QGraphicsViewAdapter::handlePointerEvent( int x, int y, int buttonMask )
 				qwebViewImage->focusBrowser( true );
 			}
 		}
-
 
 		QMouseEvent event( eventType, QPoint( x, y ), qtButton, qtMouseButtons, 0 );
 		QCoreApplication::sendEvent( _graphicsView->viewport(), &event );
