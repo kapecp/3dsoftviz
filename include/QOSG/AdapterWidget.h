@@ -8,6 +8,7 @@
 #include <osgViewer/Viewer>
 
 #include <QtGlobal>
+#include <QTime>
 
 #include <QKeyEvent>
 #include <QGLWidget>

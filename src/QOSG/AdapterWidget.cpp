@@ -271,9 +271,11 @@ bool AdapterWidget::event( QEvent* event )
 	switch ( event->type() ) {
 		//first touch if previous touches were zero
 		case QEvent::TouchBegin: {
+			break;
 		}
 		//if the touch is still going on
 		case QEvent::TouchUpdate: {
+			break;
 		}
 		//we changed the position of a touch
 		case QEvent::TouchEnd: {
@@ -348,7 +350,7 @@ bool AdapterWidget::event( QEvent* event )
 					_time.restart();
 
 					//checking for double-tap
-					if ( ( _difference < 200 ) && ( _difference > 50 ) || ( _difference > 200 ) ) {
+					if ( ( ( _difference < 200 ) && ( _difference > 50 ) ) || ( _difference > 200 ) ) {
 						//a lot of time has passed, cancel double-tap
 						if ( _difference > 200 ) {
 							_gw->getEventQueue()->mouseButtonRelease( static_cast<float>( touchPoint.pos().x() ),static_cast<float>( touchPoint.pos().y() ), 3 );
@@ -356,8 +358,8 @@ bool AdapterWidget::event( QEvent* event )
 						}
 						else {
 							//double-tap at approximately the same place
-							if ( ( abs( _lastSingleTouch.pos().x() - touchPoint.pos().x() ) < 10 )
-									&& ( abs( _lastSingleTouch.pos().y() - touchPoint.pos().y() ) < 10 ) ) {
+							if ( ( std::abs( _lastSingleTouch.pos().x() - touchPoint.pos().x() ) < 10 )
+									&& ( std::abs( _lastSingleTouch.pos().y() - touchPoint.pos().y() ) < 10 ) ) {
 								_gw->getEventQueue()->mouseButtonPress( static_cast<float>( touchPoint.pos().x() ),static_cast<float>( touchPoint.pos().y() ), 3 );
 								_rightMouse = true;
 							}
@@ -371,7 +373,7 @@ bool AdapterWidget::event( QEvent* event )
 					//move camera on axis X/Y
 					else {
 						//check the difference, has to be greater for sensitivity
-						if ( abs( touchPoint.pos().x()-touchPoint.lastPos().x() ) > 5 ) {
+						if ( std::abs( touchPoint.pos().x()-touchPoint.lastPos().x() ) > 5 ) {
 							if ( touchPoint.pos().x() < touchPoint.lastPos().x() ) {
 								_gw->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Right );
 								_gw->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Right );
@@ -382,7 +384,7 @@ bool AdapterWidget::event( QEvent* event )
 							}
 						}
 						//check the difference, has to be greater for sensitivity
-						if ( abs( touchPoint.pos().y()-touchPoint.lastPos().y() ) > 5 ) {
+						if ( std::abs( touchPoint.pos().y()-touchPoint.lastPos().y() ) > 5 ) {
 							if ( touchPoint.pos().y() < touchPoint.lastPos().y() ) {
 								_gw->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Down );
 								_gw->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Down );
@@ -400,10 +402,10 @@ bool AdapterWidget::event( QEvent* event )
 					const QTouchEvent::TouchPoint _t_0 = touchPoints.takeFirst();
 					const QTouchEvent::TouchPoint _t_1 = touchPoints.takeFirst();
 					// move camera on axis Z, have to be in close proximity
-					if ( ( abs( _t_0.pos().y() - _t_0.lastPos().y() ) <= 25 )
-							&& ( abs( _t_0.pos().x() - _t_0.lastPos().x() ) <= 25 ) ) {
+					if ( ( std::abs( _t_0.pos().y() - _t_0.lastPos().y() ) <= 25 )
+							&& ( std::abs( _t_0.pos().x() - _t_0.lastPos().x() ) <= 25 ) ) {
 						//first touch is stationary and second is used for direction of movement
-						if ( abs( _t_1.pos().y() - _t_1.lastPos().y() ) >= 10 ) {
+						if ( std::abs( _t_1.pos().y() - _t_1.lastPos().y() ) >= 10 ) {
 							if ( _t_1.pos().y() > _t_1.lastPos().y() ) {
 								_gw->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Down );
 								_gw->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Down );
@@ -416,20 +418,20 @@ bool AdapterWidget::event( QEvent* event )
 						}
 					}
 					//Zoom, distances based on previous position and curent position
-					double _x_last = abs( _t_0.lastPos().rx()-_t_1.lastPos().rx() );
-					double _y_last = abs( _t_0.lastPos().ry()-_t_1.lastPos().ry() );
+					double _x_last = std::abs( _t_0.lastPos().rx()-_t_1.lastPos().rx() );
+					double _y_last = std::abs( _t_0.lastPos().ry()-_t_1.lastPos().ry() );
 					double _v_last = sqrt( ( _x_last*_x_last )+( _y_last*_y_last ) );
 
-					double _x_now = abs( _t_0.pos().rx()-_t_1.pos().rx() );
-					double _y_now = abs( _t_0.pos().ry()-_t_1.pos().ry() );
+					double _x_now = std::abs( _t_0.pos().rx()-_t_1.pos().rx() );
+					double _y_now = std::abs( _t_0.pos().ry()-_t_1.pos().ry() );
 					double _v_now = sqrt( ( _x_now*_x_now )+( _y_now*_y_now ) );
 
 					//maximal distance for gesture for camera movement on axis X/Y
 					if ( _v_now < 75 ) {
 						//maximal difference for gesture to activate
-						if ( abs( _v_now - _v_last ) < 25 ) {
+						if ( std::abs( _v_now - _v_last ) < 25 ) {
 							//same as with one touch
-							if ( abs( _t_0.pos().x() - _t_0.lastPos().x() ) > 5 ) {
+							if ( std::abs( _t_0.pos().x() - _t_0.lastPos().x() ) > 5 ) {
 								if ( _t_0.pos().x() < _t_0.lastPos().x() ) {
 									_gw->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Right );
 									_gw->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Right );
@@ -439,7 +441,7 @@ bool AdapterWidget::event( QEvent* event )
 									_gw->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Left );
 								}
 							}
-							if ( abs( _t_0.pos().y() - _t_0.lastPos().y() ) > 5 ) {
+							if ( std::abs( _t_0.pos().y() - _t_0.lastPos().y() ) > 5 ) {
 								if ( _t_0.pos().y() < _t_0.lastPos().y() ) {
 									_gw->getEventQueue()->keyPress( osgGA::GUIEventAdapter::KEY_Page_Down );
 									_gw->getEventQueue()->keyRelease( osgGA::GUIEventAdapter::KEY_Page_Down );
@@ -453,7 +455,7 @@ bool AdapterWidget::event( QEvent* event )
 						}
 					}
 					//Zoom, gesture pinch and spread
-					if ( abs( _v_now - _v_last ) > 25 ) {
+					if ( std::abs( _v_now - _v_last ) > 25 ) {
 						if ( _v_now > _v_last ) {
 							_gw->getEventQueue()->mouseScroll( osgGA::GUIEventAdapter::SCROLL_UP );
 						}
