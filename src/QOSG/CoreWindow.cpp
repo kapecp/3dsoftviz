@@ -5588,7 +5588,7 @@ void CoreWindow::swapManipulator()
 }
 //*****
 
-	// TODO: projective core entry
+// TODO: projective core entry
 void CoreWindow::createProjARWindow()
 {
 	QOSG::ProjectiveARCore::getInstance( NULL, this )->init( );

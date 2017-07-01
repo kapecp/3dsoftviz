@@ -65,8 +65,6 @@ private:
 	QOSG::ProjectiveARWindow*   mProjectiveARWindow;
 	QOSG::ProjectiveARViewer*   mProjectiveARViewer;
 
-
-
 };
 }
 

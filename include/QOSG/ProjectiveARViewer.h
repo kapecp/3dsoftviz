@@ -94,7 +94,12 @@ public:
 	 * @brief createBase - Creates a geometry with two perpendicular quads and two polygons.
 	 * @return Pointer to created geometry.
 	 */
+#if 0
+	//#ifdef PCL_FOUND
 	osg::Node* createBase();
+#else
+	osg::Geode* createBase();
+#endif
 
 	/**
 		  *  \fn inline public  reloadConfig
