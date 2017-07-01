@@ -2718,6 +2718,7 @@ void CoreWindow::selectionTypeComboBoxChanged( int index )
 			break;
 
 	}
+	selectionTypeComboBox->setCurrentIndex( index );
 }
 
 void CoreWindow::nodeTypeComboBoxChanged( int index )

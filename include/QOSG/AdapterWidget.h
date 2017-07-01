@@ -11,10 +11,12 @@
 
 #include <QKeyEvent>
 #include <QGLWidget>
+
 #if QT_VERSION > 0x050000
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #endif
+
 #if QT_VERSION >= 0x050000
 #define TOASCII toLatin1
 #else
@@ -159,12 +161,29 @@ protected:
 		*/
 	virtual void wheelEvent( QWheelEvent* event );
 
+	/**
+	  *  \fn protected virtual event( QEvent *event )
+	  *  \brief
+	  *  \param event
+	 */
+	virtual bool event( QEvent* event );
+
 
 	/**
 		*  osg::ref_ptr _gw
 		*  \brief
 		*/
 	osg::ref_ptr<osgViewer::GraphicsWindowEmbedded> _gw;
+	/**
+	  *  Moje lokalne premenne pamatanie dotykov
+	  */
+	QTime _time;
+	int _difference;
+	int _whatSelect;
+	int _counter;
+	bool _rightMouse;
+	bool _selectionMode;
+	QTouchEvent::TouchPoint _lastSingleTouch;
 
 };
 }
