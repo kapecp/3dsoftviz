@@ -157,7 +157,7 @@ void QOSG::ViewerQT::moveMouseAruco( double positionX,double positionY,bool isCl
 			this->getEventQueue()->mouseButtonRelease( wieverX, wieverY, button );
 			return;
 		}
-	}    
+	}
 	this->getEventQueue()->mouseMotion( wieverX, wieverY );
 }
 

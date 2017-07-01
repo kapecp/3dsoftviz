@@ -52,13 +52,13 @@ void Vwr::MouseControl::clickPressMouse( Qt::MouseButton button )
 }
 
 void Vwr::MouseControl::clickPressMouse( float positionX,float positionY,Qt::MouseButton button )
-{    
+{
 	viewer->getEventQueue()->mouseButtonPress( positionX,positionY,button );
 	this->moveMouse( positionX,positionY );
 }
 
 void Vwr::MouseControl::releasePressMouse( Qt::MouseButton button )
-{    
+{
 	//corection of position
 	this->corectionMousePosition( viewer->cursor().pos().x(),viewer->cursor().pos().y() );
 	//release of button

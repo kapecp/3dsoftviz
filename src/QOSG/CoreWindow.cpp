@@ -2303,7 +2303,7 @@ void CoreWindow::loadFromGit()
 
 //    Manager::GraphManager::getInstance()->createNewGraph( "new graph" );
 
-    if ( lPath != "" ) {
+	if ( lPath != "" ) {
 		if ( Manager::GraphManager::getInstance()->loadEvolutionGraphFromGit( lPath ) ) {
 			qDebug() << Manager::GraphManager::getInstance()->getActiveEvolutionGraph()->getFilePath();
 //            Manager::GraphManager::getInstance()->importEvolutionGraph( lPath );
@@ -2719,7 +2719,7 @@ void CoreWindow::selectionTypeComboBoxChanged( int index )
 			break;
 
 	}
-    selectionTypeComboBox->setCurrentIndex(index);
+	selectionTypeComboBox->setCurrentIndex( index );
 }
 
 void CoreWindow::nodeTypeComboBoxChanged( int index )

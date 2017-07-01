@@ -161,12 +161,12 @@ protected:
 		*/
 	virtual void wheelEvent( QWheelEvent* event );
 
-    /**
-      *  \fn protected virtual event( QEvent *event )
-      *  \brief
-      *  \param event
-     */
-    virtual bool event( QEvent* event );
+	/**
+	  *  \fn protected virtual event( QEvent *event )
+	  *  \brief
+	  *  \param event
+	 */
+	virtual bool event( QEvent* event );
 
 
 	/**
@@ -174,16 +174,16 @@ protected:
 		*  \brief
 		*/
 	osg::ref_ptr<osgViewer::GraphicsWindowEmbedded> _gw;
-    /**
-      *  Moje lokalne premenne pamatanie dotykov
-      */
-    QTime _time;
-    int _difference;
-    int _whatSelect;
-    int _counter;
-    bool _rightMouse;
-    bool _selectionMode;
-    QTouchEvent::TouchPoint _lastSingleTouch;
+	/**
+	  *  Moje lokalne premenne pamatanie dotykov
+	  */
+	QTime _time;
+	int _difference;
+	int _whatSelect;
+	int _counter;
+	bool _rightMouse;
+	bool _selectionMode;
+	QTouchEvent::TouchPoint _lastSingleTouch;
 
 };
 }

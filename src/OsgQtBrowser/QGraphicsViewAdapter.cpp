@@ -48,7 +48,7 @@ public:
 };
 
 
-QGraphicsViewAdapter::QGraphicsViewAdapter( osg::Image* image, QWidget* widget ):    
+QGraphicsViewAdapter::QGraphicsViewAdapter( osg::Image* image, QWidget* widget ):
 	_image( image ),
 
 	_qtKeyModifiers( Qt::NoModifier ),
