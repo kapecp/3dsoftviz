@@ -252,9 +252,12 @@ void Data::OsgNode::setScale( float val )
 
 bool Data::OsgNode::setInvisible( bool invisible )
 {
-	setValue( graph->getNodeVisual(), !invisible );
-	//-poriesit invisible pre label
-	return true;
+    //setValue( graph->getNodeVisual(), !invisible );
+    setValue( INDEX_LABEL, !invisible );
+    setValue( INDEX_SQUARE, !invisible );
+    setValue( INDEX_SPHERE, !invisible );
+    setValue( INDEX_RESIDENCE, !invisible );
+    return true;
 }
 
 osg::Vec3f Data::OsgNode::getTargetPosition() const
@@ -293,7 +296,7 @@ void Data::OsgNode::setVisual( unsigned int index )
 	setValue( INDEX_SQUARE, false );
 	setValue( INDEX_SPHERE, false );
 	setValue( INDEX_RESIDENCE, false );
-	setValue( index, true );
+    setValue( index, true );
 }
 
 void Data::OsgNode::reloadConfig()
@@ -305,7 +308,7 @@ void Data::OsgNode::reloadConfig()
 	this->insertChild( INDEX_RESIDENCE, createNodeResidence( this->scale ), false );
 	setSelected( selected );
 	setColor( color );
-	setValue( graph->getNodeVisual(), true );
+    setVisual( graph->getNodeVisual() );
 }
 
 void Data::OsgNode::showLabel( bool visible, bool labelsForResidence )
@@ -513,5 +516,6 @@ void Data::OsgNode::setIsFocused( bool value )
 		this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 		setDrawableColor( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0 ) );
 	}
-	setValue( graph->getNodeVisual(), true );
+
+    setVisual(graph->getNodeVisual());
 }

@@ -11,8 +11,10 @@
 #include "Data/Cluster.h"
 
 #include "Util/ApplicationConfig.h"
+#include "Util/CameraHelper.h"
 
 #include <osg/Geometry>
+#include <osg/Geode>
 #include <osg/Depth>
 #include <osg/BlendFunc>
 #include <osg/CullFace>
@@ -51,7 +53,7 @@ Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, D
 		if ( ++cnt % 3 == 0 ) {
 			labelText = labelText.replace( pos, 1, "\n" );
 		}
-	}
+    }
 
 	this->force = osg::Vec3f();
 	this->velocity = osg::Vec3f( 0,0,0 );
@@ -243,3 +245,64 @@ void Data::Node::setRadialLayout( Layout::RadialLayout* rl )
 }
 
 //volovar_kon
+
+// TODO - comment move to the right place
+
+osg::Vec3f Data::Node::getSize()
+{
+    osg::Vec3f res;
+    unsigned int visual = graph->getNodeVisual();
+    osg::Node* node = this->getChild( visual );
+    osg::Transform* at = node->asTransform();
+    osg::Geode* geo = at->getChild(0)->asGeode();
+
+    osg::BoundingBox box = geo->getBoundingBox();
+    osg::BoundingSphere sphere = geo->getBound();
+
+    res = osg::Vec3f((box.xMax() - box.xMin()),
+                     (box.yMax() - box.yMin()),
+                     (box.zMax() - box.zMin()));
+
+//    if (visual == INDEX_SQUARE)
+//    {
+//        osg::Drawable* draw = node->asDrawable();
+//        osg::BoundingBox box;
+//        if (draw != 0)
+//            box = draw->getBoundingBox();
+//        else
+//            box = this->square->getBoundingBox();
+//        res = osg::Vec3f(box.xMax() - box.xMin(), box.yMax() - box.yMin(), box.zMax() - box.zMin());
+//    }
+//    else if (visual == INDEX_SPHERE)
+//    {
+////        osg::Geode* sphere = node->asGeode();
+////        float size = sphere->getRadius();
+////        res = osg::Vec3f( 2 * size, 2 * size, 2 * size );
+//    }
+//    else
+//    {
+//        osg::BoundingBox box = this->square->getBoundingBox();
+//        res = osg::Vec3f(box.xMax() - box.xMin(), box.yMax() - box.yMin(), box.zMax() - box.zMin());
+//    }
+
+    return res;
+}
+
+float Data::Node::getRadius()
+{
+    float radius = getSize().x() / 2.f;
+//    qDebug() << "Point radius: " << radius;
+    return radius;
+}
+
+bool Data::Node::isOnScreen()
+{
+    bool res = true;
+    osg::Vec3f pos = this->targetPosition();
+    pos = Util::CameraHelper::byProjection(Util::CameraHelper::byView(pos));
+    if (qAbs(pos.x()) > 1 || qAbs(pos.y()) > 1)
+        res = false;
+    return res;
+}
+
+// END TODO

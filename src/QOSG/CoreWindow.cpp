@@ -952,6 +952,17 @@ QWidget* CoreWindow::createGraphTab( QFrame* line )
 	edgeTypeComboBox->setMaximumWidth( 136 );
 	lGraph->addRow( edgeTypeComboBox );
 
+    line = createLine();
+    lGraph->addRow( line );
+    lGraph->addRow( new QLabel( tr( "Special features" ) ) );
+    line = createLine();
+    lGraph->addRow( line );
+    chb_projective_force = new QCheckBox( tr( "Apply projective force" ) );
+    chb_projective_force->setChecked( false );
+    chb_projective_force->setMaximumWidth( 136 );
+    lGraph->addRow( chb_projective_force );
+    connect( chb_projective_force, SIGNAL( clicked( bool ) ), this, SLOT( setProjectiveForceEnable(bool) ) );
+
 	wGraph->setLayout( lGraph );
 
 	return wGraph;
@@ -4141,6 +4152,11 @@ void CoreWindow::setCameraEnable( bool enable )
 {
 	qDebug() << "Nastavujem na " << enable;
 	viewerWidget->getCameraManipulator()->setCameraActive( enable );
+}
+
+void CoreWindow::setProjectiveForceEnable( bool enable )
+{
+    layout->setProjectiveForceEnabled( enable );
 }
 
 // Duransky start - Akcia pri prepnuti checkboxu "Vertigo zoom"

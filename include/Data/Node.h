@@ -270,6 +270,14 @@ public:
 		this->ignoreByLayout = flag;
 	}
 
+    // TODO - comment move to the right place
+
+    osg::Vec3f getSize();
+    float getRadius();
+    bool isOnScreen();
+
+    // END TODO
+
 private:
 
 	/**
@@ -330,8 +338,7 @@ private:
 	//volovak_kon
 
 	//JMA
-	bool ignoreByLayout;
-
+    bool ignoreByLayout;
 };
 }
 

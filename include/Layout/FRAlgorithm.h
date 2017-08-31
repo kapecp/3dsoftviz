@@ -172,6 +172,19 @@ public:
 		return MAX_DISTANCE;
 	}
 
+    //TODO - upratat, okomentovat
+
+    void setProjectiveForceEnabled(bool value)
+    {
+        projectiveForceEnabled = value;
+    }
+    bool getProjectiveForceEnabled()
+    {
+        return projectiveForceEnabled;
+    }
+
+    //ENDTODO
+
 private:
 	Layout::RadialLayout* rl;
 
@@ -250,6 +263,12 @@ private:
 		*  \brief normal length of edge, rest mass of chord
 		*/
 	double K;
+
+    /**
+        *  double M
+        *  \brief margin between nodes
+        */
+    double M;
 
 	/**
 		*  osg::Vec3f center
@@ -462,6 +481,18 @@ private:
 		 * \brief Last focused node (if any).
 		 */
 	Data::Node* mLastFocusedNode;
+
+
+    // TODO - comment and move to the right place
+
+    bool mayOverlap(Data::Node* u, Data::Node* v);
+    void addProjectiveForce(Data::Node* u, Data::Node* v);
+    osg::Vec3f getProjVector(Data::Node* u, Data::Node* v);
+    float getMinProjDistance(Data::Node* u, Data::Node* v, osg::Vec3f pv);
+    float proj(float distance, float ideal);
+    bool projectiveForceEnabled = false;
+
+    // END TODO
 
 };
 }
