@@ -9,8 +9,8 @@
 
 #include <math.h>
 
-QOSG::ViewerQT::ViewerQT( QWidget* parent , const char* name , const QGLWidget* shareWidget , WindowFlags f , Vwr::CoreGraph* cg ):
-	AdapterWidget( parent, name, shareWidget, f )
+QOSG::ViewerQT::ViewerQT( const QGLFormat& format, QWidget* parent, const char* name, const QGLWidget* shareWidget, WindowFlags f, Vwr::CoreGraph* cg ):
+	AdapterWidget( format, parent, name, shareWidget, f )
 {
     Util::CameraHelper::setCamera(this->getCamera());
 	this->cg = cg;
@@ -91,7 +91,13 @@ QOSG::ViewerQT::ViewerQT( QWidget* parent , const char* name , const QGLWidget* 
 
 	setThreadingModel( osgViewer::ViewerBase::SingleThreaded );
 
+#if QT_VERSION > 0x050000
+	connect( &_timer, SIGNAL( timeout() ), this, SLOT( update() ) );
+#elif QT_VERSION > 0x040000
 	connect( &_timer, SIGNAL( timeout() ), this, SLOT( updateGL() ) );
+#endif
+
+
 
 	_timer.start( 10 );
 }
@@ -126,7 +132,7 @@ void QOSG::ViewerQT::resizeGL( int width, int height )
 	cg->onResized( width, height );
 }
 
-void QOSG::ViewerQT::moveMouseAruco( double positionX,double positionY,bool isClick,int windowX,int windowY ,Qt::MouseButton button )
+void QOSG::ViewerQT::moveMouseAruco( double positionX,double positionY,bool isClick,int windowX,int windowY,Qt::MouseButton button )
 {
 	//qDebug() << positionX << "  " << positionY << "         " << isClick;
 
@@ -156,7 +162,7 @@ void QOSG::ViewerQT::moveMouseAruco( double positionX,double positionY,bool isCl
 	this->getEventQueue()->mouseMotion( wieverX, wieverY );
 }
 
-void QOSG::ViewerQT::moveMouseKinect( double positionX,double positionY,double speed,bool isClick,int windowX,int windowY ,Qt::MouseButton button )
+void QOSG::ViewerQT::moveMouseKinect( double positionX,double positionY,double speed,bool isClick,int windowX,int windowY,Qt::MouseButton button )
 {
 	//qDebug() << positionX << "  " << positionY << "         " << isClick;
 	positionX /=640.0;

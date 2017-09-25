@@ -3,6 +3,7 @@
 
 #include <QPointer>
 
+
 class QApplication;
 
 namespace QOSG {

@@ -677,7 +677,7 @@ void Repository::Git::GitLuaGraphAnalyzer::findFunctionRowsFromFile( Repository:
 		}
 	}
 
-	QString filepath = this->evolutionGraph->getFilePath().replace( '\\' , '/' ) + "/" + file->getFilepath();
+	QString filepath = this->evolutionGraph->getFilePath().replace( '\\', '/' ) + "/" + file->getFilepath();
 
 //    qDebug() << filepath;
 

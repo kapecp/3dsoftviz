@@ -6,11 +6,22 @@
 #include "Viewer/CoreGraph.h"
 #include "Core/Core.h"
 
+#if QT_VERSION > 0x050000
+#include <QLabel>
+#include <QRadioButton>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QFormLayout>
+
+#elif QT_VERSION > 0x040000
 #include <QtGui/QLabel>
 #include <QtGui/QRadioButton>
 #include <QtGui/QPushButton>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QFormLayout>
+#endif
+
+
 #include <QCloseEvent>
 #include <QDebug>
 
@@ -22,7 +33,12 @@ QOSG::ProjectiveARWindow::ProjectiveARWindow( QWidget* parent, QApplication* app
 
 	ViewerQT* sourceViewer = AppCore::Core::getInstance( app )->getCoreWindow()->getViewerWidget();
 	Vwr::CoreGraph* coreGraph = AppCore::Core::getInstance( app )->getCoreGraph();
-	viewerWidget = new ProjectiveARViewer( this, 0, 0, 0, this, sourceViewer, coreGraph );
+
+
+	QGLFormat format( QGL::DoubleBuffer | QGL::DepthBuffer | QGL::Rgba | QGL::StencilBuffer | QGL::AlphaChannel | QGL::StereoBuffers );
+	format.setVersion( 2, 1 );
+
+	viewerWidget = new ProjectiveARViewer( format, this, 0, 0, 0, this, sourceViewer, coreGraph );
 	viewerWidget->addEventHandler( new ProjectiveAREventHandler( this ) );
 	createLeftToolBar();
 
@@ -220,15 +236,15 @@ QDoubleSpinBox* QOSG::ProjectiveARWindow::createCoordSpinBox( double value, cons
 /*
 QGroupBox* QOSG::ProjectiveARWindow::createProjectorGroupBox()
 {
-    QGroupBox* group = createGroupBox( tr( "Radial layout" ) );
-    QFormLayout* layoutGroup = createGroupLayout();
-    b_SetRestriction_RadialLayout->setMinimumWidth( 68 );
+	QGroupBox* group = createGroupBox( tr( "Radial layout" ) );
+	QFormLayout* layoutGroup = createGroupLayout();
+	b_SetRestriction_RadialLayout->setMinimumWidth( 68 );
 
 
 
-    group->setLayout( layoutGroup );
+	group->setLayout( layoutGroup );
 
-    return group;
+	return group;
 }*/
 
 QFrame* QOSG::ProjectiveARWindow::createLine()

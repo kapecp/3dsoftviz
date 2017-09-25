@@ -77,7 +77,7 @@ public:
 		*
 		*/
 
-	ProjectiveARViewer( QWidget* parent = 0, const char* name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0, QOSG::ProjectiveARWindow* window = 0, osgViewer::Viewer* viewerPerspective = 0, Vwr::CoreGraph* coreGraph = 0 );
+	ProjectiveARViewer( const QGLFormat& format, QWidget* parent = 0, const char* name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0, QOSG::ProjectiveARWindow* window = 0, osgViewer::Viewer* viewerPerspective = 0, Vwr::CoreGraph* coreGraph = 0 );
 
 	/**
 	 * @author Viktor Kostan
@@ -94,7 +94,12 @@ public:
 	 * @brief createBase - Creates a geometry with two perpendicular quads and two polygons.
 	 * @return Pointer to created geometry.
 	 */
+#if 0
+	//#ifdef PCL_FOUND
+	osg::Node* createBase();
+#else
 	osg::Geode* createBase();
+#endif
 
 	/**
 		  *  \fn inline public  reloadConfig
@@ -232,7 +237,7 @@ private:
 		*  osg::Geode* base
 		*  \brief camera that renders model to texture
 		*/
-	osg::Geode* base;
+	osg::Node* base;
 
 
 	/**

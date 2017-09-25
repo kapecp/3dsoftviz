@@ -5,10 +5,15 @@
 
 namespace Manager {
 static ResourceManager* instance = nullptr;
+
+#include <leathers/push>
+#include <leathers/exit-time-destructors>
+#include <leathers/global-constructors>
 static QMap<QString, osg::ref_ptr<osg::Node>> meshes;
 static QMap<QString, osg::ref_ptr<osg::Geode>> shapes;
 static QMap<QString, osg::ref_ptr<osg::Texture>> textures;
 static QMap<osg::Vec3, osg::ref_ptr<osg::Material>> materials;
+#include <leathers/pop>
 
 ResourceManager::ResourceManager()
 {

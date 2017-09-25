@@ -41,11 +41,11 @@ class CameraManipulator;
 
 namespace QOSG {
 /**
-    *  \class ViewerQT
-    *  \brief
-    *  \author Adam Pazitnaj
-    *  \date 29. 4. 2010
-    */
+	*  \class ViewerQT
+	*  \brief
+	*  \author Adam Pazitnaj
+	*  \date 29. 4. 2010
+	*/
 class ViewerQT : public osgViewer::Viewer, public AdapterWidget
 {
 
@@ -53,28 +53,28 @@ class ViewerQT : public osgViewer::Viewer, public AdapterWidget
 public:
 
 	/*!
-	    *
-	    * \param parent
-	    * Rodic widgetu.
-	    *
-	    * \param name
-	    * Meno widgetu.
-	    *
-	    * \param shareWidget
-	    * Zdielanie widgetu.
-	    *
-	    * \param f
-	    * Znacky pre vytvaranie okna.
-	    *
-	    * \param cg
-	    * CoreGraf, ktory sa bude vykreslovat.
-	    *
-	    *
-	    * Vytvori widget, ktory dokaze zobrazit OSG grafy.
-	    *
-	    */
+		*
+		* \param parent
+		* Rodic widgetu.
+		*
+		* \param name
+		* Meno widgetu.
+		*
+		* \param shareWidget
+		* Zdielanie widgetu.
+		*
+		* \param f
+		* Znacky pre vytvaranie okna.
+		*
+		* \param cg
+		* CoreGraf, ktory sa bude vykreslovat.
+		*
+		*
+		* Vytvori widget, ktory dokaze zobrazit OSG grafy.
+		*
+		*/
 
-	ViewerQT( QWidget* parent = 0, const char* name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0, Vwr::CoreGraph* cg = 0 );
+	ViewerQT( const QGLFormat& format, QWidget* parent = 0, const char* name = 0, const QGLWidget* shareWidget = 0, WindowFlags f = 0, Vwr::CoreGraph* cg = 0 );
 
 
 	/**
@@ -101,48 +101,48 @@ public:
 
 
 	/**
-	      *  \fn inline public constant  getPickHandler
-	      *  \brief Returns pick handler
-	      *  \return Vwr::PickHandler * pick handler
-	      */
+		  *  \fn inline public constant  getPickHandler
+		  *  \brief Returns pick handler
+		  *  \return Vwr::PickHandler * pick handler
+		  */
 	Vwr::PickHandler* getPickHandler() const ;
 
 
 	/**
-	      *  \fn inline public constant  getCameraManipulator
-	      *  \brief Returns camera manipulator
-	      *  \return Vwr::CameraManipulator * camera manipulator
-	      */
+		  *  \fn inline public constant  getCameraManipulator
+		  *  \brief Returns camera manipulator
+		  *  \return Vwr::CameraManipulator * camera manipulator
+		  */
 	Vwr::CameraManipulator* getCameraManipulator() const;
 
 
 
 	/**
-	      *  \fn inline public  reloadConfig
-	      *  \brief Reloads configuration
-	      */
+		  *  \fn inline public  reloadConfig
+		  *  \brief Reloads configuration
+		  */
 	void reloadConfig();
 
 protected:
 
 
 	/**
-	    *  QTimer _timer
-	    *  \brief
-	    */
+		*  QTimer _timer
+		*  \brief
+		*/
 	QTimer _timer;
 
 	/**
-	    *  Vwr::CoreGraph * cg
-	    *  \brief core graph
-	    */
+		*  Vwr::CoreGraph * cg
+		*  \brief core graph
+		*/
 	Vwr::CoreGraph* cg;
 
 
 	/**
-	    *  \fn inline protected virtual  paintGL
-	    *  \brief Paints new frame
-	    */
+		*  \fn inline protected virtual  paintGL
+		*  \brief Paints new frame
+		*/
 
 	virtual void paintGL();
 
@@ -151,21 +151,21 @@ protected:
 private:
 
 	/**
-	    *  Vwr::CameraManipulator * manipulator
-	    *  \brief camera manipulator
-	    */
+		*  Vwr::CameraManipulator * manipulator
+		*  \brief camera manipulator
+		*/
 	Vwr::CameraManipulator* manipulator;
 
 	/**
-	    *  Vwr::PickHandler * pickHandler
-	    *  \brief pick handler
-	    */
+		*  Vwr::PickHandler * pickHandler
+		*  \brief pick handler
+		*/
 	Vwr::PickHandler* pickHandler;
 
 	/**
-	    *  Util::ApplicationConfig * appConf
-	    *  \brief application configuration
-	    */
+		*  Util::ApplicationConfig * appConf
+		*  \brief application configuration
+		*/
 	Util::ApplicationConfig* appConf;
 
 

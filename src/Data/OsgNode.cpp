@@ -12,6 +12,7 @@
 #include <osg/BlendFunc>
 #include <osgText/FadeText>
 #include "City/Residence.h"
+#include "City/Module.h"
 
 #include <QTextStream>
 #include <Shapes/Cuboid.h>
@@ -27,11 +28,10 @@ Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Grap
 	this->setParentBall( NULL );
 
 
-	insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ) , false );
-	insertChild( INDEX_SQUARE, createNodeSquare( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ) , false );
+	insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ), false );
+	insertChild( INDEX_SQUARE, createNodeSquare( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 	insertChild( INDEX_SPHERE, createNodeSphere( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 	insertChild( INDEX_RESIDENCE,  createNodeResidence( this->scale ), false );
-	insertChild( INDEX_MODULE,  createNodeModule( this->scale ), false );
 	setValue( graph->getNodeVisual(), true );
 
 	this->square = createNode( this->scale * 4, OsgNode::createStateSet( this->type->getTypeTexture() ) );
@@ -40,6 +40,7 @@ Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Grap
 	this->force = osg::Vec3f();
 	this->velocity = osg::Vec3f( 0,0,0 );
 	this->selected = false;
+	this->inModule = false;
 
 	this->usingInterpolation = true;
 
@@ -170,6 +171,38 @@ osg::ref_ptr<osg::Drawable> Data::OsgNode::createSquare( const float& scale, osg
 	return nodeRect;
 }
 
+City::Module* Data::OsgNode::getModule()
+{
+	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
+	return ( at != nullptr ) ? dynamic_cast<City::Module*>( at->asTransform()->asPositionAttitudeTransform() ) : nullptr;
+}
+
+void Data::OsgNode::setModule( City::Module* module )
+{
+	removeChild( INDEX_RESIDENCE );
+	insertChild( INDEX_RESIDENCE, module );
+	setValue( INDEX_RESIDENCE, true );
+}
+
+void Data::OsgNode::adjustLabelForModule( float scale )
+{
+	osg::ref_ptr<osg::Node> newLabel = createLabel( scale, labelText );
+	replaceChild( getLabel(), newLabel );
+}
+
+osg::ref_ptr<osg::Node> Data::OsgNode::getLabel()
+{
+	auto at = getChild( INDEX_LABEL );
+	return at ? at : nullptr;
+}
+
+osg::ref_ptr<osg::PositionAttitudeTransform> Data::OsgNode::getResidenceAsPAT()
+{
+	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
+	return at ? at->asTransform()->asPositionAttitudeTransform() : nullptr;
+
+}
+
 City::Residence* Data::OsgNode::getResidence()
 {
 	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
@@ -188,6 +221,15 @@ City::Building* Data::OsgNode::getBuilding()
 	return nullptr;
 }
 
+City::Ball* Data::OsgNode::getModuleBall()
+{
+	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
+	if ( at->getNumChildren() > 0 ) {
+		return dynamic_cast<City::Ball*>( at->getChild( 0 )->asTransform()->asPositionAttitudeTransform() );
+	}
+	return nullptr;
+}
+
 void Data::OsgNode::setResidence( osg::Node* residence )
 {
 	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
@@ -195,11 +237,10 @@ void Data::OsgNode::setResidence( osg::Node* residence )
 	at->addChild( residence );
 }
 
-void Data::OsgNode::setModule( osg::Node* module )
+void Data::OsgNode::clearResidence( int fromIndex )
 {
-	auto at = getChild( INDEX_MODULE )->asTransform()->asPositionAttitudeTransform();
-	at->removeChildren( 0, at->getNumChildren() );
-	at->addChild( module );
+	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
+	at->removeChildren( fromIndex, at->getNumChildren() );
 }
 
 osg::Vec3f Data::OsgNode::getCurrentPosition( bool calculateNew, float interpolationSpeed )
@@ -302,7 +343,7 @@ void Data::OsgNode::setVisual( unsigned int index )
 void Data::OsgNode::reloadConfig()
 {
 	removeChildren( 0, 4 );
-	this->insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ) , false );
+	this->insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ), false );
 	this->insertChild( INDEX_SQUARE, createNodeSquare( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 	this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 	this->insertChild( INDEX_RESIDENCE, createNodeResidence( this->scale ), false );
@@ -318,6 +359,16 @@ void Data::OsgNode::showLabel( bool visible, bool labelsForResidence )
 	if ( residence ) {
 		residence->showLabels( visible && labelsForResidence );
 	}
+
+	//if it's in module node -> turn off Data::Note labels and turn on City::Building labels
+	if ( inModule ) {
+		setValue( INDEX_LABEL, false );
+	}
+	auto module = getModule();
+	if ( module ) {
+		module->showLabels( visible && labelsForResidence );
+	}
+
 }
 
 osg::ref_ptr<osg::StateSet> Data::OsgNode::createStateSet( const osg::ref_ptr<osg::Texture2D>& texture )
@@ -438,11 +489,6 @@ osg::ref_ptr<osg::Node> Data::OsgNode::createNodeSphere( const float& scaling, o
 }
 
 osg::ref_ptr<osg::Node> Data::OsgNode::createNodeResidence( const float& scale )
-{
-	return new osg::PositionAttitudeTransform();
-}
-
-osg::ref_ptr<osg::Node> Data::OsgNode::createNodeModule( const float& scale )
 {
 	return new osg::PositionAttitudeTransform();
 }

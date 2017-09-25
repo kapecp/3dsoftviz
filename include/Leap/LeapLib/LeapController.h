@@ -1,10 +1,12 @@
 #ifndef LEAPCONTROLLER_H
 #define LEAPCONTROLLER_H
 
-#include "Leap.h"
+
 #include "LeapLib/LeapListener.h"
 #include "LeapLib/LeapManager.h"
 #include "LeapLib/LeapExport.h"
+
+#include "Leap.h"
 
 namespace Leap {
 

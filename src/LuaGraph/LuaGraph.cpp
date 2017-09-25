@@ -24,16 +24,13 @@ Lua::LuaValueList luaCallback( const Lua::LuaValueList& params )
 	return Lua::LuaValueList().getValue();
 }
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-#endif
+#include <leathers/push>
+#include <leathers/conversion>
+#include <leathers/missing-prototypes>
 
 LUA_WRAP_FUNCTION( luaCallback )
 
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic pop
-#endif
+#include <leathers/pop>
 
 Lua::LuaGraph::LuaGraph()
 {
@@ -325,15 +322,15 @@ Lua::LuaGraph* Lua::LuaGraph::loadEvoGraph( QString repoFilepath )
 Lua::LuaGraph::~LuaGraph()
 {
 	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = nodes->begin(); i != nodes->end(); ++i ) {
-		delete( *i );
+		delete ( *i );
 	}
 
 	for ( QMap<qlonglong, Lua::LuaEdge*>::iterator i = edges->begin(); i != edges->end(); ++i ) {
-		delete( *i );
+		delete ( *i );
 	}
 
 	for ( QMap<qlonglong, Lua::LuaIncidence*>::iterator i = incidences->begin(); i != incidences->end(); ++i ) {
-		delete( *i );
+		delete ( *i );
 	}
 	delete nodes;
 	delete incidences;

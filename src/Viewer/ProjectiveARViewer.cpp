@@ -23,10 +23,40 @@
 #include <osgDB/ReadFile>
 #include <osgViewer/Viewer>
 
+
+// TODO: termporary disable PCL
+// Note: PCL on OSX via HomeBrew does not provide Openni2_grabber by deafault, thus pcl/io/openni2_grabber.h is missing
+// so install PCL via: brew install pcl --with-openni2
+#if 0
+//#ifdef PCL_FOUND
+#include <pcl/common/time.h> //fps calculations
+#include <pcl/common/angles.h>
+#include <pcl/io/openni2_grabber.h>
+#include <pcl/io/obj_io.h>
+#include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/visualization/boost.h>
+#include <pcl/visualization/image_viewer.h>
+#include <pcl/console/print.h>
+#include <pcl/console/parse.h>
+#include <pcl/console/time.h>
+#include <pcl/filters/voxel_grid.h>
+#include <pcl/surface/mls.h>
+#include <pcl/surface/poisson.h>
+#include <pcl/surface/grid_projection.h>
+#include <pcl/point_types.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/kdtree/kdtree_flann.h>
+#include <pcl/features/normal_3d.h>
+#include <pcl/surface/gp3.h>
+#endif
+
 #include <math.h>
 
 // used code from http://jotschi.de/2009/05/31/projective-textures-with-openscenegraph/
-osg::StateSet* QOSG::ProjectiveARViewer::createProjectorState( osg::Texture2D* texture, osg::Vec3d projectorPos, osg::Vec3d projectorDirection, double projectorFOV )
+osg::StateSet* QOSG::ProjectiveARViewer::createProjectorState( osg::Texture2D* texture
+		, osg::Vec3d projectorPos
+		, osg::Vec3d projectorDirection
+		, double projectorFOV )
 {
 
 	osg::StateSet* stateset = new osg::StateSet;
@@ -75,7 +105,7 @@ osg::StateSet* QOSG::ProjectiveARViewer::createProjectorState( osg::Texture2D* t
 		"void main() \n"
 		"{ \n"
 		"	vec4 dividedCoord = projCoord / projCoord.w; \n"
-		"	vec2 texCoord = dividedCoord.st + vec2(0.5f, 0.5f); \n"
+		"	vec2 texCoord = dividedCoord.st + vec2(0.5, 0.5); \n"
 		"	vec4 color = texture2D(projectionMap, texCoord); \n"
 		"	gl_FragColor = color * gl_Color; \n"
 		"} \n";
@@ -103,7 +133,124 @@ osg::StateSet* QOSG::ProjectiveARViewer::createProjectorState( osg::Texture2D* t
 	return stateset;
 }
 
+// TODO: termporary disable PCL
+// Note: PCL on OSX via HomeBrew does not provide Openni2_grabber by deafault, thus pcl/io/openni2_grabber.h is missing
+// so install PCL via: brew install pcl --with-openni2
+#if 0
+//#ifdef PCL_FOUND
+osg::Node* QOSG::ProjectiveARViewer::createBase()
+{
+	osg::Geode* baseGeode = new osg::Geode();
+	osg::Geometry* baseGeometry = new osg::Geometry();
 
+	baseGeode->addDrawable( baseGeometry );
+
+	pcl::PointCloud<pcl::PointXYZ>::Ptr sourceCloud( new pcl::PointCloud<pcl::PointXYZ> );
+	pcl::PolygonMesh triangles;
+
+	{
+		using namespace pcl;
+		using namespace std;
+
+
+		boost::function<void( const PointCloud<PointXYZ>::ConstPtr& )> function = [&sourceCloud]( const PointCloud<PointXYZ>::ConstPtr &cloud ) {
+			*sourceCloud = *cloud;
+		};
+
+		io::OpenNI2Grabber* grabber = new io::OpenNI2Grabber();
+		grabber->registerCallback( function );
+		grabber->start();
+		boost::this_thread::sleep( boost::posix_time::seconds( 1 ) );
+		grabber->stop();
+	}
+
+	if ( !sourceCloud ) {
+		std::cerr << "nepodarilo sa poincloud vybrat" << std::endl;
+		exit( 1 );
+	}
+
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloudecek( new pcl::PointCloud<pcl::PointXYZ> );
+	pcl::PointCloud<pcl::PointXYZ> cloud_filtered;
+	pcl::PointCloud<pcl::PointXYZ> clo;
+
+	if ( sourceCloud ) {
+
+		pcl::copyPointCloud( *sourceCloud, *cloudecek );
+		pcl::VoxelGrid<pcl::PointXYZ> sor;
+		sor.setInputCloud( cloudecek );
+		sor.setLeafSize( 0.01f, 0.01f, 0.01f );
+		sor.filter( cloud_filtered );
+
+		*cloudecek = cloud_filtered;
+
+		// Normal estimation
+		pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> n;
+		pcl::PointCloud<pcl::Normal>::Ptr normals( new pcl::PointCloud<pcl::Normal> );
+		pcl::search::KdTree<pcl::PointXYZ>::Ptr tree( new pcl::search::KdTree<pcl::PointXYZ> );
+		tree->setInputCloud( cloudecek );
+		n.setInputCloud( cloudecek );
+		n.setSearchMethod( tree );
+		n.setKSearch( 20 );
+		n.compute( *normals );
+
+		// Concatenate the XYZ and normal fields*
+		pcl::PointCloud<pcl::PointNormal>::Ptr cloud_with_normals( new pcl::PointCloud<pcl::PointNormal> );
+		pcl::concatenateFields( *cloudecek, *normals, *cloud_with_normals );
+		// cloud_with_normals = cloud + normals
+
+		// Create search tree*
+		pcl::search::KdTree<pcl::PointNormal>::Ptr tree2( new pcl::search::KdTree<pcl::PointNormal> );
+		tree2->setInputCloud( cloud_with_normals );
+
+		// Initialize objects
+		pcl::Poisson<pcl::PointNormal> p;
+
+		// vs druhe min cas / prijatelna kvalita
+
+		// POISSON RECONSTRUCTION
+		p.setDepth( 8 );
+		p.setInputCloud( cloud_with_normals );
+		p.reconstruct( triangles );
+
+		pcl::fromPCLPointCloud2( triangles.cloud, clo );
+	}
+
+	// push verts and indices to geode
+
+	// verts
+	osg::ref_ptr<osg::Vec3Array> verts( new osg::Vec3Array );
+	for ( auto elm : clo.points ) {
+		verts->push_back( osg::Vec3( elm.x, elm.y, elm.z ) );
+	}
+
+	// indices
+	for ( auto elm : triangles.polygons ) {
+		osg::DrawElementsUInt* face = new osg::DrawElementsUInt( osg::PrimitiveSet::TRIANGLES, 0 );
+		for ( auto e : elm.vertices ) {
+			face->push_back( e );
+		}
+		baseGeometry->addPrimitiveSet( face );
+	}
+
+	baseGeometry->setVertexArray( verts.get() );
+//  test
+//	baseGeode = dynamic_cast<osg::Geode *>(osgDB::readNodeFile("test.osg"));
+
+	// rotate geometry
+	osg::MatrixTransform* mt = new osg::MatrixTransform;
+	osg::Matrixf* rm = new osg::Matrixf;
+	rm->makeRotate( osg::inDegrees( 50.0f ), osg::Vec3f( 1.0f, 0.0f, 0.0f ),
+					osg::inDegrees( 180.0f ),  osg::Vec3f( 0.0f, 1.0f, 0.0f ),
+					osg::inDegrees( 0.0f ),   osg::Vec3f( 0.0f, 0.0f, 1.0f ) );
+	mt->setMatrix( *rm );
+	mt->addChild( baseGeode );
+
+//  test
+//	osgDB::writeNodeFile(*mt, "transform.osg");
+
+	return mt;
+}
+#else
 osg::Geode* QOSG::ProjectiveARViewer::createBase()
 {
 	osg::Geode* baseGeode = new osg::Geode();
@@ -187,7 +334,7 @@ osg::Geode* QOSG::ProjectiveARViewer::createBase()
 
 	return baseGeode;
 }
-
+#endif
 
 osg::Group* QOSG::ProjectiveARViewer::createProjectorScene()
 {
@@ -242,7 +389,7 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene()
 
 		// setting Projection Matrix (compute frustum parameters)
 		double dist = renderCameraRelPos.length();
-		renderCamera->setProjectionMatrix( createFrustumForSphere( static_cast<double>( bs.radius() ) , dist ) );
+		renderCamera->setProjectionMatrix( createFrustumForSphere( static_cast<double>( bs.radius() ), dist ) );
 	}
 	else {
 		renderCamera->setProjectionMatrixAsPerspective( viewerFOV, 1.0, zNear, zFar );
@@ -284,8 +431,8 @@ osg::Group* QOSG::ProjectiveARViewer::createProjectorScene()
 	return projectorScene;
 }
 
-QOSG::ProjectiveARViewer::ProjectiveARViewer( QWidget* parent , const char* name , const QGLWidget* shareWidget , WindowFlags f , QOSG::ProjectiveARWindow* window, osgViewer::Viewer* viewerPerspective, Vwr::CoreGraph* coreGraph ):
-	AdapterWidget( parent, name, shareWidget, f )
+QOSG::ProjectiveARViewer::ProjectiveARViewer( const QGLFormat& format, QWidget* parent, const char* name, const QGLWidget* shareWidget, WindowFlags f, QOSG::ProjectiveARWindow* window, osgViewer::Viewer* viewerPerspective, Vwr::CoreGraph* coreGraph ):
+	AdapterWidget( format, parent, name, shareWidget, f )
 {
 	this->window = window;
 	this->coreGraph = coreGraph;
@@ -392,6 +539,11 @@ void QOSG::ProjectiveARViewer::updateProjector()
 
 void QOSG::ProjectiveARViewer::updateScene()
 {
+	//
+	//	sem pridat nastavenie base
+	//
+
+
 	updateRenderCamera();
 	updateViewer();
 	updateProjector();

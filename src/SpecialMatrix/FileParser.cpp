@@ -1,9 +1,10 @@
 #include "SpecialMatrix/FileParser.h"
 
 #include <QtGui>
+#include <QMessageBox>
 
-#pragma warning(push)
-#pragma warning(disable:4244)
+#include <leathers/push>
+#include <leathers/conversion>
 
 SpecialMatrix::FileParser::FileParser( QString fileName, Data::Graph* matrixGraph, SpecialMatrix::NodeConnections* connections )
 {
@@ -207,7 +208,7 @@ Data::Graph* SpecialMatrix::FileParser::addNormalNodesToGraph( Data::Graph* matr
 		if ( foundNodeId ) {
 			foundNode = matrixGraph->findNodeById( foundNodeId );
 			osg::Vec2f foundNodePos = getAvailablePosition( connections, static_cast<int>( pos.x() ), static_cast<int>( pos.y() ) );
-			foundNode->setTargetPosition( osg::Vec3f( foundNodePos.x()*separator , foundNodePos.y()*separator , 0.0f ) );
+			foundNode->setTargetPosition( osg::Vec3f( foundNodePos.x()*separator, foundNodePos.y()*separator, 0.0f ) );
 			connections->setNodePositionsArrayField( static_cast<int>( foundNodePos.x() ), static_cast<int>( foundNodePos.y() ), foundNodeId );
 		}
 
@@ -734,10 +735,10 @@ Data::Graph* SpecialMatrix::FileParser::addSpecialCase2NodesToGraph( Data::Graph
 osg::Vec2f SpecialMatrix::FileParser::getAvailablePosition( SpecialMatrix::NodeConnections* connections, int row, int column )
 {
 	//int newRow = static_cast<int>( row ), newCol = static_cast<int>( column );
-	int newRow =  row , newCol =  column ;
+	int newRow =  row, newCol =  column ;
 	int cornerRow = newRow, cornerCol = newCol;
 	int distance = 1, phase = 0;
-	int nodeCount = ( int ) connections->getNodePositionsArray().size();
+	int nodeCount = static_cast<int>( connections->getNodePositionsArray().size() );
 	osg::Vec2f nodePos;
 	while ( true ) {
 		//if the position is taken
@@ -866,3 +867,4 @@ void SpecialMatrix::FileParser::createSettings( Data::Graph* matrixGraph )
 	iEdgeType = matrixGraph->addType( "iEdgeType", settings );
 }
 
+#include <leathers/pop>

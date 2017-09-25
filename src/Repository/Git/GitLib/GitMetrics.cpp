@@ -604,7 +604,7 @@ QList<QString> Repository::Git::GitMetrics::getFunctionConnectorsFromFile( QStri
 	return functionConnectors.toList();
 }
 
-QList<QString> Repository::Git::GitMetrics::getFunctionConnectorsFromFile( QString identifier , QString author )
+QList<QString> Repository::Git::GitMetrics::getFunctionConnectorsFromFile( QString identifier, QString author )
 {
 	QSet<QString> functionConnectors = QSet<QString>();
 

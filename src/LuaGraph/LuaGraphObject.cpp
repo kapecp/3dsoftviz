@@ -42,4 +42,25 @@ float Lua::LuaGraphObject::getFloatParam( std::string name, float defaultValue )
 	return static_cast<float>( params.getValue()[name].asNumber() );
 }
 
+float Lua::LuaGraphObject::getFloatParam( std::string tableName, std::string key, float defaultValue )
+{
+	if ( params.getValue().type() == 0 ) {
+		return defaultValue;
+	}
+	if ( params.getValue()[tableName].typeName() != "table" ) {
+		return defaultValue;
+	}
+	Lua::LuaValue tableFromParams;
+	tableFromParams.setValue( params.getValue()[tableName].asTable() );
+
+	if ( tableFromParams.getValue().type() == 0 ) {
+		return defaultValue;
+	}
+	if ( tableFromParams.getValue()[key].typeName() != "number" ) {
+		return defaultValue;
+	}
+	return static_cast<float>( tableFromParams.getValue()[key].asNumber() );
+
+}
+
 

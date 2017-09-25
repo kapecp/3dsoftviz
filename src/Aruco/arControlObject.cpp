@@ -1,4 +1,5 @@
 #include "Aruco/arControlObject.h"
+
 #include "Util/ApplicationConfig.h"
 #include <QDebug>
 #include <QMap>
@@ -9,18 +10,22 @@
 #include "Data/Node.h"
 #include "Core/Core.h"
 #include "Viewer/CoreGraph.h"
-
+#include "Viewer/PickHandler.h"
 
 
 namespace ArucoModul {
 
-
-ArControlObject::ArControlObject( int id, osg::Vec3f position )
+/*
+ * ArControlObject
+ */
+ArControlObject::ArControlObject( int id, osg::Vec3f position, ArAssignmentStrategy* _assignmentStrategy, ArSelectionLayoutStrategy* _selectionLayoutStrategy )
 {
+	this->_assignmentStrategy = _assignmentStrategy;
+	this->_selectionLayoutStrategy = _selectionLayoutStrategy;
+
 	this->id = id;
 	this->position = position;
 	this->focused = false;
-	this->lost = false;
 
 	//Create lost timer
 	this->timer = new QTimer( 0 );
@@ -34,94 +39,60 @@ ArControlObject::ArControlObject( int id, osg::Vec3f position )
 	connect( this->timer, SIGNAL( timeout() ), this, SLOT( timerEvent() ) );
 	m_workerThread->start();
 
-	updatePosition( this->position );
+	qDebug() << "asigning";
+
+	this->focusedNode = this->_assignmentStrategy->assign( this->position );
+	if ( this->focusedNode != NULL ) {
+		qDebug() << "focused";
+
+		//     AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt()->getPickHandler()->addPickedNode(this->focusedNode);
+		//      AppCore::Core::getInstance()->getCoreWindow()->forceOnChange();
+
+		this->focused = true;
+		this->_selectionLayoutStrategy->setSelectionLayout( this->focusedNode );
+		updatePosition( this->position );
+	}
 }
 
 void ArControlObject::timerEvent()
 {
 	qDebug() << "LOST MARKER TRACK" ;
-	this->lost = true;
-	this->focusedNode->setDefaultColor();
-	this->focusedNode->setUsingInterpolation( true );
-	this->focusedNode->setIgnoreByLayout( false );
+	this->_selectionLayoutStrategy->resetSelectionLayout( this->focusedNode );
+	this->focused = false;
 
-	//SELECTION MODE - ONLY PICKED NODE
-	/*
-	for(auto j : this->focusedNode->getEdges()->keys()){
-	    this->focusedNode->getEdges()->value(j)->getOtherNode( this->focusedNode )->setIgnoreByLayout( false );
-	    this->focusedNode->getEdges()->value(j)->getOtherNode( this->focusedNode )->setDefaultColor();
-	}
-	*/
+//   AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt()->getPickHandler()->unselectPickedNodes(this->focusedNode);
+//   AppCore::Core::getInstance()->getCoreWindow()->forceOnChange();
+
+	this->focusedNode = NULL;
 }
 
 void ArControlObject::updatePosition( osg::Vec3f position )
 {
 	this->position = position;
+	this->focusedNode->setTargetPosition( position );
 
-	if ( !this->focused ) {
-		Data::Graph* currentGraph = Manager::GraphManager::getInstance()->getActiveGraph();
-		QMap<qlonglong, osg::ref_ptr<Data::Node> >* allNodes = currentGraph->getNodes();
-
-		for ( auto e : allNodes->keys() ) {
-			// not already used and marker near node, pick it
-			if ( !allNodes->value( e )->isIgnoredByLayout() && chckIfNearPosition( allNodes->value( e )->getTargetPosition() ) ) {
-				this->focused = true;
-
-				this->focusedNode = allNodes->value( e );
-				this->focusedNode->setDrawableColor( osg::Vec4( 0.0f,1.0f,0.0f,1.0f ) );
-				this->focusedNode->setUsingInterpolation( false );
-				this->focusedNode->setIgnoreByLayout( true );
-				this->focusedNode->setTargetPosition( this->position );
-
-				//SELECTION MODE - ONLY PICKED NODE
-				/*
-				for(auto j : this->focusedNode->getEdges()->keys()){
-				    this->focusedNode->getEdges()->value(j)->getOtherNode( this->focusedNode )->setIgnoreByLayout( true );
-				    this->focusedNode->getEdges()->value(j)->getOtherNode( this->focusedNode )->setDrawableColor( osg::Vec4( 0.0f,1.0f,0.0f,0.2f ) );
-				}
-				*/
-
-				//restart kill timer
-				QMetaObject::invokeMethod( this->timer, "start",Qt::QueuedConnection );
-
-				break;
-			}
-		}
-	}
-	else {
-		this->focusedNode->setTargetPosition( this->position );
-		//restart kill timer
-		QMetaObject::invokeMethod( this->timer, "start",Qt::QueuedConnection );
-	}
-}
-
-bool ArControlObject::chckIfNearPosition( osg::Vec3f target )
-{
-	if ( ( this->position - target ).length() < 25.0f ) {
-		return true;
-	}
-	return false;
+	//restart kill timer
+	QMetaObject::invokeMethod( this->timer, "start",Qt::QueuedConnection );
 }
 
 
 
 
 
-
-
-
-
-
-
-
-
+/*
+ * ArControlClass
+ */
 ArControlClass::ArControlClass()
 {
 	viewer = AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt();
 	coreGraph = AppCore::Core::getInstance()->getCoreGraph();
+
+	_assignmentStrategy = new ArAssignmentStrategyPosition();
+	_selectionLayoutStrategy = new ArSelectionLayoutStrategyNodeOnly();
 }
 void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 modelViewMatrix, bool reverse )
 {
+	qDebug() << "updateObjectPositionAruco";
 
 	osg::Matrixd markerMVM( modelViewMatrix.operator()( 0,0 ),modelViewMatrix.operator()( 0,1 ),modelViewMatrix.operator()( 0,2 ),modelViewMatrix.operator()( 0,3 ),
 							modelViewMatrix.operator()( 1,0 ),modelViewMatrix.operator()( 1,1 ),modelViewMatrix.operator()( 1,2 ),modelViewMatrix.operator()( 1,3 ),
@@ -130,6 +101,7 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
 
 	// transformation vector user to move graph over aruco shadow base (jurik)
 	osg::Vec3f arucoBaseDist = coreGraph->getGrafRotTransVec();
+	osg::Vec3f graphScale = coreGraph->getGrafRotTransScale();
 
 	osg::Matrixd baseMVM = viewer->getCamera()->getViewMatrix();
 	osg::Matrixd transMVM = markerMVM.operator *( baseMVM.inverse( baseMVM ) );
@@ -140,26 +112,77 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
 	// if marker is not behind, reverse coordinates
 	if ( !reverse ) {
 		// TO DO - nefunguje ani jurikova base ... zistit co je problem
-		targetPosition.set( ( targetPosition - arucoBaseDist ).operator /( -2 ) );
+		targetPosition.set( ( targetPosition - arucoBaseDist ).operator /( -2*graphScale.x() ) );
 	}
 	else {
 		//position of second marker in world coordinate system
-		targetPosition.set( ( targetPosition - arucoBaseDist ).operator /( 2 ) );
+		targetPosition.set( ( targetPosition - arucoBaseDist ).operator /( 2*graphScale.x() ) );
 	}
-
 	if ( controlObjects.value( object_id ) != NULL ) {
 		//if object is lost, destroy and create new
-		if ( controlObjects.value( object_id )->isLost() ) {
+		if ( !controlObjects.value( object_id )->isFocused() ) {
+			qDebug() << "reinsert object";
+
 			controlObjects.remove( object_id );
-			controlObjects.insert( object_id, new ArControlObject( object_id, targetPosition ) );
+
+			ArControlObject* newControlObject = new ArControlObject( object_id, targetPosition, _assignmentStrategy, _selectionLayoutStrategy );
+			if ( newControlObject->isFocused() ) {
+				//sucesfully assigned to graph node
+				controlObjects.insert( object_id,  newControlObject );
+			}
+
 		}
 		else {
+			qDebug() << "update object";
 			controlObjects.value( object_id )->updatePosition( targetPosition );
 		}
 	}
 	else {
-		controlObjects.insert( object_id, new ArControlObject( object_id, targetPosition ) );
+		qDebug() << "new object";
+		ArControlObject* newControlObject = new ArControlObject( object_id, targetPosition, _assignmentStrategy, _selectionLayoutStrategy );
+		if ( newControlObject->isFocused() ) {
+			//sucesfully assigned to graph node
+			controlObjects.insert( object_id,  newControlObject );
+		}
+
 	}
 }
 
+void ArControlClass::setNodeAssignmentStrategy( int strategy )
+{
+	switch ( strategy ) {
+		case 0 :
+			_assignmentStrategy = new ArAssignmentStrategyPosition();
+			break;
+		case 1 :
+			_assignmentStrategy = new ArAssignmentStrategyEdgeCount();
+			break;
+		case 2 :
+			_assignmentStrategy = new ArAssignmentStrategyNearest();
+			break;
+	}
+	qDebug() << "set" << strategy;
+
+	// potencionalne zbytocne, kedze kazdy objekt v mape uz je assignuty
+	for ( auto e : controlObjects.keys() ) {
+		controlObjects.value( e )->setNodeAssignmentStrategy( _assignmentStrategy );
+	}
+
+}
+void ArControlClass::setNodeBehaviourStrategy( int strategy )
+{
+	switch ( strategy ) {
+		case 0 :
+			_selectionLayoutStrategy = new ArSelectionLayoutStrategyNodeOnly();
+			break;
+		case 1 :
+			_selectionLayoutStrategy = new ArSelectionLayoutStrategyNodeCluster();
+			break;
+	}
+	qDebug() << "set" << strategy;
+
+	for ( auto e : controlObjects.keys() ) {
+		controlObjects.value( e )->setNodeBehaviourStrategy( _selectionLayoutStrategy );
+	}
+}
 } // namespace ArucoModul
