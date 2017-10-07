@@ -52,7 +52,7 @@ FRAlgorithm::FRAlgorithm() :
 	dist( 0 ),
 	// No node is focused on the beginning
     mLastFocusedNode( 0 ),
-    M( 7 )
+    M( 10 )
 {
 	// Duransky start - pociatocne nastavenie nasobica odpudivych sil na rovnakej rovine na hodnotu 1
 	setRepulsiveForceVertigo( 1 );
@@ -322,12 +322,12 @@ bool FRAlgorithm::iterate()
 					// odpudiva sila beznej velkosti
 
 					//JMA ignore node cond
-                       if( !j.value()->isIgnoredByLayout() && !k.value()->isIgnoredByLayout() ){
-					addRepulsive( j.value(), k.value(), 1 );
+                    if( !j.value()->isIgnoredByLayout() && !k.value()->isIgnoredByLayout() ){
+                        addRepulsive( j.value(), k.value(), 1 );
 
-                    if (getProjectiveForceEnabled())// && i < h)
-                        addProjectiveForce( j.value(), k.value());
-                       }
+                        if (getProjectiveForceEnabled())// && i < h)
+                            addProjectiveForce( j.value(), k.value());
+                    }
 				}
 			}
 		}
@@ -783,33 +783,14 @@ bool FRAlgorithm::mayOverlap(Data::Node* u, Data::Node *v)
 {
     bool overlaps = false;
     if (u != NULL && v != NULL
-//        && !u->isIgnored() && !v->isIgnored()
-//        && !u->isIgnoredByLayout() && !v->isIgnoredByLayout()
-//        && u->isOnScreen() && v->isOnScreen()
-//        && areForcesBetween(u,v)
+        && !u->isIgnored() && !v->isIgnored()
+        && !u->isIgnoredByLayout() && !v->isIgnoredByLayout()
+        && u->isOnScreen() && v->isOnScreen()
+        //&& areForcesBetween(u,v)
         )
     {
-//        osg::Vec2f up = Util::CameraHelper::worldToScreen(u->getTargetPosition());
-//        osg::Vec2f vp = Util::CameraHelper::worldToScreen(v->getTargetPosition());
-//        osg::Vec3f usz = u->getSize();
-//        osg::Vec3f vsz = v->getSize();
-
-//        float d = (up - vp).length();
-//        float vr = v->getRadius();
-//        float ur = u->getRadius();
-//        d -= vr + ur;
-
-//        qDebug() << "Distance: " << d;
-
-//        if (d < 0)
-//            overlaps = true;
-//        else
-//            overlaps = false;
-
-        osg::Vec3f eye = Util::CameraHelper::getEye();
-
-        float udist = (u->targetPosition() - eye).length();
-        float vdist = (v->targetPosition() - eye).length();
+        float udist = (u->targetPosition() - Util::CameraHelper::getEye()).length();
+        float vdist = (v->targetPosition() - Util::CameraHelper::getEye()).length();
 
         if (udist >= vdist)
             overlaps = true;
@@ -817,6 +798,9 @@ bool FRAlgorithm::mayOverlap(Data::Node* u, Data::Node *v)
         if (vdist >= udist)
             overlaps = true;
     }
+
+    qDebug() << "Overlaps: " << overlaps;
+
     return overlaps;
 }
 
@@ -827,24 +811,15 @@ void FRAlgorithm::addProjectiveForce(Data::Node* u, Data::Node* v)
         osg::Vec3f pvec = getProjVector(u, v);              // compute projective vector
         if (pvec.length() != 0)
         {
-//            qDebug() << pvec.x() << "," << pvec.y() << "," << pvec.z();
-
             float pdist = pvec.normalize();					// projective distance between nodes
             float pideal = getMinProjDistance(u, v, pvec); 	// minimal projective distance
             float projF = proj(pdist, pideal);				// projective force
-//            qDebug() << "ProjF: " << projF;
             osg::Vec3f fv = pvec * projF;					// add projective force
-            float len = fv.length();
-//            qDebug() << "Length: " << len << " | fv: [" << fv.x() << "," << fv.y() << "," << fv.z() << "]";
             u->addForce(fv);
             v->addForce(-fv);
             // NOTE: node weight is not accounted for, force depends on node radius
         }
-//        else
-//            qDebug() << "projective vector is 0";
     }
-//    else
-//        qDebug() << "not overlapping";
 }
 
 osg::Vec3f FRAlgorithm::getProjVector(Data::Node* u, Data::Node* v)
@@ -852,66 +827,13 @@ osg::Vec3f FRAlgorithm::getProjVector(Data::Node* u, Data::Node* v)
     osg::Vec3f up = u->getTargetPosition();
     osg::Vec3f vp = v->getTargetPosition();
 
-//    qDebug() << "x: " <<  up.x() << ", y: " << up.y() << ", z: " << up.z() << "\r\n";
-
     osg::Vec3f edgeDir = vp - up;
-
-//    osg::Vec3f pos1 = Util::CameraHelper::byWindow(Util::CameraHelper::byProjection(Util::CameraHelper::byView(up)));
-//    osg::Vec3f pos2 = Util::CameraHelper::byWindow(Util::CameraHelper::byProjection(Util::CameraHelper::byView(vp)));
-//    qDebug() <<  "u[" << pos1.x() << "," << pos1.y() << "," << pos1.z() << "]" <<  "v[" << pos2.x() << "," << pos2.y() << "," << pos2.z() << "]";
-
-//    osg::Vec2f pos1 = Util::CameraHelper::worldToScreen(up);
-//    osg::Vec2f pos2 = Util::CameraHelper::worldToScreen(vp);
-//    osg::Vec3f us = u->getSize();
-//    osg::Vec3f vs = v->getSize();
-
-//    osg::Vec3f p11 = osg::Vec3f(up.x() - us.x(), up.y() - us.y(), up.z() - us.z());
-//    osg::Vec3f p12 = osg::Vec3f(up.x() + us.x(), up.y() - us.y(), up.z() - us.z());
-//    osg::Vec3f p13 = osg::Vec3f(up.x() + us.x(), up.y() + us.y(), up.z() - us.z());
-//    osg::Vec3f p14 = osg::Vec3f(up.x() - us.x(), up.y() + us.y(), up.z() - us.z());
-//    osg::Vec3f p15 = osg::Vec3f(up.x() - us.x(), up.y() - us.y(), up.z() + us.z());
-//    osg::Vec3f p16 = osg::Vec3f(up.x() + us.x(), up.y() - us.y(), up.z() + us.z());
-//    osg::Vec3f p17 = osg::Vec3f(up.x() + us.x(), up.y() + us.y(), up.z() + us.z());
-//    osg::Vec3f p18 = osg::Vec3f(up.x() - us.x(), up.y() + us.y(), up.z() + us.z());
-
-//    osg::Vec3f pt11 = Util::CameraHelper::byView(p11);
-//    osg::Vec3f pt12 = Util::CameraHelper::byFull(p12);
-//    osg::Vec3f pt13 = Util::CameraHelper::byFull(p13);
-//    osg::Vec3f pt14 = Util::CameraHelper::byFull(p14);
-//    osg::Vec3f pt15 = Util::CameraHelper::byFull(p15);
-//    osg::Vec3f pt16 = Util::CameraHelper::byFull(p16);
-//    osg::Vec3f pt17 = Util::CameraHelper::byFull(p17);
-//    osg::Vec3f pt18 = Util::CameraHelper::byFull(p18);
-
-
-
-//    qDebug() << "[" << pt14.x() << "," << pt14.y() << "," << pt14.z() << "]            [" << pt13.x() << "," << pt13.y() << "," << pt13.z() << "]";
-//    qDebug() << "[" << pt11.x() << "," << pt11.y() << "," << pt11.z() << "]            [" << pt12.x() << "," << pt12.y() << "," << pt12.z() << "]";
-//    qDebug();
-//    qDebug() << "[" << pt18.x() << "," << pt18.y() << "," << pt18.z() << "]            [" << pt17.x() << "," << pt17.y() << "," << pt17.z() << "]";
-//    qDebug() << "[" << pt15.x() << "," << pt15.y() << "," << pt15.z() << "]            [" << pt16.x() << "," << pt16.y() << "," << pt16.z() << "]";
-//    qDebug();
-//    qDebug() << "u[" << pos1.x() << "," << pos1.y() << "]";
-//    qDebug() << "v[" << pos2.x() << "," << pos2.y() << "]";
-
-
-//    osg::Matrix* m1 = osg::Matrix(3, 4);
-//    osg::Matrix* m2 = osg::Matrix(3, 4);
-//    osg::Vec3f usize = u->getSize();
-//    osg::Vec3f vsize = v->getSize();
-
-//    osg::Vec3f p11 = osg::Vec3f(up.x() - usize.x(), up.y(), up.z());
-//    osg::Vec3f p12 = osg::Vec3f(up.x() - usize.x(), up.y(), up.z());
-//    osg::Vec3f p13 = osg::Vec3f(up.x() - usize.x(), up.y(), up.z());
-
     osg::Vec3f viewVec = Util::CameraHelper::getEye() - ((up + vp) / 2.0f); // from eye to middle of u,v
-
     osg::Vec3f pv = viewVec ^ (edgeDir ^ viewVec);
+
     float length = edgeDir.normalize();
     pv.normalize();
     float dist = length * qAbs(pv * edgeDir);
-
-//    qDebug() << "Distance: " << dist;
 
     if (dist == 0) {
         return osg::Vec3f(0, 0, 0);
