@@ -1,19 +1,22 @@
 #include "Viewer/BrowserGroup.h"
+
 #include "OsgQtBrowser/QWebViewImage.h"
+#include "Data/Graph.h"
+#include "Manager/Manager.h"
+#include "Repository/Git/GitLuaGraphUtils.h"
+#include "GitLib/GitMetaData.h"
+#include "GitLib/GitEvolutionGraph.h"
 
 #include <QLinkedList>
 
 #include <osg/ValueObject>
 #include <osg/LineWidth>
 
-#include "GitLib/GitEvolutionGraph.h"
-#include "Manager/Manager.h"
-#include "Repository/Git/GitLuaGraphUtils.h"
-#include "GitLib/GitMetaData.h"
-
 #include <math.h>
 #include <utility>
 #include <string>
+
+
 
 namespace Vwr {
 
