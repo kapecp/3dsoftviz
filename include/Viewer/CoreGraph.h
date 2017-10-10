@@ -176,7 +176,7 @@ public:
 	void setCamera( osg::ref_ptr<osg::Camera> camera )
 	{
 		this->camera = camera;
-
+        //cout<<"CoreGraph.h setCamera";
 		QMapIterator<qlonglong, osg::ref_ptr<Data::Edge> > i( *in_edges );
 
 

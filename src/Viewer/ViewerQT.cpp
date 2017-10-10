@@ -64,6 +64,8 @@ QOSG::ViewerQT::ViewerQT( QWidget* parent , const char* name , const QGLWidget* 
 	}
 	else {
 		getCamera()->setViewport( new osg::Viewport( 0, 0, width(), height() ) );
+        getCamera()->setCullMask(0x1);
+        getCamera()->setClearColor(osg::Vec4(0, 0, 0, 1));
 		getCamera()->setGraphicsContext( getGraphicsWindow() );
 		//getCamera()->setProjectionMatrixAsFrustum(-widthFrustum/2.0, widthFrustum/2.0, -heigthFrustum/2.0, heigthFrustum/2.0, nearClippingPlane, farClippingPlane);
 		getCamera()->setProjectionMatrixAsPerspective( fovy, aspectRatio, nearClippingPlane, farClippingPlane );

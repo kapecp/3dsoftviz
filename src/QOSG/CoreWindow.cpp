@@ -82,6 +82,8 @@
 #include <Shapes/Cuboid.h>
 #include <Manager/ResourceManager.h>
 
+#include "Util/ApplicationConfig.h"
+
 #ifdef OPENCV_FOUND
 #include "OpenCV/OpenCVCore.h"
 #endif
@@ -2224,7 +2226,7 @@ void CoreWindow::loadExampleGraphLua()
 	Lua::LuaGraphVisualizer* visualizer = new Lua::SimpleGraphVisualizer( currentGraph, coreGraph->getCamera() );
 	visualizer->visualize();
 
-	coreGraph->reloadConfig();
+    coreGraph->reloadConfig();
 	if ( isPlaying ) {
 		layout->play();
 		coreGraph->setNodesFreezed( false );
@@ -3874,13 +3876,15 @@ void CoreWindow::restartLayouting()
 
 void CoreWindow::magicLensOnOff( bool )
 {
+    double aspectRatio = static_cast<double>( width() )/static_cast<double>( height() );
     if(viewerWidget->getNumSlaves()==0){
         osg::ref_ptr<osg::Camera> lensCamera = new osg::Camera;
         lensCamera->setCullMask(0x2);
         lensCamera->setGraphicsContext(viewerWidget->getGraphicsWindow());
-        lensCamera->setViewport(new osg::Viewport((viewerWidget->width()/4),(viewerWidget->height()/4+0.545),viewerWidget->width()/2,viewerWidget->height()/2));
+        lensCamera->setViewport(new osg::Viewport((viewerWidget->width()/4),(viewerWidget->height()/4),viewerWidget->width()/2,viewerWidget->height()/2));
         lensCamera->setReferenceFrame(osg::Transform::RELATIVE_RF);
-        viewerWidget->addSlave(lensCamera.get(), osg::Matrix::scale(2,2,2),osg::Matrixd());
+        //viewerWidget->addSlave(lensCamera.get(), osg::Matrix::scale(aspectRatio,aspectRatio,1), osg::Matrix(), true);
+        viewerWidget->addSlave(lensCamera.get(), osg::Matrixd(), osg::Matrix::scale(2,2,1), true);
         }
         else{
             viewerWidget->removeSlave(0);
