@@ -16,6 +16,7 @@
 #include "Layout/Shape_Cube.h"
 #include "Layout/FRAlgorithm.h"
 #include "City/Residence.h"
+#include "City/Module.h"
 
 #include "Util/ApplicationConfig.h"
 

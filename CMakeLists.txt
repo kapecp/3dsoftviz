@@ -147,27 +147,24 @@ set( ALL_COMPILE_DEFINITIONS )
 set( CMAKE_AUTOMOC ON )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
+# Find Qt5
+find_package( Qt5
+		CONFIG
+		COMPONENTS
+			Core Widgets Gui OpenGL Sql
+			WebEngine WebEngineWidgets
+			Xml Network
+		QUIET )
 
 # Find Qt4
-find_package( Qt4 COMPONENTS QtCore QtGui QtOpenGL QtSql QtWebKit QtXml QtNetwork REQUIRED)
-set( QT_USE_QTOPENGL 1 )
-set( QT_USE_QTSQL 1 )
-set( QT_USE_QTWEBKIT 1 )
-set( QT_USE_QTXML 1 )
-set( QT_USE_QTNETWORK 1 )
-include( ${QT_USE_FILE} )
-
-if ( NOT Qt4_FOUND )
-	# Find Qt5
-	find_package( Qt5Core QUIET )
-	find_package( Qt5Widgets QUIET )
-	find_package( Qt5Gui QUIET )
-	find_package( Qt5OpenGL QUIET )
-	find_package( Qt5Sql QUIET )
-	find_package( Qt5WebEngine QUIET )
-	find_package( Qt5WebEngineWidgets QUIET )
-	find_package( Qt5Xml QUIET )
-	find_package( Qt5Network QUIET )
+if ( NOT Qt5_FOUND )
+	find_package( Qt4 COMPONENTS QtCore QtGui QtOpenGL QtSql QtWebKit QtXml QtNetwork REQUIRED)
+	set( QT_USE_QTOPENGL 1 )
+	set( QT_USE_QTSQL 1 )
+	set( QT_USE_QTWEBKIT 1 )
+	set( QT_USE_QTXML 1 )
+	set( QT_USE_QTNETWORK 1 )
+	include( ${QT_USE_FILE} )
 endif()
 
 if ( Qt5Core_FOUND )
@@ -226,7 +223,12 @@ endif()
 
 # ------------------------------ OpenCV -------------------------------
 # Find OpenCV
-find_package( OpenCV )
+if( APPLE )
+	find_package( OpenCV 2.4.13 PATHS "/usr/local/opt/opencv@2" )
+else()
+	find_package( OpenCV )
+endif()
+
 if( OpenCV_FOUND )
 	if( WIN32 )
 		list( APPEND ALL_COMPILE_DEFINITIONS -DNOMINMAX )
@@ -235,7 +237,7 @@ if( OpenCV_FOUND )
 	#list( APPEND ALL_SYSTEM_HEADERS	${OpenCV_INCLUDE_DIRS} )
 	list( APPEND ALL_COMPILE_DEFINITIONS -DOPENCV_FOUND )
 
-	message( STATUS "OpenCV Found:" )
+	message( STATUS "OpenCV Found: " ${OpenCV_VERSION} )
 	message( STATUS "OpenCV_LIB_DIR=${OpenCV_LIB_DIR}" )
 	message( STATUS "OpenCV_LIB_DIR=${OpenCV_LIBS}" )
 else()
@@ -1245,8 +1247,10 @@ if ( Qt5Core_FOUND )
 endif()
 
 # parserlib library
-include_directories( SYSTEM dependencies/parserlib/source )
+# include_directories( SYSTEM dependencies/parserlib/source )
 add_library( parserlib STATIC dependencies/parserlib/source/ast.cpp dependencies/parserlib/source/parser.cpp )
+target_include_directories( parserlib SYSTEM PUBLIC dependencies/parserlib/source  )
+
 
 # ---------------------------------------------------------------
 # Build modules as libraries
@@ -1266,9 +1270,8 @@ target_compile_definitions( gitlib PUBLIC -DGITLIB_LIBRARY_STATIC )
 target_compile_options( gitlib PUBLIC ${FLAGS_FOR_DEBUG} )
 
 if ( Qt5Core_FOUND )
-	qt5_use_modules( gitlib Core )
+	target_link_libraries( gitlib Qt5::Core )
 elseif( Qt4_FOUND )
-#	target_link_libraries( gitlib ${QT_LIBRARIES} )
 	target_link_libraries( gitlib Qt4::QtCore )
 endif()
 
@@ -1276,6 +1279,7 @@ endif()
 if( COMMAND cotire )
 	# link gitlib_unity target to all libraries to which gitlib links
 	set_target_properties( gitlib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
+	set_target_properties(gitlib PROPERTIES COTIRE_ENABLE_PRECOMPILED_HEADER FALSE)
 	cotire( gitlib CONFIGURATIONS Debug Release )
 endif()
 
@@ -1294,7 +1298,7 @@ if( LEAP_FOUND )
 	target_compile_options( leaplib PUBLIC ${FLAGS_FOR_DEBUG} )
 
 	if ( Qt5Core_FOUND )
-		qt5_use_modules( leaplib Core )
+		target_link_libraries( leaplib Qt5::Core )
 	elseif( Qt4_FOUND )
 		target_link_libraries( leaplib ${QT_LIBRARIES} )
 	endif()
@@ -1303,6 +1307,7 @@ if( LEAP_FOUND )
 	if( COMMAND cotire )
 		# link leaplib_unity target to all libraries to which leaplib links
 		set_target_properties( leaplib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
+			set_target_properties(leaplib PROPERTIES COTIRE_ENABLE_PRECOMPILED_HEADER FALSE)
 		cotire( leaplib CONFIGURATIONS Debug Release )
 	endif()
 endif()
@@ -1427,10 +1432,11 @@ if( MOUSE3D_FOUND )
 	endif()
 endif()
 
-# 'cotire' the executable
+# 'cotire' the library
 if( COMMAND cotire )
 	# link ${3DSOFTVIZ_NAME}_unity target to all libraries to which ${3DSOFTVIZ_NAME} links
 	set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
+		set_target_properties(${3DSOFTVIZ_NAME} PROPERTIES COTIRE_ENABLE_PRECOMPILED_HEADER FALSE)
 
 	cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Debug Release )
 
@@ -1501,12 +1507,15 @@ add_executable( ${3DSOFTVIZ_NAME}_app ${INCL}  ${SRC_MAIN} )
 set_target_properties( ${3DSOFTVIZ_NAME}_app PROPERTIES OUTPUT_NAME ${3DSOFTVIZ_NAME} )
 target_compile_options( ${3DSOFTVIZ_NAME}_app PUBLIC ${FLAGS_FOR_DEBUG} )
 target_compile_definitions( ${3DSOFTVIZ_NAME}_app PUBLIC ${ALL_COMPILE_DEFINITIONS} )
-target_link_libraries( ${3DSOFTVIZ_NAME}_app ${3DSOFTVIZ_NAME} )
+
 
 if( COMMAND cotire )
 	set_target_properties( ${3DSOFTVIZ_NAME}_app PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
-
+	target_link_libraries( ${3DSOFTVIZ_NAME}_app ${3DSOFTVIZ_NAME}_unity )
 	cotire( ${3DSOFTVIZ_NAME}_app CONFIGURATIONS Debug Release )
+
+else()
+	target_link_libraries( ${3DSOFTVIZ_NAME}_app ${3DSOFTVIZ_NAME} )
 endif()
 
 
@@ -1552,8 +1561,12 @@ endif()
 
 # add custom install_unity target
 if( COMMAND cotire )
+	install(TARGETS ${3DSOFTVIZ_NAME}_app_unity RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT "unity")
+
 	add_custom_target( install_unity
-		COMMAND ${CMAKE_COMMAND} -P "cmake_install.cmake" )
+		COMMAND ${CMAKE_COMMAND} -DCOMPONENT=unity -P "cmake_install.cmake"
+		COMMENT "Install the unity-built project..."
+		WORKING_DIRECTORY ${CMAKE_BINARY_DIR} )
 	add_dependencies( install_unity ${3DSOFTVIZ_NAME}_app_unity )
 	add_dependencies( install_unity gitlib_unity )
 	if( LEAP_FOUND )
