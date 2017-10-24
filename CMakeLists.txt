@@ -1561,10 +1561,10 @@ endif()
 
 # add custom install_unity target
 if( COMMAND cotire )
-	install(TARGETS ${3DSOFTVIZ_NAME}_app_unity RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT "unity")
+	install(TARGETS ${3DSOFTVIZ_NAME}_app_unity RUNTIME DESTINATION ${INSTALL_BIN} )
 
 	add_custom_target( install_unity
-		COMMAND ${CMAKE_COMMAND} -DCOMPONENT=unity -P "cmake_install.cmake"
+		COMMAND ${CMAKE_COMMAND} -P "cmake_install.cmake"
 		COMMENT "Install the unity-built project..."
 		WORKING_DIRECTORY ${CMAKE_BINARY_DIR} )
 	add_dependencies( install_unity ${3DSOFTVIZ_NAME}_app_unity )
