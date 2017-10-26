@@ -987,16 +987,16 @@ QWidget* CoreWindow::createGraphTab( QFrame* line )
 	lGraph->addRow( chb_dragger_scale );
 	lGraph->addRow( chb_dragger_rotation );
 
-    line = createLine();
-    lGraph->addRow( line );
-    lGraph->addRow( new QLabel( tr( "Special features" ) ) );
-    line = createLine();
-    lGraph->addRow( line );
-    chb_projective_force = new QCheckBox( tr( "Apply projective force" ) );
-    chb_projective_force->setChecked( false );
-    chb_projective_force->setMaximumWidth( 136 );
-    lGraph->addRow( chb_projective_force );
-    connect( chb_projective_force, SIGNAL( clicked( bool ) ), this, SLOT( setProjectiveForceEnable(bool) ) );
+	line = createLine();
+	lGraph->addRow( line );
+	lGraph->addRow( new QLabel( tr( "Special features" ) ) );
+	line = createLine();
+	lGraph->addRow( line );
+	chb_projective_force = new QCheckBox( tr( "Apply projective force" ) );
+	chb_projective_force->setChecked( false );
+	chb_projective_force->setMaximumWidth( 136 );
+	lGraph->addRow( chb_projective_force );
+	connect( chb_projective_force, SIGNAL( clicked( bool ) ), this, SLOT( setProjectiveForceEnable( bool ) ) );
 
 	wGraph->setLayout( lGraph );
 
@@ -4237,7 +4237,7 @@ void CoreWindow::setCameraEnable( bool enable )
 
 void CoreWindow::setProjectiveForceEnable( bool enable )
 {
-    layout->setProjectiveForceEnabled( enable );
+	layout->setProjectiveForceEnabled( enable );
 }
 
 // Duransky start - Akcia pri prepnuti checkboxu "Vertigo zoom"

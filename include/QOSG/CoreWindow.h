@@ -687,7 +687,7 @@ public slots:
 
 	void setCameraEnable( bool enable );
 
-    void setProjectiveForceEnable( bool enable );
+	void setProjectiveForceEnable( bool enable );
 
 	/**
 	 * bool nextVersion()
@@ -1310,19 +1310,19 @@ private:
 	 *CheckBox for mapinulation camera or object
 	 *@brief chb_camera_rot
 	 */
-    QCheckBox* chb_camera_rot;
+	QCheckBox* chb_camera_rot;
 
-    /**
-     *CheckBox for enabling camera
-     *@brief chb_camera_enable
-     */
-    QCheckBox* chb_camera_enable;
+	/**
+	 *CheckBox for enabling camera
+	 *@brief chb_camera_enable
+	 */
+	QCheckBox* chb_camera_enable;
 
-    /**
-     *CheckBox for enabling projective force
-     *@brief chb_projective_force
-     */
-    QCheckBox* chb_projective_force;
+	/**
+	 *CheckBox for enabling projective force
+	 *@brief chb_projective_force
+	 */
+	QCheckBox* chb_projective_force;
 
 	/**
 		*  QAction * load

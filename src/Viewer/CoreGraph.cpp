@@ -2310,7 +2310,7 @@ void CoreGraph::drawAxes()
 	//base
 	osg::Vec3Array* vertices = new osg::Vec3Array;
 	vertices->push_back( osg::Vec3( 0, 0, 0 ) ); // base
-    vertices->push_back( osg::Vec3( 1000, 0, 0 ) ); // x
+	vertices->push_back( osg::Vec3( 1000, 0, 0 ) ); // x
 	vertices->push_back( osg::Vec3( 0, 0, 0 ) ); // base
 	vertices->push_back( osg::Vec3( 0, 250, 0 ) ); // y
 	vertices->push_back( osg::Vec3( 0, 0, 0 ) ); // base

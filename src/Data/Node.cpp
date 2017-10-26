@@ -53,7 +53,7 @@ Data::Node::Node( qlonglong id, QString name, Data::Type* type, float scaling, D
 		if ( ++cnt % 3 == 0 ) {
 			labelText = labelText.replace( pos, 1, "\n" );
 		}
-    }
+	}
 
 	this->force = osg::Vec3f();
 	this->velocity = osg::Vec3f( 0,0,0 );

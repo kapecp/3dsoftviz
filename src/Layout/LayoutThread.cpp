@@ -62,7 +62,7 @@ void LayoutThread::setAlphaEdgeBundlingValue( float val )
 }
 void LayoutThread::setProjectiveForceEnabled( bool enable )
 {
-    alg->setProjectiveForceEnabled( enable );
+	alg->setProjectiveForceEnabled( enable );
 }
 void LayoutThread::pauseAllAlg()
 {

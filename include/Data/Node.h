@@ -268,7 +268,7 @@ public:
 	void setIgnoreByLayout( bool flag )
 	{
 		this->ignoreByLayout = flag;
-    }
+	}
 
 private:
 
@@ -330,7 +330,7 @@ private:
 	//volovak_kon
 
 	//JMA
-    bool ignoreByLayout;
+	bool ignoreByLayout;
 };
 }
 

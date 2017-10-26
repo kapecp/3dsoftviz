@@ -96,12 +96,12 @@ public:
 		*/
 	void setAlphaEdgeBundlingValue( float val );
 
-    /**
-        * \fn public setProjectiveForceEnabled(bool enable)
-        * \brief Sets if should apply projective force to nodes
-        * \param enable
-        */
-    void setProjectiveForceEnabled( bool enable );
+	/**
+	    * \fn public setProjectiveForceEnabled(bool enable)
+	    * \brief Sets if should apply projective force to nodes
+	    * \param enable
+	    */
+	void setProjectiveForceEnabled( bool enable );
 
 	/**
 		*  \fn public  pauseAllAlg

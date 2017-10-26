@@ -21,7 +21,7 @@
 Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Graph* graph, float scaling, osg::Vec3f position )
 	:DbNode( id,name,type,graph,scaling )
 {
-    setSize(scaling, scaling, scaling);
+	setSize( scaling, scaling, scaling );
 
 	this->mTargetPosition = position;
 	this->currentPosition = position * Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
@@ -93,7 +93,7 @@ osg::ref_ptr<osg::Drawable> Data::OsgNode::createNode( const float& scaling, osg
 {
 	//vytvorenie uzla, scaling urcuje jeho velkost
 	float width = scaling;
-    float height = scaling;
+	float height = scaling;
 
 	osg::ref_ptr<osg::Geometry> nodeQuad = new osg::Geometry;
 	osg::ref_ptr<osg::Vec3Array> nodeVerts = new osg::Vec3Array( 4 );
@@ -141,7 +141,7 @@ osg::ref_ptr<osg::Drawable> Data::OsgNode::createSquare( const float& scale, osg
 	float height = 2.0f;
 
 	width *= scale;
-    height *= scale;
+	height *= scale;
 
 	osg::ref_ptr<osg::Geometry> nodeRect = new osg::Geometry;
 	osg::ref_ptr<osg::Vec3Array> nodeVerts = new osg::Vec3Array( 5 );
@@ -292,18 +292,18 @@ void Data::OsgNode::setScale( float val )
 		}
 	}
 
-    // computes actual size from visual
-    computeSize();
+	// computes actual size from visual
+	computeSize();
 }
 
 bool Data::OsgNode::setInvisible( bool invisible )
 {
-    //setValue( graph->getNodeVisual(), !invisible );
-    setValue( INDEX_LABEL, !invisible );
-    setValue( INDEX_SQUARE, !invisible );
-    setValue( INDEX_SPHERE, !invisible );
-    setValue( INDEX_RESIDENCE, !invisible );
-    return true;
+	//setValue( graph->getNodeVisual(), !invisible );
+	setValue( INDEX_LABEL, !invisible );
+	setValue( INDEX_SQUARE, !invisible );
+	setValue( INDEX_SPHERE, !invisible );
+	setValue( INDEX_RESIDENCE, !invisible );
+	return true;
 }
 
 osg::Vec3f Data::OsgNode::getTargetPosition() const
@@ -342,10 +342,10 @@ void Data::OsgNode::setVisual( unsigned int index )
 	setValue( INDEX_SQUARE, false );
 	setValue( INDEX_SPHERE, false );
 	setValue( INDEX_RESIDENCE, false );
-    setValue( index, true );
+	setValue( index, true );
 
-    // computes actual size from visual
-    computeSize();
+	// computes actual size from visual
+	computeSize();
 }
 
 void Data::OsgNode::reloadConfig()
@@ -357,7 +357,7 @@ void Data::OsgNode::reloadConfig()
 	this->insertChild( INDEX_RESIDENCE, createNodeResidence( this->scale ), false );
 	setSelected( selected );
 	setColor( color );
-    setVisual( graph->getNodeVisual() );
+	setVisual( graph->getNodeVisual() );
 }
 
 void Data::OsgNode::showLabel( bool visible, bool labelsForResidence )
@@ -410,7 +410,7 @@ osg::ref_ptr<osg::Node> Data::OsgNode::createNodeSquare( const float& scaling, o
 {
 	//vytvorenie uzla, scaling urcuje jeho velkost
 	float width = scaling;
-    float height = scaling;
+	float height = scaling;
 
 	osg::ref_ptr<osg::Geometry> nodeQuad = new osg::Geometry;
 	osg::ref_ptr<osg::Vec3Array> nodeVerts = new osg::Vec3Array( 4 );
@@ -463,7 +463,7 @@ osg::ref_ptr<osg::Node> Data::OsgNode::createNodeSquare( const float& scaling, o
 osg::ref_ptr<osg::Node> Data::OsgNode::createNodeSphere( const float& scaling, osg::StateSet* bbState )
 {
 	//vytvorenie uzla, scaling urcuje jeho velkost
-    float radius = scaling ;
+	float radius = scaling ;
 
 	osg::ref_ptr<osg::ShapeDrawable> nodeSphere = new osg::ShapeDrawable;
 	osg::Sphere* sphere = new osg::Sphere;
@@ -571,48 +571,49 @@ void Data::OsgNode::setIsFocused( bool value )
 		setDrawableColor( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0 ) );
 	}
 
-    setVisual(graph->getNodeVisual());
+	setVisual( graph->getNodeVisual() );
 }
 
 osg::Vec3f Data::OsgNode::getSize()
 {
-    return nodeSize;
+	return nodeSize;
 }
 
-void Data::OsgNode::setSize(osg::Vec3f size)
+void Data::OsgNode::setSize( osg::Vec3f size )
 {
-    nodeSize = size;
+	nodeSize = size;
 }
 
-void Data::OsgNode::setSize(float width, float height, float depth)
+void Data::OsgNode::setSize( float width, float height, float depth )
 {
-    setSize(osg::Vec3f(width, height, depth));
+	setSize( osg::Vec3f( width, height, depth ) );
 }
 
 void Data::OsgNode::computeSize()
 {
-    unsigned int visual = graph->getNodeVisual();
-    osg::Node* node = this->getChild( visual );
-    osg::Transform* at = node->asTransform();
-    osg::Geode* geo = at->getChild(0)->asGeode();
-    osg::BoundingBox box = geo->getBoundingBox();
-    setSize(osg::Vec3f((box.xMax() - box.xMin()),
-                       (box.yMax() - box.yMin()),
-                       (box.zMax() - box.zMin())));
+	unsigned int visual = graph->getNodeVisual();
+	osg::Node* node = this->getChild( visual );
+	osg::Transform* at = node->asTransform();
+	osg::Geode* geo = at->getChild( 0 )->asGeode();
+	osg::BoundingBox box = geo->getBoundingBox();
+	setSize( osg::Vec3f( ( box.xMax() - box.xMin() ),
+						 ( box.yMax() - box.yMin() ),
+						 ( box.zMax() - box.zMin() ) ) );
 }
 
 float Data::OsgNode::getRadius()
 {
-    float radius = getSize().x() / 2.f;
-    return radius;
+	float radius = getSize().x() / 2.f;
+	return radius;
 }
 
 bool Data::OsgNode::isOnScreen()
 {
-    bool res = true;
-    osg::Vec3f pos = this->targetPosition();
-    pos = Util::CameraHelper::byProjection(Util::CameraHelper::byView(pos));
-    if (qAbs(pos.x()) > 1 || qAbs(pos.y()) > 1)
-        res = false;
-    return res;
+	bool res = true;
+	osg::Vec3f pos = this->targetPosition();
+	pos = Util::CameraHelper::byProjection( Util::CameraHelper::byView( pos ) );
+	if ( qAbs( pos.x() ) > 1 || qAbs( pos.y() ) > 1 ) {
+		res = false;
+	}
+	return res;
 }
