@@ -8,6 +8,7 @@
 namespace Util {
 
 /// Utility class for camera operations and coordinate transformations.
+/// Source: DP - 2011 - Ukrop Jakub
 class CameraHelper
 {
 public:
