@@ -331,6 +331,7 @@ private:
 
 	//JMA
 	bool ignoreByLayout;
+
 };
 }
 

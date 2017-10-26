@@ -37,7 +37,7 @@ FRAlgorithm::FRAlgorithm() :
 	ALPHA_EDGEBUNDLING( 100 ),
 	flexibility( 0 ),
 	sizeFactor( 0 ),
-	K( 1 ),
+	K( 0 ),
 	center( osg::Vec3f( 0, 0, 0 ) ),
 	state( RUNNING ),
 	stateEdgeBundling( PAUSED ),

@@ -298,7 +298,8 @@ void Data::OsgNode::setScale( float val )
 
 bool Data::OsgNode::setInvisible( bool invisible )
 {
-	//setValue( graph->getNodeVisual(), !invisible );
+	setValue( graph->getNodeVisual(), !invisible );
+	//-poriesit invisible pre label
 	setValue( INDEX_LABEL, !invisible );
 	setValue( INDEX_SQUARE, !invisible );
 	setValue( INDEX_SPHERE, !invisible );
