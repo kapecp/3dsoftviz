@@ -88,3 +88,6 @@
 [submodule "dependencies/luacomments"]
 	path = dependencies/luacomments
 	url = https://github.com/LuaDist/luacomments.git
+[submodule "dependencies/osgQt"]
+	path = dependencies/osgQt
+	url = git@github.com:openscenegraph/osgQt.git
