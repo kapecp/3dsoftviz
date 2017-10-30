@@ -2,6 +2,7 @@ Install guide pre macOS
 =======================
 
 (vytvárané a testované pre verziu 10.13 High Sierra)
+----------------------------------------------------
 
 1. Inštalácia Homebrew príkazom:
 
@@ -33,11 +34,11 @@ Install guide pre macOS
 
 	::
 
-		* brew tap homebrew/science
-		* brew tap totakke/openni2
-    	* brew install openni2
+		brew tap homebrew/science
+		brew tap totakke/openni2
+		brew install openni2
 
-* dostupné v Google Drive projektu
+* dostupné `na stiahnutie v Google Drive <https://drive.google.com/open?id=0Bx3FU7Baa_8pOUlrTmJ4VHJzZFU>`_
 
 6. Nainštalovať Boost:
 
@@ -101,6 +102,8 @@ alebo
 
 16.	Nainštalovať ovládače pre 3D myš dostupné na odkaze alebo v Google Drive projektu.
 
+|
+
 17.	Nainštalovať Qt Creator:
 
 ::
@@ -124,18 +127,18 @@ alebo
 Nastavenie Qt Creatora:
 -----------------------
 
-	* cmd + , pre otvorenie nastavení
-	* skontrolovať záložku Qt Versions, ak je dostupné Qt 5.x, nechať tak. Ak nie, treba nájsť binárku qmake (defaultne po inštalácii Qt cez Homebrew v /usr/local/bin/).
-	* skontrolovať záložku CMake. Ak nie je detekovaný žiadny, treba nájsť binárku cmake (defaultne po inštalácii CMake cez Homebrew v /usr/local/bin/).
-	* ísť do zákožky Kits.
-	* Zvoliť konfiguráciu a vpravo kliknúť na Clone
-	* Klinúť na novú konfiguráciu (dole sa otvorí editačné okno)
-	* Name zvoliť napr. unity
-	* C aj C++ Compiler zvoliť Clang
-	* Qt version zvoliť Qt 5.x
-	* CMake Tool zvoliť na CMake zo záložky CMake
-	* Vpravo hore klikúť na Make Default
-	* Potvrdiť tlačidlom OK
+* cmd + , pre otvorenie nastavení
+* skontrolovať záložku Qt Versions, ak je dostupné Qt 5.x, nechať tak. Ak nie, treba nájsť binárku qmake (defaultne po inštalácii Qt cez Homebrew v /usr/local/bin/).
+* skontrolovať záložku CMake. Ak nie je detekovaný žiadny, treba nájsť binárku cmake (defaultne po inštalácii CMake cez Homebrew v /usr/local/bin/).
+* ísť do zákožky Kits.
+* Zvoliť konfiguráciu a vpravo kliknúť na Clone
+* Klinúť na novú konfiguráciu (dole sa otvorí editačné okno)
+* Name zvoliť napr. unity
+* C aj C++ Compiler zvoliť Clang
+* Qt version zvoliť Qt 5.x
+* CMake Tool zvoliť na CMake zo záložky CMake
+* Vpravo hore klikúť na Make Default
+* Potvrdiť tlačidlom OK
 
 Build & Run konfigurácia:
 -------------------------
@@ -151,9 +154,8 @@ Build & Run konfigurácia:
 * Zvoliť binárku 3dsoftviz/_install/bin/3DSoftviz
 * Working directory nastaviť na 3dsoftviz/_install/bin
 
-*
 Známe problémy, riešenia a rady
--------------------------------
+--------------------------------
 
 Q: Build error  "/usr/local/.//mkspecs/macx-clang"
 **************************************************
@@ -173,45 +175,3 @@ Q: Build error  "/usr/local/.//mkspecs/macx-clang"
 	ln -s /usr/local/Cellar/qt/5.9.2/plugins /usr/local/plugins
 
 Ak príkaz zlyhá, pretože symlinky už existujú, zmažte ich a skúste znova.
-
-Q: Build error v 3dsoftviz/src/Mouse3d/LibMouse3d/Mac, riadok 68: 	Mouse3dMacDeviceGlob::ptr->OnMove( motionData );
-********************************************************************************************************************
-
-::
-
-	/Users/peto.marusin/3d/src/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.cpp:68: error: no viable conversion from 'vector<float>' to 'const vector<double>'
-	            Mouse3dMacDeviceGlob::ptr->OnMove( motionData );
-	                                               ^~~~~~~~~~
-	/Library/Developer/CommandLineTools/usr/include/c++/v1/vector:530:5: note: candidate constructor not viable: no known conversion from 'std::vector<float>' to 'initializer_list<value_type>' (aka 'initializer_list<double>') for 1st argument
-	    vector(initializer_list<value_type> __il);
-	    ^
-	/Library/Developer/CommandLineTools/usr/include/c++/v1/vector:542:5: note: candidate constructor not viable: no known conversion from 'std::vector<float>' to 'const std::__1::vector<double, std::__1::allocator<double> > &' for 1st argument
-	    vector(const vector& __x);
-	    ^
-	/Library/Developer/CommandLineTools/usr/include/c++/v1/vector:548:5: note: candidate constructor not viable: no known conversion from 'std::vector<float>' to 'std::__1::vector<double, std::__1::allocator<double> > &&' for 1st argument
-	    vector(vector&& __x)
-    ^
-
-**A:** Zakomentovať riadok (TEMPORARY!)
-
-Q: Runtime lua error ast.lua:9: module 'metrics.lookup' not found
-*****************************************************************
-
-::
-
-	ERROR [default] ...eto.marusin/3d/_install/bin/../lib/lua/luadb/ast.lua:9: module 'metrics.lookup' not found:
-	no field package.preload['metrics.lookup']
-	no file './metrics/lookup.lua'
-	no file '/Users/peto.marusin/3d/_install/bin/../lib/lua/metrics/lookup.lua'
-	no file '/Users/peto.marusin/3d/_install/bin/../lib/lua/metrics/lookup/init.lua'
-	no file './metrics/lookup/init.lua'
-	no file './metrics/lookup.so'
-	no file '/Users/peto.marusin/3d/_install/bin/../lib/lua/metrics/lookup.so'
-	no file '/Users/peto.marusin/3d/_install/bin/../lib/lua/loadall.so'
-	no file './metrics.so'
-	no file '/Users/peto.marusin/3d/_install/bin/../lib/lua/metrics.so'
-	no file '/Users/peto.marusin/3d/_install/bin/../lib/lua/loadall.so'
-	stack traceback:
-	[string "line"]:1: in main chunk
-
-**A:** V súbore ~/3dsoftviz/resosurces/scripts/app/main.lua zakomentujte prvý riadok: graph_importer = require "softviz/graph_importer"
