@@ -1,29 +1,20 @@
 Návod pre Linux
 ===============
 
-
-1. Nainštalovať Synaptic Package Manager
-
-  .. image:: /images/packagemanager.jpg
-     :align: center
-
-2. Nainštalovať prostredníctvom Synaptic nasledujúce programy
+1. Cez Apt nainštalovať nasledujúce programy
 
   * **Git** - git
   * **OpenSceneGraph** - libopenscenegraph-dev
-  * **Qt4** - libqt4-dev
+  * **Qt5** - qt5*
+  * **Qt5WebEngine** - qtwebengine5
   * **QtCreator** - qtcreator
   * **Boost** - libboost-all-dev
   * **Lua** - liblua5.1-0-dev
   * **OpenCV** - libopencv-dev
-  * **FreeGlut3**
-
-    * freeglut3
-    * freeglut3-dev
-
-  * **CMake** `3.5.0 <https://cmake.org/files/v3.5/cmake-3.5.0.tar.gz>`_
-
-    * inštalovať zo source files, nie Synaptic
+  * **FreeGlut3** - freeglut3-dev
+  * **CMake** - cmake
+  
+**Príkaz na inštaláciu** : sudo apt install git,libopenscenegraph-dev,qt5*,qtwebengine5,qtcreator,libboost-all-dev,liblua5.1-0-dev,libopencv-dev,freeglut3-dev,cmake
 
 .. note:: Názvy knižníc sú ukázané pre Ubuntu
 
