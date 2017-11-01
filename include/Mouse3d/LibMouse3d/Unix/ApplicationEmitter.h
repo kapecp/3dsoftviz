@@ -7,18 +7,23 @@ class Mouse3dUnixDevice;
 class ApplicationEmitter;
 class ApplicationEmitter : public QObject
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
 	ApplicationEmitter( Mouse3dUnixDevice* device );
 
 	~ApplicationEmitter();
-
+#if QT_VERSION >= 0x050000
+//todo
+#elif QT_VERSION < 0x050000
 	void emitX11Event( XEvent* event );
-
+#endif
 signals:
+#if QT_VERSION >= 0x050000
+//todo
+#elif QT_VERSION < 0x050000
 	void signalX11Event( XEvent* event );
-
+#endif
 	void signalDummy();
 
 private:

@@ -2,9 +2,8 @@
 #define APPLICATION_H
 
 #pragma once
-
+#include <QtGlobal>
 #include <QApplication>
-
 #if defined(Q_WS_X11) || defined(Q_OS_LINUX)
 #include "Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h"
 #include "Mouse3d/LibMouse3d/Unix/ApplicationEmitter.h"
@@ -22,13 +21,18 @@ public:
 
 	~Application();
 
-#if defined(Q_WS_X11) || defined(Q_OS_LINUX)
+#if  defined(Q_WS_X11) || defined(Q_OS_LINUX)
+	#if QT_VERSION >= 0x050000
+	//todo
+	#elif QT_VERSION < 0x050000
 	virtual bool x11EventFilter( XEvent* event );
+	#endif
 
 	void startEmitter( Mouse3dUnixDevice* device );
 
 	void stopEmitter();
 #endif
+
 
 #if defined(Q_WS_X11) || defined(Q_OS_LINUX)
 private:
