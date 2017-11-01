@@ -33,7 +33,6 @@ public:
 	void stopEmitter();
 #endif
 
-
 #if defined(Q_WS_X11) || defined(Q_OS_LINUX)
 private:
 	bool isEmitting;

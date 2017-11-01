@@ -54,9 +54,6 @@ void Mouse3dUnixDevice::initMouse3d()
 	else {
 		LOG( INFO ) << "[X11] Mouse3dDevice: MagellanInit() = Success!" << endl;
 	}
-
-
-
 	QCoreApplication* inst = App::Application::instance();
 	App::Application* app = qobject_cast<App::Application*>( inst );
 	//QObject::connect( app, SIGNAL(passDummy()), this, SLOT(translateDummy()));

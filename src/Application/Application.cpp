@@ -54,4 +54,3 @@ void Application::stopEmitter()
 }
 #endif
 } //App
-
