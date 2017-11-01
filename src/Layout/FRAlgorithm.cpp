@@ -779,7 +779,7 @@ void FRAlgorithm::StopAlgEdgeBundling()
 bool FRAlgorithm::mayOverlap( Data::Node* u, Data::Node* v )
 {
 	bool overlaps = false;
-	if ( u != NULL && v != NULL) {
+	if ( u != NULL && v != NULL ) {
 
 		float udist = ( u->targetPosition() - Util::CameraHelper::getEye() ).length();
 		float vdist = ( v->targetPosition() - Util::CameraHelper::getEye() ).length();

@@ -511,7 +511,7 @@ private:
 		* \brief Compute projective vector
 		* \return Return computed projective vector
 		*/
-	osg::Vec3f getProjVector( Data::Node* u, Data::Node* v );	
+	osg::Vec3f getProjVector( Data::Node* u, Data::Node* v );
 
 	/**
 		* \fn private float getMinProjDistance( Data::Node* u, Data::Node* v, osg::Vec3f pv )

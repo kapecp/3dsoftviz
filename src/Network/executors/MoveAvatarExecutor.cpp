@@ -19,7 +19,7 @@ void MoveAvatarExecutor::execute_client()
 
 	*stream >> x >> y >> z >> a >> b >> c >> d >> distance >> id;
 
-	osg::Vec3d center = osg::Vec3d( x-5,y,z );
+	osg::Vec3d center = osg::Vec3d( x,y,z );
 	osg::Quat rotation = osg::Quat( a,b,c,d );
 
 	osg::Vec3d direction = rotation * osg::Vec3d( 0, 0, 1 );
@@ -76,7 +76,7 @@ void MoveAvatarExecutor::execute_server()
 		client->write( block );
 	}
 
-	osg::Vec3d center = osg::Vec3d( x-5,y,z );
+	osg::Vec3d center = osg::Vec3d( x,y,z );
 	osg::Quat rotation = osg::Quat( a,b,c,d );
 
 	osg::Vec3d direction = rotation * osg::Vec3d( 0, 0, 1 );
