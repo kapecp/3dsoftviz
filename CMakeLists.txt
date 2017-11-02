@@ -207,14 +207,24 @@ find_package( OpenSceneGraph COMPONENTS
 	osgVolume
 	osgWidget
 )
-find_package( osgViewer )
 
-find_package( osgQt )
+message( STATUS "Using OpenSceneGraph version: " ${OPENSCENEGRAPH_VERSION} )
+
+# OpenSceneGraph v3.5.5 removed osgQt (osgQt is now in it's own repository)
+if( ${OPENSCENEGRAPH_VERSION} VERSION_GREATER_EQUAL 3.5.5 )
+	message( "Building osgQt" )
+	set( BUILD_OSGQT TRUE )
+else()
+	message( "Searching for osgQt" )
+	find_package( osgQt )
+	list( APPEND ALL_SYSTEM_HEADERS ${OSGQT_INCLUDE_DIR} )
+endif( )
+
+find_package( osgViewer )
 
 list( APPEND ALL_SYSTEM_HEADERS
 	${OPENSCENEGRAPH_INCLUDE_DIRS}
 	${OSGVIEWER_INCLUDE_DIR}
-	${OSGQT_INCLUDE_DIR}
 )
 
 if( MSVC )
@@ -532,6 +542,52 @@ if( USE_BUILTIN_DEPENDENCIES )
 		set_target_properties( osgModeling PROPERTIES
 			IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_SHARED_LIBRARY_SUFFIX}
 			IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}osgModeling${CMAKE_STATIC_LIBRARY_SUFFIX} )
+	endif()
+
+	# Build osgQt
+	if( BUILD_OSGQT )
+		ExternalProject_Add( dep_osgQt
+			PREFIX osgQt
+			SOURCE_DIR ${DEP_SOURCE}/osgQt
+			BINARY_DIR osgQt
+			CMAKE_ARGS
+				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+				-C ${CMAKE_CURRENT_BINARY_DIR}/config.cmake
+			)
+
+		add_library( osgQt SHARED IMPORTED )
+		add_dependencies( osgQt dep_osgQt )
+
+		# osgQt's build system sets different library name based on Qt version
+		if( Qt5Widgets_FOUND )
+			set( OSGQT_NAME osgQt5 )
+		else()
+			set( OSGQT_NAME osgQt )
+		endif()
+
+		# osgQt's build system sets different library name posfixes based on build type
+		# TODO: RelWithDebInfo, MinSizeRel
+		# NOTE: we could use ExternalProject_Get_Property
+		if( CMAKE_BUILD_TYPE MATCHES "Debug" )
+			set( OSGQT_POSTFIX "d" )
+		else()
+			set( OSGQT_POSTFIX "" ) # release
+		endif()
+
+		set_target_properties( osgQt PROPERTIES
+			IMPORTED_LOCATION ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}${OSGQT_NAME}${OSGQT_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX} )
+
+		if( UNIX AND NOT APPLE )
+			set_target_properties( osgQt PROPERTIES
+				IMPORTED_LOCATION ${DEP_BIN}/lib64/${CMAKE_SHARED_LIBRARY_PREFIX}${OSGQT_NAME}${OSGQT_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX} )
+		endif()
+
+		if( WIN32 AND MSVC )
+			set_target_properties( osgQt PROPERTIES
+				IMPORTED_LOCATION ${DEP_BIN}/bin/${CMAKE_SHARED_LIBRARY_PREFIX}${OSGQT_NAME}${OSGQT_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX}
+				IMPORTED_IMPLIB ${DEP_BIN}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}${OSGQT_NAME}${OSGQT_POSTFIX}${CMAKE_STATIC_LIBRARY_SUFFIX} )
+		endif()
 	endif()
 
 
@@ -1368,6 +1424,13 @@ if ( Qt4_FOUND )
 		${OPENGL_LIBRARIES} )
 endif()
 
+if( BUILD_OSGQT )
+	target_link_libraries( ${3DSOFTVIZ_NAME} osgQt )
+else()
+	target_link_libraries( ${3DSOFTVIZ_NAME} ${OSGQT_LIBRARIES} )
+endif()
+
+
 target_link_libraries( ${3DSOFTVIZ_NAME}
 	gitlib
 	lua
@@ -1378,7 +1441,6 @@ target_link_libraries( ${3DSOFTVIZ_NAME}
 	parserlib
 	${OPENSCENEGRAPH_LIBRARIES}
 	${OSGVIEWER_LIBRARIES}
-	${OSGQT_LIBRARIES}
 )
 
 if( UNIX AND NOT APPLE )
