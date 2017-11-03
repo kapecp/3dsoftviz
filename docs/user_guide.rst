@@ -904,3 +904,15 @@ Git repozitár
 .. |10000201000000AD00000018AD24406D| image:: images/10000201000000AD00000018AD24406D.png
 
 .. |160317235033| image:: images/160317235033.png
+
+.. |dragger-scale_png| image:: images/dragger-scale.png
+	:width: 1.3232in
+	:height: 0.2295in
+
+.. |dragger-rotation_png| image:: images/dragger-rotation.png
+	:width: 1.3232in
+	:height: 0.2295in
+
+.. |city-layout_png| image:: images/city-layout.png
+	:width: 2in
+	:height: 0.1295in
