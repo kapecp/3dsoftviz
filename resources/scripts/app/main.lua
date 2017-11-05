@@ -1,4 +1,4 @@
-graph_importer = require "softviz/graph_importer"
+--graph_importer = require "softviz/graph_importer"
 logical_filter = require "softviz/logical_filter"
 slt2_renderer = require "softviz/slt2_renderer"
 

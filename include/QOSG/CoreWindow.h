@@ -687,6 +687,8 @@ public slots:
 
 	void setCameraEnable( bool enable );
 
+	void setProjectiveForceEnable( bool enable );
+
 	/**
 	 * bool nextVersion()
 	 * @brief Updates graph to the next version
@@ -1315,6 +1317,12 @@ private:
 	 *@brief chb_camera_enable
 	 */
 	QCheckBox* chb_camera_enable;
+
+	/**
+	 *CheckBox for enabling projective force
+	 *@brief chb_projective_force
+	 */
+	QCheckBox* chb_projective_force;
 
 	/**
 		*  QAction * load

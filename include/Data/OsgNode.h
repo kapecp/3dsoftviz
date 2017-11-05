@@ -416,6 +416,26 @@ public:
 	     */
 	void setIsFocused( bool value );
 
+	/**
+	 * @brief Returns size of node from local field
+	 */
+	osg::Vec3f getSize();
+
+	/**
+	 * @brief Computes actual size of node and stores it into local field
+	 */
+	void computeSize();
+
+	/**
+	 * @brief Returns half of node x size;
+	 */
+	float getRadius();
+
+	/**
+	 * @brief Check if is node on screen
+	 */
+	bool isOnScreen();
+
 
 	/**
 	    *  \fn private static  createNodeSquare(const float & scale, osg::StateSet* bbState)
@@ -558,6 +578,21 @@ protected:
 	     * \brief Flag whether this node is focused at the moment.
 	     */
 	bool mIsFocused;
+
+	/**
+	 * @brief Size of node
+	 */
+	osg::Vec3f nodeSize;
+
+	/**
+	 * @brief Stores size of node into local field
+	 */
+	void setSize( osg::Vec3f size );
+
+	/**
+	 * @brief Stores size of node into local field
+	 */
+	void setSize( float width, float height, float depth );
 
 };
 }

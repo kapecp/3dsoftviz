@@ -42,7 +42,7 @@ public:
 		 * \fn restartLayout
 		 * \brief Restarts layouting of graph.
 		 */
-	void restartLayout();
+	void restartLayout( bool fixedPositions = false );
 
 	/**
 		 * \fn restartLayoutForMatrix

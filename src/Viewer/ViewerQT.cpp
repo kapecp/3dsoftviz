@@ -4,6 +4,7 @@
 #include "Viewer/CameraManipulator.h"
 #include "Viewer/CoreGraph.h"
 #include "Util/ApplicationConfig.h"
+#include "Util/CameraHelper.h"
 #include "Core/Core.h"
 
 #include <math.h>
@@ -11,6 +12,7 @@
 QOSG::ViewerQT::ViewerQT( const QGLFormat& format, QWidget* parent, const char* name, const QGLWidget* shareWidget, WindowFlags f, Vwr::CoreGraph* cg ):
 	AdapterWidget( format, parent, name, shareWidget, f )
 {
+	Util::CameraHelper::setCamera( this->getCamera() );
 	this->cg = cg;
 	cg->setCamera( this->getCamera() );
 
