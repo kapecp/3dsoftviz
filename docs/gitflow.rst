@@ -51,6 +51,8 @@ v Commit messages pouzivame tagy a ID ulohy na zaciatok:
 * [DOC] - pridali sme dokumentaciu, komenty...
 * [REF] - pre refactoring
 * [FMT] - formatovanie textu, uprava
+* [TEST] - pre testy
+* [BUILD] - aktualizacia CMake build systemu, modulov
 
 Za tym velmi strucne (a vystizne) opiseme, ake zmeny sme spravili. Message by mali byt kratke, no pokryvat vsetko, co sme v commite spravili.
 **!!! vseobecny tvar: "[tag] #taskId Popis vykonanej zmeny"**
