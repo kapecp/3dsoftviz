@@ -691,207 +691,46 @@ if( USE_BUILTIN_DEPENDENCIES )
 		endif()
 	endif()
 
-	# Build lpeg
-	ExternalProject_Add ( dep_lpeg
-		PREFIX lpeg
-		SOURCE_DIR ${DEP_SOURCE}/lpeg
-		BINARY_DIR lpeg
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+	# Names of  dependencies
+	set ( DEP_NAMES
+		"lpeg"
+		"leg"
+		"luametrics"
+		"luafilesystem"
+		"lualogging"
+		"StackTracePlus"
+		"luasocket"
+		"mobdebug"
+		"luacov"
+		"luacheck"
+		"lua_cliargs"
+		"luasystem"
+		"dkjson"
+		"say"
+		"luassert"
+		"lua-term"
+		"penlight"
+		"mediator_lua"
+		"busted"
+		"luacomments"
+	)
 
-	# Build leg
-	ExternalProject_Add ( dep_leg
-		PREFIX leg
-		SOURCE_DIR ${DEP_SOURCE}/leg
-		BINARY_DIR leg
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
+	# Macro for adding external projects for each dependency
+	macro ( build_dependecies _DEP_NAME )
+		ExternalProject_Add ( dep_${_DEP_NAME}
+			PREFIX ${_DEP_NAME}
+			SOURCE_DIR ${DEP_SOURCE}/${_DEP_NAME}
+			BINARY_DIR ${_DEP_NAME}
+			CMAKE_ARGS
+				-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
+				-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+			)
+	endmacro ()
 
-	# Build luametrics
-	ExternalProject_Add ( dep_luametrics
-		PREFIX luametrics
-		SOURCE_DIR ${DEP_SOURCE}/luametrics
-		BINARY_DIR luametrics
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
-
-	# Build luafilesystem
-	ExternalProject_Add ( dep_luafilesystem
-		PREFIX luafilesystem
-		SOURCE_DIR ${DEP_SOURCE}/luafilesystem
-		BINARY_DIR luafilesystem
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
-
-	# Build lualogging
-	ExternalProject_Add ( dep_lualogging
-		PREFIX lualogging
-		SOURCE_DIR ${DEP_SOURCE}/lualogging
-		BINARY_DIR lualogging
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
-
-	# Build StackTracePlus
-	ExternalProject_Add ( dep_StackTracePlus
-		PREFIX StackTracePlus
-		SOURCE_DIR ${DEP_SOURCE}/StackTracePlus
-		BINARY_DIR StackTracePlus
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
-
-	# Build luasocket
-	ExternalProject_Add ( dep_luasocket
-		PREFIX luasocket
-		SOURCE_DIR ${DEP_SOURCE}/luasocket
-		BINARY_DIR luasocket
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
-
-	# Build mobdebug
-	ExternalProject_Add ( dep_mobdebug
-		PREFIX mobdebug
-		SOURCE_DIR ${DEP_SOURCE}/mobdebug
-		BINARY_DIR mobdebug
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
-
-	# Build luacov
-	ExternalProject_Add ( dep_luacov
-		PREFIX luacov
-		SOURCE_DIR ${DEP_SOURCE}/luacov
-		BINARY_DIR luacov
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
-
-	# Build luacheck
-	ExternalProject_Add ( dep_luacheck
-		PREFIX luacheck
-		SOURCE_DIR ${DEP_SOURCE}/luacheck
-		BINARY_DIR luacheck
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
-
-	# Build lua_cliargs
-	ExternalProject_Add ( dep_lua_cliargs
-		PREFIX lua_cliargs
-		SOURCE_DIR ${DEP_SOURCE}/lua_cliargs
-		BINARY_DIR lua_cliargs
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
-
-	# Build luasystem
-	ExternalProject_Add ( dep_luasystem
-		PREFIX luasystem
-		SOURCE_DIR ${DEP_SOURCE}/luasystem
-		BINARY_DIR luasystem
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
-
-	# Build dkjson
-	ExternalProject_Add ( dep_dkjson
-		PREFIX dkjson
-		SOURCE_DIR ${DEP_SOURCE}/dkjson
-		BINARY_DIR dkjson
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
-
-	# Build say
-	ExternalProject_Add ( dep_say
-		PREFIX say
-		SOURCE_DIR ${DEP_SOURCE}/say
-		BINARY_DIR say
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
-
-	# Build luassert
-	ExternalProject_Add ( dep_luassert
-		PREFIX luassert
-		SOURCE_DIR ${DEP_SOURCE}/luassert
-		BINARY_DIR luassert
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
-
-	# Build lua-term
-	ExternalProject_Add ( dep_lua-term
-		PREFIX lua-term
-		SOURCE_DIR ${DEP_SOURCE}/lua-term
-		BINARY_DIR lua-term
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
-
-	# Build penlight
-	ExternalProject_Add ( dep_penlight
-		PREFIX penlight
-		SOURCE_DIR ${DEP_SOURCE}/penlight
-		BINARY_DIR penlight
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
-
-	# Build mediator_lua
-	ExternalProject_Add ( dep_mediator_lua
-		PREFIX mediator_lua
-		SOURCE_DIR ${DEP_SOURCE}/mediator_lua
-		BINARY_DIR mediator_lua
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
-
-	# Build busted
-	ExternalProject_Add ( dep_busted
-		PREFIX busted
-		SOURCE_DIR ${DEP_SOURCE}/busted
-		BINARY_DIR busted
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
-
-
-	# Build luacomments
-	ExternalProject_Add ( dep_luacomments
-		PREFIX luacomments
-		SOURCE_DIR ${DEP_SOURCE}/luacomments
-		BINARY_DIR luacomments
-		CMAKE_ARGS
-			-DCMAKE_INSTALL_PREFIX:PATH=${DEP_BIN}
-			-DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		)
-
+	# Adds external projects for each dependency
+	foreach (DEP ${DEP_NAMES})
+		build_dependecies( ${DEP} )
+	endforeach(DEP)
 
 	# Ensure correct order of build (dependencies between external dependencies)
 	if( MSVC OR APPLE )
@@ -899,25 +738,11 @@ if( USE_BUILTIN_DEPENDENCIES )
 	else()
 		set( WHICH_LUA dep_luajit )
 	endif()
-	add_dependencies( dep_lpeg ${WHICH_LUA} )
-	add_dependencies( dep_leg ${WHICH_LUA} )
-	add_dependencies( dep_luametrics ${WHICH_LUA} )
-	add_dependencies( dep_luafilesystem ${WHICH_LUA} )
-	add_dependencies( dep_StackTracePlus ${WHICH_LUA} )
-	add_dependencies( dep_luasocket ${WHICH_LUA} )
-	add_dependencies( dep_mobdebug ${WHICH_LUA} )
-	add_dependencies( dep_luacov ${WHICH_LUA} )
-	add_dependencies( dep_luacheck ${WHICH_LUA} )
-	add_dependencies( dep_lua_cliargs ${WHICH_LUA} )
-	add_dependencies( dep_luasystem ${WHICH_LUA} )
-	add_dependencies( dep_dkjson ${WHICH_LUA} )
-	add_dependencies( dep_say ${WHICH_LUA} )
-	add_dependencies( dep_luassert ${WHICH_LUA} )
-	add_dependencies( dep_lua-term ${WHICH_LUA} )
-	add_dependencies( dep_penlight ${WHICH_LUA} )
-	add_dependencies( dep_mediator_lua ${WHICH_LUA} )
-	add_dependencies( dep_busted ${WHICH_LUA} )
-	add_dependencies( dep_luacomments ${WHICH_LUA} )
+
+	foreach (DEP ${DEP_NAMES})
+		add_dependencies( dep_${DEP} ${WHICH_LUA} )
+	endforeach(DEP)
+
 	if( NOT MSVC )
 		add_dependencies( dep_diluculum ${WHICH_LUA} )
 	endif()
@@ -1955,4 +1780,3 @@ if( cppcheck_FOUND )
 		)
 	endif()
 endif()
-
