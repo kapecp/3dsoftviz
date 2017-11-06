@@ -9,6 +9,8 @@
 #include "Data/Cluster.h"
 #include "Data/Graph.h"
 
+#include "Util/CameraHelper.h"
+
 //volovar_zac
 #include "Layout/RadialLayout.h"
 //volovar_kon
@@ -49,7 +51,8 @@ FRAlgorithm::FRAlgorithm() :
 	vp( osg::Vec3f() ),
 	dist( 0 ),
 	// No node is focused on the beginning
-	mLastFocusedNode( 0 )
+	mLastFocusedNode( 0 ),
+	M( 10 )
 {
 	// Duransky start - pociatocne nastavenie nasobica odpudivych sil na rovnakej rovine na hodnotu 1
 	setRepulsiveForceVertigo( 1 );
@@ -75,7 +78,8 @@ FRAlgorithm::FRAlgorithm( Data::Graph* graph ) :
 	last( osg::Vec3f() ),
 	newLoc( osg::Vec3f() ),
 	up( osg::Vec3f() ),
-	vp( osg::Vec3f() )
+	vp( osg::Vec3f() ),
+	M( 7 )
 {
 	this->Randomize();
 }
@@ -307,18 +311,24 @@ bool FRAlgorithm::iterate()
 		//uzly
 		QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator j;
 		QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator k;
+
 		j = graph->getNodes()->begin();
 		for ( int i = 0; i < graph->getNodes()->count(); ++i,++j ) {
 			// pre vsetky uzly..
+
 			k = graph->getNodes()->begin();
 			for ( int h = 0; h < graph->getNodes()->count(); ++h,++k ) { // pre vsetky uzly..
 				if ( !j.value()->equals( k.value() ) ) {
 					// odpudiva sila beznej velkosti
 
 					//JMA ignore node cond
-					//   if( !j.value()->isIgnoredByLayout() && !k.value()->isIgnoredByLayout() ){
-					addRepulsive( j.value(), k.value(), 1 );
-					//   }
+					if ( !j.value()->isIgnoredByLayout() && !k.value()->isIgnoredByLayout() ) {
+						addRepulsive( j.value(), k.value(), 1 );
+
+						if ( getProjectiveForceEnabled() ) {
+							addProjectiveForce( j.value(), k.value() );
+						}
+					}
 				}
 			}
 		}
@@ -764,6 +774,79 @@ void FRAlgorithm::StopAlgEdgeBundling()
 	if ( graph != NULL ) {
 		stateEdgeBundling = PAUSED;
 	}
+}
+
+bool FRAlgorithm::mayOverlap( Data::Node* u, Data::Node* v )
+{
+	bool overlaps = false;
+	if ( u != NULL && v != NULL ) {
+
+		float udist = ( u->targetPosition() - Util::CameraHelper::getEye() ).length();
+		float vdist = ( v->targetPosition() - Util::CameraHelper::getEye() ).length();
+
+		if ( udist >= vdist ) {
+			overlaps = true;
+		}
+
+		if ( vdist >= udist ) {
+			overlaps = true;
+		}
+	}
+
+	return overlaps;
+}
+
+void FRAlgorithm::addProjectiveForce( Data::Node* u, Data::Node* v )
+{
+	if ( mayOverlap( u, v ) ) {
+		osg::Vec3f pvec = getProjVector( u, v );            // compute projective vector
+		if ( pvec.length() != 0 ) {
+			float pdist = pvec.normalize();					// projective distance between nodes
+			float pideal = getMinProjDistance( u, v, pvec ); 	// minimal projective distance
+			float projF = proj( pdist, pideal );				// projective force
+			osg::Vec3f fv = pvec * projF;					// add projective force
+			u->addForce( fv );
+			v->addForce( -fv );
+			// NOTE: node weight is not accounted for, force depends on node radius
+		}
+	}
+}
+
+osg::Vec3f FRAlgorithm::getProjVector( Data::Node* u, Data::Node* v )
+{
+	osg::Vec3f up = u->getTargetPosition();
+	osg::Vec3f vp = v->getTargetPosition();
+
+	osg::Vec3f edgeDir = vp - up;
+	osg::Vec3f viewVec = Util::CameraHelper::getEye() - ( ( up + vp ) / 2.0f ); // from eye to middle of u,v
+	osg::Vec3f pv = viewVec ^ ( edgeDir ^ viewVec );
+
+	float length = edgeDir.normalize();
+	pv.normalize();
+	float dist = length * qAbs( pv * edgeDir );
+
+	if ( dist == 0 ) {
+		return osg::Vec3f( 0, 0, 0 );
+	}
+	return pv * dist;
+}
+
+float FRAlgorithm::getMinProjDistance( Data::Node* u, Data::Node* v, osg::Vec3f pv )
+{
+	float ideal = 0;
+	if ( pv.length() != 0 ) {
+		ideal = u->getRadius() + v->getRadius() + M;
+	}
+	return ideal;
+}
+
+float FRAlgorithm::proj( float distance, float ideal )
+{
+	float f = -( 4 * ideal * ideal / distance ) + 2 * ideal;
+	if ( f > 0 ) {
+		return 0;
+	}
+	return f;
 }
 
 } // namespace Layout

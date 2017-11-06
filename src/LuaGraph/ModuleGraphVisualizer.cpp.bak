@@ -40,8 +40,8 @@ void Lua::ModuleGraphVisualizer::visualize()
 
 	//adding nodes
 	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = luaGraph->getNodes()->begin(); i != luaGraph->getNodes()->end(); ++i ) {
-		osg::ref_ptr<Data::Node> n = currentGraph->addNode( i.key() , i.value()->getLabel(), nodeType );
-		n->setLuaIdentifier(i.value()->getIdentifier());
+		osg::ref_ptr<Data::Node> n = currentGraph->addNode( i.key(), i.value()->getLabel(), nodeType );
+		n->setLuaIdentifier( i.value()->getIdentifier() );
 		setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
 	}
 
@@ -67,7 +67,7 @@ void Lua::ModuleGraphVisualizer::visualize()
 		else {
 			newEdge = currentGraph->addEdge( i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, false );
 		}
-		newEdge->setLuaIdentifier(i.value()->getIdentifier());
+		newEdge->setLuaIdentifier( i.value()->getIdentifier() );
 		newEdge->setCamera( camera );
 		setEdgeParams( newEdge, i.value(), osg::Vec4f( 1,1,1,1 ) );
 	}
@@ -87,20 +87,20 @@ void Lua::ModuleGraphVisualizer::visualize()
 	//iterate through all nodes
 	QMap<qlonglong, Lua::LuaNode*>::iterator i;
 	for ( i = luaGraph->getNodes()->begin();
-		  i != luaGraph->getNodes()->end();
-		  ++i ) {
+			i != luaGraph->getNodes()->end();
+			++i ) {
 		auto graphNode = currentGraph->getNodes()->value( i.key() );
-		if(graphNode == nullptr) {
+		if ( graphNode == nullptr ) {
 			continue;
 		}
-		if( i.value()->getParams().getValue()["type"] == "module" ) {
+		if ( i.value()->getParams().getValue()["type"] == "module" ) {
 			auto module = new City::Module();
-			graphNode->setResidence(module);
-			QMap<qlonglong, osg::ref_ptr<Data::Edge>> *edges = graphNode->getEdges();
+			graphNode->setResidence( module );
+			QMap<qlonglong, osg::ref_ptr<Data::Edge>>* edges = graphNode->getEdges();
 			std::cout << "Module Node = " << graphNode->Data::AbsNode::getName().toStdString() << "\n";
 			std::cout << "Only provides edges \n";
-			for(auto edge : edges->values()) {
-				if(edge->getSrcNode() == graphNode && edge->Data::AbsEdge::getName().toStdString() == "provides") {
+			for ( auto edge : edges->values() ) {
+				if ( edge->getSrcNode() == graphNode && edge->Data::AbsEdge::getName().toStdString() == "provides" ) {
 					//handle interface nodes
 					std::cout << edge->Data::AbsEdge::getName().toStdString() << '\n';
 					std::cout << edge->getDstNode()->Data::AbsNode::getName().toStdString() << '\n';
@@ -194,7 +194,7 @@ void Lua::ModuleGraphVisualizer::visualize()
 			continue;
 		}
 		auto node = currentGraph->getNodes()->value( i.key() );
-		if(node == nullptr) {
+		if ( node == nullptr ) {
 			continue;
 		}
 
@@ -393,11 +393,11 @@ void Lua::ModuleGraphVisualizer::deleteNonModuleNodes()
 {
 	std::cout << "Number of nodes to be deleted: " << nodeIdsToDelete.size() << "\n";
 	int counter = 0;
-	for(auto nodeId : nodeIdsToDelete.values()) {
-		osg::ref_ptr<Data::Node> nodeToDelete = currentGraph->getNodes()->value(nodeId);
-		if(nodeToDelete != nullptr) {
+	for ( auto nodeId : nodeIdsToDelete.values() ) {
+		osg::ref_ptr<Data::Node> nodeToDelete = currentGraph->getNodes()->value( nodeId );
+		if ( nodeToDelete != nullptr ) {
 			std::cout << "Deleting... " << nodeToDelete->Data::AbsNode::getName().toStdString() << "\n";
-			currentGraph->removeNode(nodeToDelete);
+			currentGraph->removeNode( nodeToDelete );
 			++counter;
 		}
 	}
@@ -410,30 +410,30 @@ void Lua::ModuleGraphVisualizer::deleteReturnsNode()
 	Lua::LuaGraph* luaGraph = Lua::LuaGraph::loadGraph();
 	QMap<qlonglong, Lua::LuaNode*>::iterator i;
 	for ( i = luaGraph->getNodes()->begin();
-		  i != luaGraph->getNodes()->end();
-		  ++i ) {
-		if( i.value()->getParams().getValue()["type"] == "interface" && i.value()->getLabel() == "Returns") {
+			i != luaGraph->getNodes()->end();
+			++i ) {
+		if ( i.value()->getParams().getValue()["type"] == "interface" && i.value()->getLabel() == "Returns" ) {
 			auto returnsNode = currentGraph->getNodes()->value( i.key() );
 
 			osg::ref_ptr<Data::Node> moduleNode;
 			osg::ref_ptr<Data::Edge> edgeToDelete;
-			QMap<qlonglong, osg::ref_ptr<Data::Edge>> *edges = returnsNode->getEdges();
-			for(auto edge : edges->values()) {
-				if(edge->getDstNode() == returnsNode) {
+			QMap<qlonglong, osg::ref_ptr<Data::Edge>>* edges = returnsNode->getEdges();
+			for ( auto edge : edges->values() ) {
+				if ( edge->getDstNode() == returnsNode ) {
 					std::cout << "should be provides... : " << edge->Data::AbsEdge::getName().toStdString() << "\n";
 					moduleNode = edge->getSrcNode();
 					edgeToDelete = edge;
 				}
 			}
-			for(auto edge : edges->values()) {
-				if(edge->getSrcNode() == returnsNode) {
+			for ( auto edge : edges->values() ) {
+				if ( edge->getSrcNode() == returnsNode ) {
 					std::cout << "should be provides... : " << edge->Data::AbsEdge::getName().toStdString() << "\n";
-					edge->setSrcNode(moduleNode);
+					edge->setSrcNode( moduleNode );
 				}
 			}
-			currentGraph->removeEdge(edgeToDelete);
+			currentGraph->removeEdge( edgeToDelete );
 			std::cout << "module -> Returns edge removed \n";
-			currentGraph->removeNode(returnsNode, true);
+			currentGraph->removeNode( returnsNode, true );
 			std::cout << "returns node removed \n";
 
 		}

@@ -54,7 +54,7 @@ AppCore::Core::~Core()
 {
 }
 
-void AppCore::Core::restartLayout()
+void AppCore::Core::restartLayout( bool fixedPositions )
 {
 	// [GrafIT][!] the layout algorithm did not end correctly, what caused more instances
 	// to be running, fixed it here + made modifications in FRAlgorithm to make correct ending possible
@@ -62,7 +62,7 @@ void AppCore::Core::restartLayout()
 	//this->thr->wait();
 	//delete this->thr;
 
-	this->alg->SetGraph( Manager::GraphManager::getInstance()->getActiveGraph() );
+	this->alg->SetGraph( Manager::GraphManager::getInstance()->getActiveGraph(), fixedPositions );
 
 	this->alg->SetParameters( 50,0.7f,true );
 	this->thr = new Layout::LayoutThread( this->alg );

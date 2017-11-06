@@ -75,7 +75,7 @@ public:
 	 * \fn createNewGraph
 	 * \brief Creates new graph.
 	 */
-	Data::Graph* createNewGraph( QString name );
+	Data::Graph* createNewGraph( QString name, bool fixedPositions = false );
 
 
 	/**

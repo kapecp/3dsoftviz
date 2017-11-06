@@ -60,6 +60,10 @@ void LayoutThread::setAlphaEdgeBundlingValue( float val )
 {
 	alg->SetAlphaEdgeBundlingValue( val );
 }
+void LayoutThread::setProjectiveForceEnabled( bool enable )
+{
+	alg->setProjectiveForceEnabled( enable );
+}
 void LayoutThread::pauseAllAlg()
 {
 	//order is important

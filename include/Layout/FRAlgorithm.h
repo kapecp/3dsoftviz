@@ -172,6 +172,24 @@ public:
 		return MAX_DISTANCE;
 	}
 
+	/**
+		* \fn public void setProjectiveForceEnabled
+		* \brief Set projective force on/off computation, depend on value
+		*/
+	void setProjectiveForceEnabled( bool value )
+	{
+		projectiveForceEnabled = value;
+	}
+
+	/**
+		* \fn public void setProjectiveForceEnabled
+		* \brief Return if projective force is enabled
+		*/
+	bool getProjectiveForceEnabled()
+	{
+		return projectiveForceEnabled;
+	}
+
 private:
 	Layout::RadialLayout* rl;
 
@@ -250,6 +268,12 @@ private:
 		*  \brief normal length of edge, rest mass of chord
 		*/
 	double K;
+
+	/**
+	    *  double M
+	    *  \brief margin between nodes
+	    */
+	double M;
 
 	/**
 		*  osg::Vec3f center
@@ -462,6 +486,56 @@ private:
 		 * \brief Last focused node (if any).
 		 */
 	Data::Node* mLastFocusedNode;
+
+	/**
+		* \fn private bool mayOverlap( Data::Node* u, Data::Node* v )
+		* \brief Check if two nodes are overlaping in camera view
+		* \param       u - vector U
+		* \param       v - vector V
+		* \return return if nodes overlap
+		*/
+	bool mayOverlap( Data::Node* u, Data::Node* v );
+
+	/**
+		* \fn private void addProjectiveForce( Data::Node* u, Data::Node* v )
+		* \brief Compute projective force and add it to both nodes
+		* \param       u - vector U
+		* \param       v - vector V
+		*/
+	void addProjectiveForce( Data::Node* u, Data::Node* v );
+
+	/**
+		* \fn private osg::Vec3f getProjVector( Data::Node* u, Data::Node* v )
+		* \param       u - vector U
+		* \param       v - vector V
+		* \brief Compute projective vector
+		* \return Return computed projective vector
+		*/
+	osg::Vec3f getProjVector( Data::Node* u, Data::Node* v );
+
+	/**
+		* \fn private float getMinProjDistance( Data::Node* u, Data::Node* v, osg::Vec3f pv )
+		* \param       u - vector U
+		* \param       v - vector V
+		* \param      pv - projective vector
+		* \brief Compute minimal distance between nodes. If length of projective vector is 0, then return 0.
+		* \return Return u.Radius + v.Radius + M (margin)
+		*/
+	float getMinProjDistance( Data::Node* u, Data::Node* v, osg::Vec3f pv );
+
+	/**
+		* \fn private float proj( float distance, float ideal )
+		* \brief Compute projective force
+		* \param distance - current distance
+		* \param    ideal - ideal distance
+		* \return Return projective force as float
+		*/
+	float proj( float distance, float ideal );
+
+	/**
+		* \brief Indicates if is projective force enabled
+		*/
+	bool projectiveForceEnabled = false;
 
 };
 }

@@ -277,7 +277,7 @@ Data::Graph* Manager::GraphManager::createNewMatrixGraph( QString name )
 }
 
 
-Data::Graph* Manager::GraphManager::createNewGraph( QString name )
+Data::Graph* Manager::GraphManager::createNewGraph( QString name, bool fixedPositions )
 {
 	bool ok = true;
 
@@ -310,7 +310,7 @@ Data::Graph* Manager::GraphManager::createNewGraph( QString name )
 
 	if ( ok ) {
 		// robime zakladnu proceduru pre restartovanie layoutu
-		AppCore::Core::getInstance()->restartLayout();
+		AppCore::Core::getInstance()->restartLayout( fixedPositions );
 	}
 
 	return ( ok ? this->activeGraph.get() : NULL );
