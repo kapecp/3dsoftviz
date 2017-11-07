@@ -82,8 +82,6 @@
 #include <Shapes/Cuboid.h>
 #include <Manager/ResourceManager.h>
 
-#include "Util/ApplicationConfig.h"
-
 #ifdef OPENCV_FOUND
 #include "OpenCV/OpenCVCore.h"
 #endif
@@ -1356,17 +1354,16 @@ QWidget* CoreWindow::createEvolutionTab( QFrame* line )
 
 QWidget* CoreWindow::createMagicLensTab ( QFrame* line )
 {
-    QWidget* wLens = new QWidget();
-    QFormLayout* lLens = new QFormLayout( wLens );
-    lLens->setContentsMargins( 1,1,1,1 );
-    lLens->setSpacing( 2 );
+	QWidget* wLens = new QWidget();
+	QFormLayout* lLens = new QFormLayout( wLens );
+	lLens->setContentsMargins( 1,1,1,1 );
+	lLens->setSpacing( 2 );
 
-    //lLens->addRow( new QLabel( ( tr( "Life span:" ) ) ));
-    b_magic_lens->setMaximumWidth( 136 );
-    lLens->addRow( b_magic_lens );
-    wLens->setLayout( lLens );
+	b_magic_lens->setMaximumWidth( 136 );
+	lLens->addRow( b_magic_lens );
+	wLens->setLayout( lLens );
 
-    return wLens;
+	return wLens;
 }
 
 void CoreWindow::createGraphSlider()
@@ -1415,7 +1412,7 @@ void CoreWindow::createLeftToolBar()
 	toolBox->addItem( wManage, tr( "Connections" ) );
 	toolBox->addItem( wEvolution, tr( "Evolution" ) );
 	toolBox->addItem( wMore, tr( "More features" ) );
-    toolBox->addItem( wLens, tr( "Magic Lens" ) );
+	toolBox->addItem( wLens, tr( "Magic Lens" ) );
 	toolBar = new QToolBar( "Tools",this );
 
 	QFrame* frame = createHorizontalFrame();
@@ -2561,7 +2558,7 @@ void CoreWindow::switchBackgroundLeap()
 
 void CoreWindow::labelOnOff( bool )
 {
-    if ( viewerWidget->getPickHandler()->getSelectionType() == Vwr::PickHandler::SelectionType::EDGE ) {
+	if ( viewerWidget->getPickHandler()->getSelectionType() == Vwr::PickHandler::SelectionType::EDGE ) {
         edgeLabelsVisible = !edgeLabelsVisible;
         coreGraph->setEdgeLabelsVisible( edgeLabelsVisible );
     }

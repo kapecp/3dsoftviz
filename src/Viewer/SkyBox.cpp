@@ -176,7 +176,7 @@ osg::Node* SkyBox::createSkyBox( int skyboxType )
 
 	osg::ClearNode* clearNode = new osg::ClearNode;
 	//  clearNode->setRequiresClear(false);
-    clearNode->setCullCallback( new TexMatCallback( *tm ) );
+	clearNode->setCullCallback( new TexMatCallback( *tm ) );
 	clearNode->addChild( transform );
 
 	return clearNode;
