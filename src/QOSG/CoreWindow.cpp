@@ -848,12 +848,12 @@ void CoreWindow::createActions()
 	connect( cb_git_files, SIGNAL( currentIndexChanged( int ) ), this, SLOT( changeEvolutionFilterSpecificOption( int ) ) );
 	// garaj end
 
-    //stefcak
-    b_magic_lens = new QPushButton( tr( "Magic Lens" ) );
-    b_magic_lens->setToolTip( "&Turn on/off Magic Lens" );
-    b_magic_lens->setCheckable( true );
-    b_magic_lens->setFocusPolicy( Qt::NoFocus );
-    connect( b_magic_lens, SIGNAL( clicked( bool ) ), this, SLOT( magicLensOnOff( bool ) ) );
+	//stefcak
+	b_magic_lens = new QPushButton( tr( "Magic Lens" ) );
+	b_magic_lens->setToolTip( "&Turn on/off Magic Lens" );
+	b_magic_lens->setCheckable( true );
+	b_magic_lens->setFocusPolicy( Qt::NoFocus );
+	connect( b_magic_lens, SIGNAL( clicked( bool ) ), this, SLOT( magicLensOnOff( bool ) ) );
 
 }
 
@@ -1447,7 +1447,7 @@ void CoreWindow::createLeftToolBar()
 
 	QWidget* wMore = createMoreFeaturesTab( line );
 
-    QWidget* wLens = createMagicLensTab( line );
+	QWidget* wLens = createMagicLensTab( line );
 
 	toolBox = new QToolBox();
 	toolBox->setSizePolicy( QSizePolicy( QSizePolicy::Maximum, QSizePolicy::Ignored ) );
@@ -2769,9 +2769,6 @@ void CoreWindow::nodeTypeComboBoxChanged( int index )
 		case 2:
 			coreGraph->setNodeVisual( Data::Node::INDEX_RESIDENCE );
 			break;
-		case 3:
-			coreGraph->setNodeVisual( Data::Node::INDEX_MODULE );
-			break;
 		default:
 			qDebug() << "CoreWindow:nodeTypeComboBoxChanged do not suported index";
 			break;
@@ -3944,19 +3941,19 @@ void CoreWindow::restartLayouting()
 
 void CoreWindow::magicLensOnOff( bool )
 {
-    double aspectRatio = static_cast<double>( width() )/static_cast<double>( height() );
-    if(viewerWidget->getNumSlaves()==0){
-        osg::ref_ptr<osg::Camera> lensCamera = new osg::Camera;
-        lensCamera->setCullMask(0x2);
-        lensCamera->setGraphicsContext(viewerWidget->getGraphicsWindow());
-        lensCamera->setViewport(new osg::Viewport((viewerWidget->width()/4),(viewerWidget->height()/4),viewerWidget->width()/2,viewerWidget->height()/2));
-        lensCamera->setReferenceFrame(osg::Transform::RELATIVE_RF);
-        //viewerWidget->addSlave(lensCamera.get(), osg::Matrix::scale(aspectRatio,aspectRatio,1), osg::Matrix(), true);
-        viewerWidget->addSlave(lensCamera.get(), osg::Matrixd(), osg::Matrix::scale(2,2,1), true);
-        }
-        else{
-            viewerWidget->removeSlave(0);
-        }
+	double aspectRatio = static_cast<double>( width() )/static_cast<double>( height() );
+	if(viewerWidget->getNumSlaves()==0){
+		osg::ref_ptr<osg::Camera> lensCamera = new osg::Camera;
+		lensCamera->setCullMask(0x2);
+		lensCamera->setGraphicsContext(viewerWidget->getGraphicsWindow());
+		lensCamera->setViewport(new osg::Viewport((viewerWidget->width()/4),(viewerWidget->height()/4),viewerWidget->width()/2,viewerWidget->height()/2));
+		lensCamera->setReferenceFrame(osg::Transform::RELATIVE_RF);
+		//viewerWidget->addSlave(lensCamera.get(), osg::Matrix::scale(aspectRatio,aspectRatio,1), osg::Matrix(), true);
+		viewerWidget->addSlave(lensCamera.get(), osg::Matrixd(), osg::Matrix::scale(2,2,1), true);
+		}
+		else{
+			viewerWidget->removeSlave(0);
+		}
 }
 
 // TODO - toto by sa mohlo robit uz pri oznaceni zhluku a nie explicitne cez button
