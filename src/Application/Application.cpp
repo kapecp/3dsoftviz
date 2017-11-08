@@ -1,10 +1,13 @@
 #include "Application/Application.h"
-
+#include <QtGlobal>
 #include <QDebug>
-
 #if defined(Q_WS_X11) || defined(Q_OS_LINUX)
+#if QT_VERSION >= 0x050000
+//todo
+#elif QT_VERSION < 0x050000
 #include <X11/Xlib.h>
 #include "fixx11.h"
+#endif
 #endif
 
 namespace App {
@@ -23,6 +26,9 @@ Application::~Application()
 }
 
 #if defined(Q_WS_X11) || defined(Q_OS_LINUX)
+#if QT_VERSION >= 0x050000
+//todo
+#elif QT_VERSION < 0x050000
 bool Application::x11EventFilter( XEvent* event )
 {
 	//qDebug() << "x11EventFilter : eventType = " << event->type;
@@ -31,6 +37,7 @@ bool Application::x11EventFilter( XEvent* event )
 	}
 	return false;
 }
+#endif
 
 void Application::startEmitter( Mouse3dUnixDevice* device )
 {
@@ -46,5 +53,4 @@ void Application::stopEmitter()
 	delete this->emitter;
 }
 #endif
-
 } //App

@@ -77,7 +77,7 @@ int main( int argc, char* argv[] )
 	// This is needed for 3DConnecetion mouse
 #if QT_VERSION >= 0x050000
 	// todo
-#elseif QT_VERSION >= 0x040700
+#elif QT_VERSION < 0x050000
 	QCoreApplication::setAttribute( Qt::AA_X11InitThreads );
 #else
 	// todo

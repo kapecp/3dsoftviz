@@ -5,6 +5,7 @@ Forkovanie na GitHub-e
 ----------------------
 Fork na GitHub-e neprenesie tag-y do forknuteho repozitara, treba ich rucne preniest,
 v novom repozitari:
+
  * git remote add povodny-repozitar git@github.com:povodny-repozitar/nazov_repo.git
  * git fetch povodny-repozitar 'refs/tags/*:refs/tags/*'
  * git push --tags
@@ -13,7 +14,7 @@ Vetvy
 -----
 
  * Master - hlavny projekt
- * Develop - branchnuta z mastra, kazdy sprint ma vlastnu Develop vetvu, na konci sprintu sa mergne spat do mastra, 
+ * Develop - branchnuta z mastra, kazdy sprint ma vlastnu Develop vetvu, na konci sprintu sa mergne spat do mastra,
 	**!!! pred mergom treba spravit komplet build (nie len unity)**
  * Feature - branchnuta z developu, kazdy novy kus funkcionality (task v issue tracking nastroji), ktory sa kodi musi mat vlastnu
 
@@ -45,15 +46,16 @@ Commit messages
 
 v Commit messages pouzivame tagy a ID ulohy na zaciatok:
 
- * [FIX] - fixli sme nejaku chybu z minula, bugfix, hotfix a podobne
- * [ADD] - pridali sme novu funkcionalitu, subor, ...
- * [DOC] - pridali sme dokumentaciu, komenty...
- * [REF] - pre refactoring
- * [FMT] - formatovanie textu, uprava
- * [TEST] - pre testy
+* [FIX] - fixli sme nejaku chybu z minula, bugfix, hotfix a podobne
+* [ADD] - pridali sme novu funkcionalitu, subor, ...
+* [DOC] - pridali sme dokumentaciu, komenty...
+* [REF] - pre refactoring
+* [FMT] - formatovanie textu, uprava
+* [TEST] - pre testy
+* [BUILD] - aktualizacia CMake build systemu, modulov
 
 Za tym velmi strucne (a vystizne) opiseme, ake zmeny sme spravili. Message by mali byt kratke, no pokryvat vsetko, co sme v commite spravili.
-**!!! vseobecny tvar: "[tag] #taskId Popis vykonanej zmeny" **
+**!!! vseobecny tvar: "[tag] #taskId Popis vykonanej zmeny"**
 Napr. *[DOC] #3654 Pridanie uvadzania ID ulohy do gitflow metodiky*
 
 Useful commands
@@ -91,5 +93,5 @@ Uzatvorenie Hotfix branchu:
 
  * $ git checkout develop					//Switched to branch 'develop'
  * $ git merge --no-ff "hotfix/nazov-co-fixujem"
- 
+
  .. |Branching| image:: /images/branching.png

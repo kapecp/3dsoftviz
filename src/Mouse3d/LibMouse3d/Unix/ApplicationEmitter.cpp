@@ -18,6 +18,9 @@ ApplicationEmitter::~ApplicationEmitter()
 {
 }
 
+#if QT_VERSION >= 0x050000
+//todo
+#elif QT_VERSION < 0x050000
 void ApplicationEmitter::emitX11Event( XEvent* event )
 {
 	//qDebug() << "emitX11Event : eventType = " << event->type;
@@ -28,3 +31,4 @@ void ApplicationEmitter::emitX11Event( XEvent* event )
 	//Cheap, dirty but working solution
 	device->translateX11Event( event );
 }
+#endif

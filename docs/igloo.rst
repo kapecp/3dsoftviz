@@ -1,4 +1,4 @@
-Metodika na písanie BDD testov 
+Metodika na písanie BDD testov
 ==============================
 
 Písanie testov
@@ -7,22 +7,23 @@ Písanie testov
 1. Vytvorme normálny .cpp súbor a v hlavičke uveďme:
 
 ::
-	
+
 	#include <igloo/igloo_alt.h>
 	using namespace igloo;
-		
+
 2. Najskôr popíšeme, čo chceme testovať pomocou Describe-u:
 
 ::
-	
+
 	Describe(a_foo_bar) {
 	...
 	}
 
-3. V tele Describe-u uvedieme funkcie, ktorými budeme testovať spravanie. 
+3. V tele Describe-u uvedieme funkcie, ktorými budeme testovať spravanie.
    Funkcie pomenujme tak, aby boli samoopisné:
-::	
-	
+
+::
+
 	It( foo_should_be_bar ) {
 	...
 	}
@@ -37,19 +38,19 @@ Písanie testov
 Spustenie testov
 ----------------
 
-1. Testy (vsetky *.cpp) pre vas modul umiestnujte do priecinka:
-	
+
+1. Testy (vsetky \*.cpp) pre vas modul umiestnujte do priecinka:
+
 ::
 
 	~root/tests/Foo
 
-Testy fungujú tak, že si buildnete vlastný .exe súbor, ktorý odtestuje danú 
-funkcionalitu. Test si buildnete následovne:
+Testy fungujú tak, že si buildnete vlastný .exe súbor, ktorý odtestuje danú funkcionalitu. Test si buildnete následovne:
 	- otvorte hlavný CMakeLists.txt
 	- ctrl+f -> "BDD Igloo tests"
 
 2. Teraz si potrebujete nakopirovat nejaky kod, minimalne by ste mali mat:
-	
+
 ::
 
 	file( GLOB_RECURSE SRC_FOO_TESTS	"tests/Foo/*.cpp" )
