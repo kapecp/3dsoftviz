@@ -440,7 +440,7 @@ osg::ref_ptr<osg::Geode> Data::Edge::createEdgeLine( osg::StateSet* bbState )
 	geode->getOrCreateStateSet()->setAttributeAndModes( linewidth,
 			osg::StateAttribute::ON );
 	geode->getOrCreateStateSet()->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
-	geode->setNodeMask( 0x2 );
+
 	geode->addDrawable( nodeLine );
 
 	return geode;
