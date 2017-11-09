@@ -1797,7 +1797,9 @@ void CoreGraph::setNodeVisual( unsigned int index )
 		++iMetaNode;
 	}
 
-	graph->setNodeVisual( index );
+	if ( graph != NULL ) {
+		graph->setNodeVisual( index );
+	}
 }
 
 void CoreGraph::setEdgeVisual( int index )
@@ -1816,7 +1818,9 @@ void CoreGraph::setEdgeVisual( int index )
 		++iMetaEdge;
 	}
 
-	graph->setEdgeVisual( index );
+	if ( graph != NULL ) {
+		graph->setEdgeVisual( index );
+	}
 }
 
 void CoreGraph::setEdgeVisualForType( int index, QString edgeTypeName )
