@@ -4,11 +4,11 @@ Network
 Network:
 
    .. uml::
-      
-      !include /uml/Network1.wsd
+
+      !include uml/Network1.wsd
 
 Network (complete):
 
    .. uml::
-      
-      !include /uml/Network(complete).wsd
+
+      !include uml/Network(complete).wsd
