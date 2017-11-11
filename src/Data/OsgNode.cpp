@@ -594,12 +594,21 @@ void Data::OsgNode::computeSize()
 {
 	unsigned int visual = graph->getNodeVisual();
 	osg::Node* node = this->getChild( visual );
-	osg::Transform* at = node->asTransform();
-	osg::Geode* geo = at->getChild( 0 )->asGeode();
-	osg::BoundingBox box = geo->getBoundingBox();
-	setSize( osg::Vec3f( ( box.xMax() - box.xMin() ),
-						 ( box.yMax() - box.yMin() ),
-						 ( box.zMax() - box.zMin() ) ) );
+	if ( node != NULL ) {
+
+		osg::Transform* at = node->asTransform();
+		if ( at != NULL && at->getNumChildren() > 0 ) {
+
+			osg::Geode* geo = at->getChild( 0 )->asGeode();
+			if ( geo != NULL ) {
+
+				osg::BoundingBox box = geo->getBoundingBox();
+				setSize( osg::Vec3f( ( box.xMax() - box.xMin() ),
+									 ( box.yMax() - box.yMin() ),
+									 ( box.zMax() - box.zMin() ) ) );
+			}
+		}
+	}
 }
 
 float Data::OsgNode::getRadius()
