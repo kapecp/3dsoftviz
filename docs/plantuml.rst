@@ -109,7 +109,9 @@ duplicitu ľahko odstrániť.
     }
     @enduml
 
-*V oboch prípadoch bude výsledok nasledovný:* |Example| 
+*V oboch prípadoch bude výsledok nasledovný:*
+
+.. image:: images/plantuml1.png
 
 V druhom prípade
 sa rozhodne menej napíšeme a máme možnosť meniť použité názvy tried na
@@ -143,7 +145,9 @@ sú však podporované v class diagrame.
 
     @enduml
 
-*Výsledok:* |Example1|
+*Výsledok:*
+
+.. image:: images/plantuml2.png
 
 Užitočnosť týchto skratiek (a makier) pochopiteľne narastá s
 narastajúcou komplexitou daného diagramu.
@@ -170,6 +174,3 @@ Samotné UML diagramy je potrebné rozdeliť do prehľadnej súborovej
          -  use-case diagrams
          -  sequence diagrams
          -  state diagrams
-
-.. |Example| image:: /images/plantuml1.png
-.. |Example1| image:: /images/plantuml2.png

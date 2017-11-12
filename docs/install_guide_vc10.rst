@@ -77,7 +77,7 @@ Postup inštalácie
 
           - ak došlo k erroru: File > Delete Cache a skúsiť znovu
 
-       .. figure:: /images/install_guide/CMAKE_BUILD_OSG.png
+       .. figure:: images/install_guide/CMAKE_BUILD_OSG.png
           :align: center
 
           CMake pre OSG
@@ -98,7 +98,7 @@ Postup inštalácie
 
     Ideálne je mať všetko na spoločnom mieste kvôli prehľadnosti, napr.
 
-       .. figure::  /images/install_guide/SW_FOLDERS.png
+       .. figure::  images/install_guide/SW_FOLDERS.png
           :align: center
 
           Nainštalovaný SW
@@ -115,7 +115,7 @@ Postup inštalácie
        #. *%OPENCV_DIR%*/build/x86/vc10/bin
 
 
-       .. figure:: /images/install_guide/PATH_VAR.png
+       .. figure:: images/install_guide/PATH_VAR.png
           :align: center
 
           PATH premenná
@@ -127,7 +127,7 @@ Postup inštalácie
        #. *%OPENCV_DIR%*/build/include
 
 
-       .. figure:: /images/install_guide/CMAKE_INCLUDE_PATH_VAR.png
+       .. figure:: images/install_guide/CMAKE_INCLUDE_PATH_VAR.png
           :align: center
 
           CMAKE_INCLUDE_PATH premenná
@@ -140,7 +140,7 @@ Postup inštalácie
        #. *%OPENCV_DIR%*/build/x86/vc10/lib
 
 
-       .. figure:: /images/install_guide/CMAKE_LIBRARY_PATH_VAR.png
+       .. figure:: images/install_guide/CMAKE_LIBRARY_PATH_VAR.png
           :align: center
 
           CMAKE_LIBRARY_PATH premenná
@@ -150,7 +150,7 @@ Postup inštalácie
     #. Vytvoriť premennú BOOST_ROOT a pridať: *%BOOST_DIR%*
 
 
-       .. figure::  /images/install_guide/BOOST_VAR.png
+       .. figure::  images/install_guide/BOOST_VAR.png
           :align: center
 
           BOOST premmené
@@ -158,7 +158,7 @@ Postup inštalácie
     #. Vytvoriť premennú OPENCV_DIR a pridať: *%OPENCV_DIR%*/build
 
 
-       .. figure::  /images/install_guide/OPENCV_DIR_VAR.png
+       .. figure::  images/install_guide/OPENCV_DIR_VAR.png
           :align: center
 
           OPENCV_DIR premenná
@@ -173,7 +173,7 @@ Postup inštalácie
     #. záložka Kits – vytvoriť nový a vybrať hodnoty nasledovne:
 
 
-       .. figure:: /images/install_guide/QTC_OPTIONS_KITS.png
+       .. figure:: images/install_guide/QTC_OPTIONS_KITS.png
           :align: center
 
           QtC Kits nastavenia
@@ -194,7 +194,7 @@ Postup inštalácie
  #. Stlačiť Run CMake
 
 
-       .. figure:: /images/install_guide/QTC_CMAKE_WIZARD.png
+       .. figure:: images/install_guide/QTC_CMAKE_WIZARD.png
           :align: center
 
           QtC CMake wizard
@@ -208,7 +208,7 @@ Postup inštalácie
  #. Prejsť na vytvorený build config. „unity“, v časti Build Steps otvoriť Details a zaškrtnúť pri build step *jom.exe* možnosť *install_unity*
 
 
-       .. figure:: /images/install_guide/QTC_PROJECT_BUILD.png
+       .. figure:: images/install_guide/QTC_PROJECT_BUILD.png
           :align: center
 
           QtC build project
@@ -216,7 +216,7 @@ Postup inštalácie
  #. Skontrolovať nastavenie build config – unity
 
 
-       .. figure::  /images/install_guide/QTC_PROJECT_BUILD_CONFIG.png
+       .. figure::  images/install_guide/QTC_PROJECT_BUILD_CONFIG.png
           :align: center
 
           QtC build config
@@ -228,7 +228,7 @@ Postup inštalácie
     #. working directory: *%3DSoftViz%*/_install/bin/
 
 
-       .. figure:: /images/install_guide/QTC_PROJECT_RUN.png
+       .. figure:: images/install_guide/QTC_PROJECT_RUN.png
           :align: center
 
           QtC run project
@@ -236,7 +236,7 @@ Postup inštalácie
  #. Skontrolovať nastavenie run config – zadaná cesta
 
 
-       .. figure::  /images/install_guide/QTC_PROJECT_RUN_CONFIG.png
+       .. figure::  images/install_guide/QTC_PROJECT_RUN_CONFIG.png
           :align: center
 
           QtC run config
@@ -250,7 +250,7 @@ Rozšírenie 3DSoftviz o Kinect
  #. Skontrolovať v RapidEE či sa vytvorila premenná *%KINECTSDK10_DIR%*
 
 
-       .. figure::  /images/install_guide/KINECTSDK_VAR.png
+       .. figure::  images/install_guide/KINECTSDK_VAR.png
           :align: center
 
           KINECTSDK10_DIR premenná
@@ -267,7 +267,7 @@ Rozšírenie 3DSoftviz o Kinect
     #. *%OPENNI2_ROOT%*
 
 
-       .. figure::  /images/install_guide/OPENNI2_VAR.png
+       .. figure::  images/install_guide/OPENNI2_VAR.png
           :align:   center
 
           NITE2 premenné
@@ -284,7 +284,7 @@ Rozšírenie 3DSoftviz o Kinect
     #. *%NITE2_ROOT%*
 
 
-       .. figure::  /images/install_guide/NITE2_VAR.png
+       .. figure::  images/install_guide/NITE2_VAR.png
           :align:   center
 
           OPENNI2 premenné
@@ -295,7 +295,7 @@ Rozšírenie 3DSoftviz o Kinect
     #. *%NITE2_INCLUDE%*
 
 
-       .. figure::  /images/install_guide/CMAKE_INCLUDE_PATH_FULL_VAR.png
+       .. figure::  images/install_guide/CMAKE_INCLUDE_PATH_FULL_VAR.png
           :align:   center
 
           OPENNI2 premenné
@@ -310,7 +310,7 @@ Rozšírenie 3DSoftviz o Kinect
     #. *%NITE2_LIB%*
 
 
-       .. figure::  /images/install_guide/CMAKE_LIBRARY_PATH_FULL_VAR.png
+       .. figure::  images/install_guide/CMAKE_LIBRARY_PATH_FULL_VAR.png
           :align:   center
 
           OPENNI2 premenné
@@ -323,7 +323,7 @@ Rozšírenie 3DSoftviz o Kinect
     #. *%NITE2_ROOT%*/Samples/Bin
 
 
-       .. figure::  /images/install_guide/PATH_FULL_VAR.png
+       .. figure::  images/install_guide/PATH_FULL_VAR.png
           :align:   center
 
           OPENNI2 premenné
@@ -341,7 +341,7 @@ Nastavenie debuggera v QtCreator
  #. Skontrolovať v QtCreator Tools > Options > Build & Run > záložka Debuggers či sú autodetected
 
 
-       .. figure::  /images/install_guide/QTC_OPTIONS_DEBUGGERS.png
+       .. figure::  images/install_guide/QTC_OPTIONS_DEBUGGERS.png
           :align:   center
 
           QtC debugger nastavenia
