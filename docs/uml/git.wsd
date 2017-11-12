@@ -3,43 +3,42 @@
 package Git {
 
 package GitLib {
-class GitEvolutionGraph -down- GitUtils
+GitEvolutionGraph -down- GitUtils
 GitEvolutionGraph *-down- GitVersion
 GitVersion *-down- GitFile
 GitFile -up- GitType
 GitFile *-down- GitFileDiffBlock
 GitFile -down- GitFileLoader
 GitFile *-down- GitFunction
-GitFunction *-- GitFunction 
+GitFunction *-- GitFunction
 GitFunction -down- GitFunctionType
 GitFileDiffBlock -down- GitFileLoader
 GitFileDiffBlock *-down- GitFileDiffBlockLine
 GitFileDiffBlockLine -down- GitFileLoader
-GitFileDiffBlockLine -up- GitType 
+GitFileDiffBlockLine -up- GitType
 GitVersion -down- GitFileLoader
 GitEvolutionGraph -down- GitEvolutionGraphManager
 GitEvolutionGraph -down- GitMetaData
 }
 
-class GitGraphUpdater -left- GitEvolutionGraph
-GitGraphUpdater -left- GitType 
+GitGraphUpdater -left- GitEvolutionGraph
+GitGraphUpdater -left- GitType
 GitGraphUpdater -left- GitFile
 GitGraphUpdater - GitVersion
 }
 
 package Data {
-class Node - GitGraphUpdater
-class Edge - GitGraphUpdater
-class Graph - GitGraphUpdater
+Node - GitGraphUpdater
+Edge - GitGraphUpdater
+Graph - GitGraphUpdater
 }
 
 package Manager {
-class Manager
 Manager - GitGraphUpdater
 }
 
 package Importer {
-class GraphOperations - GitGraphUpdater
+GraphOperations - GitGraphUpdater
 }
 
 @enduml
