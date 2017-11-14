@@ -37,7 +37,8 @@ Pull request sa robi z GUI GitHubu (pravy horny roh), alebo $ git request-pull {
 
 Po odsuhlaseni Pull requestu sa potom pristupi k mergu.
 
-|Branching|
+ .. image:: images/branching.png
+
 Obrazok ilustruje vytvorenie feature branch z develop vetvy, implementaciu rozdelenu do znazornenych commitov, nasledny pull request predstavujuci
 ziadost o code review a finalny merge do develop vetvy daneho sprintu.
 
@@ -93,5 +94,3 @@ Uzatvorenie Hotfix branchu:
 
  * $ git checkout develop					//Switched to branch 'develop'
  * $ git merge --no-ff "hotfix/nazov-co-fixujem"
-
- .. |Branching| image:: /images/branching.png

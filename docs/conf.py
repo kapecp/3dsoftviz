@@ -203,7 +203,7 @@ html_theme_path = ['']
 htmlhelp_basename = '3dsoftviz_doc'
 
 #plantuml command
-plantuml = 'java -jar c:/Python27/plantuml.jar'
+plantuml = 'java -jar ../dependencies/plantuml/plantuml.jar'
 
 # -- Options for LaTeX output ---------------------------------------------
 

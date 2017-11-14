@@ -1,9 +1,9 @@
 LeapSenzor
 ==========
 
-.. uml:: 
+.. uml::
 
-	!include /uml/LeapSenzor.wsd
+	!include uml/LeapSenzor.wsd
 
 LeapThread dedi of QThread
 - include Leap, LeapController
