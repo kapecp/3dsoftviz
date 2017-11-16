@@ -3,7 +3,7 @@
 
 #include <osg/Camera>
 #include <QList>
-#include <qDebug>
+#include <QDebug>
 
 namespace Util {
 
