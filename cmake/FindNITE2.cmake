@@ -9,17 +9,17 @@
 find_path( NITE2_INCLUDE_DIR
 	NAMES NiTE.h
         HINTS
-                /home/mikajel/Downloads/NiTE-Linux-x64-2.2/Include
-		/home/marek/NiTE-Linux-x64-2.2/Include
-		/home/kapec/Desktop/work-in-progress/NiTE-Linux-x64-2.2/Include
-		/home/kapecp/Desktop/Kinect/NiTE-Linux-x64-2.2/Include/
-		/Users/cimo/_TP/NiTE-MacOSX-x64-2.2/Include
+		/usr/include/
+		/usr/include/nite2
+		/usr/local/include/
+		/usr/local/include/nite2
 	PATHS $ENV{NITE2_INCLUDE}
 	)
 
 
 if( WIN32 )
 	find_path( OPENNI2_DLL NAMES Kinect.dll
+
 		PATHS $ENV{OPENNI2_REDIST}/OpenNI2/Drivers
 	)
 endif()
@@ -27,11 +27,10 @@ endif()
 find_library( NITE2_LIBRARY
 	NAMES NiTE2
 	HINTS
-                /home/mikajel/Downloads/NiTE-Linux-x64-2.2/Redist
-		/home/marek/NiTE-Linux-x64-2.2/Redist
-		/home/kapec/Desktop/work-in-progress/NiTE-Linux-x64-2.2/Redist
-		/home/kapecp/Desktop/Kinect/NiTE-Linux-x64-2.2/Redist/
-		/Users/cimo/_TP/NiTE-MacOSX-x64-2.2/Redist
+		/usr/lib/x86_64-linux-gnu/
+		/usr/lib/x86_64-linux-gnu/nite2
+		/usr/local/lib/
+		/usr/local/lib/nite2
 	PATHS
 		$ENV{NITE2_LIB}
 		$ENV{NITE2_REDIST64}

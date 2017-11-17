@@ -8,7 +8,10 @@
 
 find_path( FREENECT2_INCLUDE_DIR
 	NAMES libfreenect2.hpp
-	HINTS 
+	HINTS
+		/usr/include/
+		/usr/include/libfreenect2
+		/usr/local/include/
 		/usr/local/include/libfreenect2
 		PATHS
 			$ENV{FREENECT2_INCLUDE}
@@ -17,7 +20,10 @@ find_path( FREENECT2_INCLUDE_DIR
 find_library( FREENECT2_LIBRARY
 	NAMES libfreenect2.so Freenect2
 
-	HINTS 
+	HINTS
+		/usr/lib/x86_64-linux-gnu/
+		/usr/lib/x86_64-linux-gnu/libfreenect2
+		/usr/local/lib/
 		/usr/local/lib/libfreenect2
 		PATHS
 			$ENV{FREENECT2_LIB}
