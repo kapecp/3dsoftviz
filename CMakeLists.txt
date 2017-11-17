@@ -7,10 +7,9 @@
 project( 3DSoftviz C CXX )
 cmake_minimum_required( VERSION 2.8.11 )
 
-# --------------
-# 3DSoftviz Info
-# --------------
-
+# ------------------------------------------------------------
+# -------------------3DSoftviz Info
+# ------------------------------------------------------------
 set( 3DSOFTVIZ_NAME "3DSoftviz" )
 set( 3DSOFTVIZ_LONGNAME "3DSoftviz - Generic 3D graph visualization tool for software visualization" )
 set( 3DSOFTVIZ_VERSION_MAJOR "0" )
@@ -24,14 +23,13 @@ set( 3DSOFTVIZ_DOMAIN_FIRST "stuba" )
 set( 3DSOFTVIZ_DOMAIN_SECOND "sk" )
 set( 3DSOFTVIZ_DOMAIN "${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_DOMAIN_SECOND}" )
 
-# --------------
-# Build settings
-# --------------
-
+# ------------------------------------------------------------
+# ----------------------Build settings------------------------
+# ------------------------------------------------------------
 # Additional CMake scripts
 set( CMAKE_MODULE_PATH
-	"${CMAKE_CURRENT_SOURCE_DIR}/cmake"
-	${CMAKE_MODULE_PATH} )
+		"${CMAKE_CURRENT_SOURCE_DIR}/cmake"
+		${CMAKE_MODULE_PATH} )
 
 # Enable C++11 features
 set(CMAKE_CXX_STANDARD 11)
@@ -44,9 +42,9 @@ if( USE_STRICT_COMPILE_WARNINGS )
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
 		# using Clang
 		set( FLAGS_FOR_DEBUG
-			-Weverything
-			-Wno-c++98-compat -Wno-documentation -Wno-shadow -Wno-padded -Wno-covered-switch-default
-			-pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused -Wno-documentation-unknown-command )
+				-Weverything
+				-Wno-c++98-compat -Wno-documentation -Wno-shadow -Wno-padded -Wno-covered-switch-default
+				-pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal  -Wformat  -Wformat-nonliteral -Wformat-security  -Wformat-y2k -Wformat=2  -Wimport  -Winit-self -Winline -Winvalid-pch -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wpacked  -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare  -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings  -Wno-unused-parameter -Wno-unused -Wno-documentation-unknown-command )
 	elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR CMAKE_COMPILER_IS_GNUCXX)
 		# using GCC
 		set( FLAGS_FOR_DEBUG -pedantic -Wall -Wcast-align -Wcast-qual -Wchar-subscripts -Wcomment -Wconversion -Wctor-dtor-privacy -Wdisabled-optimization -Wextra -Wfloat-equal -Wformat -Wformat-nonliteral -Wformat-security -Wformat-y2k -Wformat=2 -Wimport -Winit-self -Winline -Winvalid-pch -Wlogical-op -Wlong-long -Wmissing-braces -Wmissing-declarations -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -Wnoexcept -Wpacked -Wparentheses -Wpointer-arith -Wredundant-decls -Wreturn-type -Wsequence-point -Wsign-compare -Wsign-promo -Wstack-protector -Wstrict-aliasing=2 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch -Wswitch-default -Wswitch-enum -Wtrigraphs -Wundef -Wuninitialized -Wunknown-pragmas -Wunreachable-code -Wunsafe-loop-optimizations -Wvariadic-macros -Wvolatile-register-var -Wwrite-strings -Wold-style-cast -Woverloaded-virtual -Wuseless-cast -Wsign-conversion -Wno-unused-parameter -Wno-unused )
@@ -93,10 +91,17 @@ if (USE_LD_GOLD)
 	endif ()
 endif ()
 
-# --------------
-# Build settings - COTIRE module
-# --------------
-include( cotire )
+# ------------------------------------------------------------
+# -----------------Build settings - COTIRE module-------------
+# ------------------------------------------------------------
+option(SKIP_COTIRE "Skip Cotire module build speed-up." OFF)
+
+if (NOT SKIP_COTIRE)
+	include(cotire)
+else ()
+	message(STATUS "Skipped Cotire module build speed-up.")
+endif ()
+
 if(COMMAND cotire )
 	if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
 		include( ProcessorCount )
@@ -136,44 +141,52 @@ if(COMMAND cotire )
 endif()
 
 # ------------------------------------------------------------
-# Dependencies - Searching external dependencies
+# -----Dependencies - Searching external dependencies---------
 # ------------------------------------------------------------
-
 set( ALL_SYSTEM_HEADERS )
 set( ALL_COMPILE_DEFINITIONS )
-
-
-# ------------------------------ Qt -------------------------------
 set( CMAKE_AUTOMOC ON )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
-# Find Qt5
-find_package( Qt5
-		CONFIG
-		COMPONENTS
-			Core Widgets Gui OpenGL Sql
+# ------------------------------------------------------------
+# --------------------------- Qt -----------------------------
+# ------------------------------------------------------------
+option(USE_QT4_FORCED "Force using Qt4 packages." OFF)
+
+if (NOT USE_QT4_FORCED)
+	# Find Qt5
+	find_package(Qt5
+			CONFIG COMPONENTS
+			Widgets Gui OpenGL Sql
 			WebEngine WebEngineWidgets
 			Xml Network
-		QUIET )
+			QUIET)
+endif ()
 
 # Find Qt4
-if ( NOT Qt5_FOUND )
-	find_package( Qt4 COMPONENTS QtCore QtGui QtOpenGL QtSql QtWebKit QtXml QtNetwork REQUIRED)
-	set( QT_USE_QTOPENGL 1 )
-	set( QT_USE_QTSQL 1 )
-	set( QT_USE_QTWEBKIT 1 )
-	set( QT_USE_QTXML 1 )
-	set( QT_USE_QTNETWORK 1 )
-	include( ${QT_USE_FILE} )
-endif()
+if (NOT Qt5Core_FOUND)
+	find_package(Qt4
+			COMPONENTS
+			QtCore QtGui QtOpenGL QtSql
+			QtWebKit QtXml QtNetwork
+			REQUIRED)
+	set(QT_USE_QTOPENGL 1)
+	set(QT_USE_QTSQL 1)
+	set(QT_USE_QTWEBKIT 1)
+	set(QT_USE_QTXML 1)
+	set(QT_USE_QTNETWORK 1)
+	include(${QT_USE_FILE})
+endif ()
 
-if ( Qt5Core_FOUND )
+if (USE_QT4_FORCED)
+	message("Forced using Qt4 packages (deprecated)")
+elseif (Qt5Core_FOUND)
 	message(STATUS "Using Qt5 packages")
-elseif( Qt4_FOUND )
-	message(STATUS "Using Qt4 packages")
-else()
+elseif (Qt4_FOUND)
+	message(STATUS "Using Qt4 packages (deprecated)")
+else ()
 	message(STATUS "No suitable Qt packages found")
-endif()
+endif ()
 
 # add special flag to GCC compiler when using Qt 4.6.x with GCC >4.6
 if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
@@ -183,30 +196,31 @@ if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
 	set( CMAKE_CXX_FLAGS "-fpermissive" )
 endif()
 
-# ------------------------------ OpenSceneGraph -------------------------------
-
+# ------------------------------------------------------------
+# --------------------- OpenSceneGraph -----------------------
+# ------------------------------------------------------------
 # Find OpenGL
 find_package( OpenGL REQUIRED)
 
 # Find OpenSceneGraph
 find_package( OpenSceneGraph COMPONENTS
-	osgGA
-	osgUtil
-	OpenThreads
-	osg
-	osgAnimation
-	osgDB
-	osgFX
-	#osgIntrospection
-	osgManipulator
-	osgParticle
-	osgShadow
-	osgSim
-	osgTerrain
-	osgText
-	osgVolume
-	osgWidget
-)
+		osgGA
+		osgUtil
+		OpenThreads
+		osg
+		osgAnimation
+		osgDB
+		osgFX
+		#osgIntrospection
+		osgManipulator
+		osgParticle
+		osgShadow
+		osgSim
+		osgTerrain
+		osgText
+		osgVolume
+		osgWidget
+		)
 
 message( STATUS "Using OpenSceneGraph version: " ${OPENSCENEGRAPH_VERSION} )
 
@@ -223,21 +237,27 @@ endif( )
 find_package( osgViewer )
 
 list( APPEND ALL_SYSTEM_HEADERS
-	${OPENSCENEGRAPH_INCLUDE_DIRS}
-	${OSGVIEWER_INCLUDE_DIR}
-)
+		${OPENSCENEGRAPH_INCLUDE_DIRS}
+		${OSGVIEWER_INCLUDE_DIR}
+		)
 
 if( MSVC )
 	list( APPEND ALL_COMPILE_DEFINITIONS -DOSG_LIBRARY_STATIC )
 endif()
 
-# ------------------------------ OpenCV -------------------------------
+# ------------------------------------------------------------
+# -------------------------- OpenCV --------------------------
+# ------------------------------------------------------------
+option(SKIP_OPENCV "Skip using OpenCV computer vision library." OFF)
+
 # Find OpenCV
-if( APPLE )
-	find_package( OpenCV 2.4.13 PATHS "/usr/local/opt/opencv@2" )
-else()
-	find_package( OpenCV )
-endif()
+if (NOT SKIP_OPENCV)
+	if (APPLE)
+		find_package(OpenCV 2.4.13 PATHS "/usr/local/opt/opencv@2")
+	else ()
+		find_package(OpenCV)
+	endif ()
+endif ()
 
 if( OpenCV_FOUND )
 	if( WIN32 )
@@ -247,86 +267,125 @@ if( OpenCV_FOUND )
 	#list( APPEND ALL_SYSTEM_HEADERS	${OpenCV_INCLUDE_DIRS} )
 	list( APPEND ALL_COMPILE_DEFINITIONS -DOPENCV_FOUND )
 
-	message( STATUS "OpenCV Found: " ${OpenCV_VERSION} )
-	message( STATUS "OpenCV_LIB_DIR=${OpenCV_LIB_DIR}" )
-	message( STATUS "OpenCV_LIB_DIR=${OpenCV_LIBS}" )
-else()
-	message( STATUS "OpenCV NOT FOUND" )
-endif()
+	message(STATUS "OpenCV Found: " ${OpenCV_VERSION})
+	message(STATUS "OpenCV_LIB_DIR=${OpenCV_LIB_DIR}")
+	message(STATUS "OpenCV_LIB_DIR=${OpenCV_LIBS}")
+elseif (SKIP_OPENCV)
+	message(STATUS "Skipped using OpenCV")
+else ()
+	message(STATUS "OpenCV NOT FOUND")
+endif ()
 
-# ------------------------------ OpenNI2 and Nite -------------------------------
+# ------------------------------------------------------------
+# -------------------------- OpenNI2--------------------------
+# ------------------------------------------------------------
+option(SKIP_OPENNI2 "Skip building OpenNI2 features." OFF)
+
 # Find OPENNI2
-find_package( OPENNI2 )
-if( OPENNI2_FOUND )
+if (NOT SKIP_OPENNI2)
+	find_package(OPENNI2)
+	if (OPENNI2_FOUND)
 
-	list( APPEND ALL_SYSTEM_HEADERS	${OPENNI2_INCLUDE_DIRS} )
+		list(APPEND ALL_SYSTEM_HEADERS ${OPENNI2_INCLUDE_DIRS})
 
-	list( APPEND ALL_COMPILE_DEFINITIONS  -DOPENNI2_FOUND )
+		list(APPEND ALL_COMPILE_DEFINITIONS -DOPENNI2_FOUND)
 
-	message( STATUS "OpenNI2 Found:" )
-	message( STATUS "OPENNI2_INCLUDE_DIRS=${OPENNI2_INCLUDE_DIRS}" )
-	message( STATUS "OPENNI2_LIBRARIES=${OPENNI2_LIBRARIES}" )
-else( OPENNI2_FOUND )
-	message( STATUS "OpenNI2 NOT FOUND" )
-endif()
+		message(STATUS "OpenNI2 Found:" ${OPENNI2_VERSION})
+		message(STATUS "OPENNI2_INCLUDE_DIRS=${OPENNI2_INCLUDE_DIRS}")
+		message(STATUS "OPENNI2_LIBRARIES=${OPENNI2_LIBRARIES}")
+	elseif (SKIP_OPENNI2)
+		message(STATUS "Skipped building OpenNI2")
+	else ()
+		message(STATUS "OpenNI2 NOT FOUND")
+	endif ()
+endif ()
+
+# ------------------------------------------------------------
+# --------------------------- Nite2 --------------------------
+# ------------------------------------------------------------
+option(SKIP_NITE2 "Skip building Nite2 features." OFF)
 
 # Find NITE2
-find_package( NITE2 )
-if( NITE2_FOUND )
+if (NOT SKIP_NITE2)
+	find_package(NITE2)
+	if (NITE2_FOUND)
 
-	list( APPEND ALL_SYSTEM_HEADERS	${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS} )
+		list(APPEND ALL_SYSTEM_HEADERS ${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS})
 
-	list( APPEND ALL_COMPILE_DEFINITIONS -DNITE2_FOUND )
-	message( STATUS "NITE2 Found:" )
-	message( STATUS "NITE2_INCLUDE_DIRS=${NITE2_INCLUDE_DIRS}" )
-	message( STATUS "NITE2_LIBRARIES=${NITE2_LIBRARIES}" )
-else( NITE2_FOUND )
-	message ( STATUS "NITE2 NOT FOUND" )
-endif()
-# ------------------------------ FREENECT2 -------------------------------
-find_package( FREENECT2 )
-if( FREENECT2_FOUND )
+		list(APPEND ALL_COMPILE_DEFINITIONS -DNITE2_FOUND)
+		message(STATUS "NITE2 Found:" ${NITE2_VERSION})
+		message(STATUS "NITE2_INCLUDE_DIRS=${NITE2_INCLUDE_DIRS}")
+		message(STATUS "NITE2_LIBRARIES=${NITE2_LIBRARIES}")
+	elseif (SKIP_NITE2)
+		message(STATUS "Skipped building NITE2")
+	else ()
+		message(STATUS "NITE2 NOT FOUND")
+	endif ()
+endif ()
 
-	list( APPEND ALL_SYSTEM_HEADERS	${FREENECT2_INCLUDE_DIRS} )
+# ------------------------------------------------------------
+# -------------------------- FREENECT2 -----------------------
+# ------------------------------------------------------------
+option(SKIP_FREENECT2 "Skip building Freenect2 drivers for Kinect." OFF)
 
-	list( APPEND ALL_COMPILE_DEFINITIONS  -DFREENECT2_FOUND )
+# Find FREENECT2
+if (NOT SKIP_FREENECT2)
+	find_package(FREENECT2)
 
-	message( STATUS "FREENECT2 Found:" )
-	message( STATUS "FREENECT2_INCLUDE_DIRS=${FREENECT2_INCLUDE_DIRS}" )
-	message( STATUS "FREENECT2_LIBRARIES=${FREENECT2_LIBRARIES}" )
-else( FREENECT2_FOUND )
-	message( STATUS "FREENECT2 NOT FOUND" )
-endif()
+	if (FREENECT2_FOUND)
 
+		list(APPEND ALL_SYSTEM_HEADERS ${FREENECT2_INCLUDE_DIRS})
+		list(APPEND ALL_COMPILE_DEFINITIONS -DFREENECT2_FOUND)
 
-# ------------------------------- KINECT SDK ----------------------------------
-if( WIN32 AND MSVC )
+		message(STATUS "FREENECT2 Found:" ${FREENECT2_VERSION})
+		message(STATUS "FREENECT2_INCLUDE_DIRS=${FREENECT2_INCLUDE_DIRS}")
+		message(STATUS "FREENECT2_LIBRARIES=${FREENECT2_LIBRARIES}")
+	elseif (SKIP_FREENECT2)
+		message(STATUS "Skipped building FREENECT2")
+	else ()
+		message(STATUS "FREENECT2 NOT FOUND")
+	endif ()
+endif ()
 
-	find_package( KINECTSDK )
-	if( KINECTSDK_FOUND )
+# ------------------------------------------------------------
+# ----------------------- KINECT SDK -------------------------
+# ------------------------------------------------------------
+if (WIN32 AND MSVC)
 
-		list( APPEND ALL_SYSTEM_HEADERS	${KINECTSDK_INCLUDE_DIRS} )
+	option(SKIP_KINECT_SDK "Skip building Kinect SDK for Windows." OFF)
 
-		list( APPEND ALL_COMPILE_DEFINITIONS -DKINECTSDK_FOUND )
+	if (NOT SKIP_KINECT_SDK)
 
-		# find_package( SPEECHSDK )
-		# if( SPEECHSDK_FOUND )
-		# include_directories( SYSTEM ${SPEECHSDK_INCLUDE_DIRS} )
-		# add_definitions( -DSPEECHSDK_FOUND )
-		# message( STATUS "SPEECHSDK FOUND" )
-		# else( SPEECHSDK_FOUND )
-		# message ( STATUS "SPEECHSDK NOT FOUND" )
-		# endif()
+		find_package(KINECTSDK)
 
-		message( STATUS "KINECTSDK Found:" )
-		message( STATUS "KINECTSDK_INCLUDE_DIRS=${KINECTSDK_INCLUDE_DIRS}" )
-		message( STATUS "KINECTSDK_LIBRARIES=${KINECTSDK_LIBRARIES}" )
-	else( KINECTSDK_FOUND )
-		message ( STATUS "KINECTSDK NOT FOUND" )
-	endif()
-endif()
+		if (KINECTSDK_FOUND)
 
-# ------------------------------ BOOST -------------------------------
+			list(APPEND ALL_SYSTEM_HEADERS ${KINECTSDK_INCLUDE_DIRS})
+			list(APPEND ALL_COMPILE_DEFINITIONS -DKINECTSDK_FOUND)
+
+			# find_package( SPEECHSDK )
+			# if( SPEECHSDK_FOUND )
+			# include_directories( SYSTEM ${SPEECHSDK_INCLUDE_DIRS} )
+			# add_definitions( -DSPEECHSDK_FOUND )
+			# message( STATUS "SPEECHSDK FOUND" )
+			# else( SPEECHSDK_FOUND )
+			# message ( STATUS "SPEECHSDK NOT FOUND" )
+			# endif()
+
+			message(STATUS "KINECTSDK Found:" ${KINECTSDK_VERSION})
+			message(STATUS "KINECTSDK_INCLUDE_DIRS=${KINECTSDK_INCLUDE_DIRS}")
+			message(STATUS "KINECTSDK_LIBRARIES=${KINECTSDK_LIBRARIES}")
+		elseif (SKIP_KINECT_SDK)
+			message(STATUS "Skipped building KINECTSDK")
+		else ()
+			message(STATUS "KINECTSDK NOT FOUND")
+		endif ()
+	endif ()
+endif ()
+
+# ------------------------------------------------------------
+# ---------------- BOOST C++ boosting libraries---------------
+# ------------------------------------------------------------
 # Find Boost
 set( Boost_USE_STATIC_LIBS OFF )
 find_package( Boost 1.39 REQUIRED )
@@ -335,107 +394,287 @@ find_package( Boost 1.39 REQUIRED )
 # Include directories
 list( APPEND ALL_SYSTEM_HEADERS	${Boost_INCLUDE_DIRS}  )
 
-# ------------------------------ LEAP -------------------------------
+# ------------------------------------------------------------
+# -----------------LEAP Leap Motion library-------------------
+# ------------------------------------------------------------
 #enable leap orion on windows
 if( WIN32 )
 	set( USE_LEAP_ORION ON )
 endif()
 
-# Find leap
-find_package( LEAP )
-if( LEAP_FOUND )
+option(SKIP_LEAP "Skip building Leap Motion library." OFF)
+if (NOT SKIP_LEAP)
 
-	list( APPEND ALL_COMPILE_DEFINITIONS -DLEAP_FOUND )
+	find_package(LEAP)
+	if (LEAP_FOUND)
 
-	list( APPEND ALL_SYSTEM_HEADERS	${LEAP_INCLUDE_DIRS} )
+		list(APPEND ALL_COMPILE_DEFINITIONS -DLEAP_FOUND)
+		list(APPEND ALL_SYSTEM_HEADERS ${LEAP_INCLUDE_DIRS})
 
-	message( STATUS "LEAP Found:" )
-	message( STATUS "LEAP_INCLUDE_DIRS=${LEAP_INCLUDE_DIRS}" )
-	message( STATUS "LEAP_LIB_DIR=${LEAP_LIBRARIES}" )
-else()
-	message( STATUS "LEAP Not Found" )
-endif()
-# ------------------------------ PCL ----------------------------------
-# find PCL
-find_package(PCL 1.8)
-if ( PCL_FOUND )
+		message(STATUS "LEAP Found:" ${LEAP_VERSION})
+		message(STATUS "LEAP_INCLUDE_DIRS=${LEAP_INCLUDE_DIRS}")
+		message(STATUS "LEAP_LIB_DIR=${LEAP_LIBRARIES}")
+	else ()
+		message(STATUS "LEAP Not Found")
+	endif ()
+endif ()
 
-	list( APPEND ALL_COMPILE_DEFINITIONS -DPCL_FOUND )
+# ------------------------------------------------------------
+# ----------------- PCL Point Cloud Library-------------------
+# ------------------------------------------------------------
+option(SKIP_PCL "Skip building Point Cloud Library." OFF)
+if (NOT SKIP_PCL)
 
-	list( APPEND ALL_SYSTEM_HEADERS	${PCL_INCLUDE_DIRS} )
+	find_package(PCL 1.8)
+	if (PCL_FOUND)
 
-	link_directories(${PCL_LIBRARY_DIRS})
-	add_definitions(${PCL_DEFINITIONS})
-	message( STATUS "PCL FOUND" )
-else()
-		message( STATUS "PCL NOT FOUND" )
-endif()
+		list(APPEND ALL_COMPILE_DEFINITIONS -DPCL_FOUND)
 
-# ------------------------------ FGLOVE -------------------------------
-# Find fglove
-# find_package( FGLOVE )
-# if( FGLOVE_FOUND )
-#	add_definitions( -DFGLOVE_FOUND )
-#	include_directories( SYSTEM
-#		${FGLOVE_INCLUDE_DIRS}
-#	)
-#	message( STATUS "FGLOVE_LIB_DIR=${FGLOVE_LIBRARIES}" )
-# else()
-#	message( STATUS "FGLOVE Not Found" )
-# endif()
+		list(APPEND ALL_SYSTEM_HEADERS ${PCL_INCLUDE_DIRS})
 
-# ------------------------------ MOUSE3D -------------------------------
-# Find MOUSE3D
-find_package( MOUSE3D )
-if( WIN32 )
-	if( MOUSE3D_FOUND )
-		include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
-		add_definitions( -DMOUSE3D_FOUND )
-		message( STATUS "3DMouse FOUND" )
-	endif()
-elseif( APPLE )
-	if( MOUSE3D_FOUND )
-		include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
-		add_definitions( -DMOUSE3D_FOUND )
-		message( STATUS "3DMouse FOUND" )
-	endif()
-elseif( UNIX )
-	set (MOUSE3D_FOUND TRUE)
-	include_directories( SYSTEM include/Mouse3d/LibMouse3d/Unix )
-	find_package( X11 REQUIRED )
-	include_directories( SYSTEM ${X11_INCLUDE_DIR} )
-	add_definitions( -DMOUSE3D_FOUND )
-	message( STATUS "3DMouse FOUND" )
-elseif()
-	message( STATUS "3DMouse NOT FOUND" )
-endif()
+		link_directories(${PCL_LIBRARY_DIRS})
+		add_definitions(${PCL_DEFINITIONS})
+		message(STATUS "PCL FOUND")
+	elseif (SKIP_PCL)
+		message(STATUS "Skipped building PCL")
+	else ()
+		message(STATUS "PCL NOT FOUND")
+	endif ()
+endif ()
+
+# ------------------------------------------------------------
+# ------------------------- FGLOVE ---------------------------
+# ------------------------------------------------------------
+option(SKIP_FGLOVE "Skip building FGLOVE module" ON)
+if (NOT SKIP_FGLOVE)
+
+	find_package(FGLOVE)
+	if (FGLOVE_FOUND)
+		add_definitions(-DFGLOVE_FOUND)
+		include_directories(SYSTEM
+				${FGLOVE_INCLUDE_DIRS}
+				)
+		message(STATUS "FGLOVE_LIB_DIR=${FGLOVE_LIBRARIES}")
+	elseif (SKIP_FGLOVE)
+		message(STATUS "Skipped building FGLOVE")
+	else ()
+		message(STATUS "FGLOVE Not Found")
+	endif ()
+endif ()
+
+# ------------------------------------------------------------
+# ------------------- MOUSE3D 3Dconnexion --------------------
+# ------------------------------------------------------------
+option(SKIP_MOUSE3D "Skip building 3DMouse support" OFF)
+if (NOT SKIP_MOUSE3D)
+
+	if (WIN32 OR APPLE)
+		find_package(MOUSE3D)
+		if (WIN32)
+			if (MOUSE3D_FOUND)
+				include_directories(SYSTEM ${MOUSE3D_INCLUDE_DIRS})
+				add_definitions(-DMOUSE3D_FOUND)
+				message(STATUS "3DMouse FOUND")
+			endif ()
+		elseif (APPLE)
+			if (MOUSE3D_FOUND)
+				include_directories(SYSTEM ${MOUSE3D_INCLUDE_DIRS})
+				add_definitions(-DMOUSE3D_FOUND)
+				message(STATUS "3DMouse FOUND")
+			endif ()
+		endif ()
+	elseif (UNIX)
+		set(MOUSE3D_FOUND TRUE)
+		include_directories(SYSTEM include/Mouse3d/LibMouse3d/Unix)
+		find_package(X11 REQUIRED)
+		include_directories(SYSTEM ${X11_INCLUDE_DIR})
+		add_definitions(-DMOUSE3D_FOUND)
+		message(STATUS "3DMouse FOUND")
+	elseif (SKIP_MOUSE3D)
+		message(STATUS "Skipped building 3DMouse")
+	else ()
+		message(STATUS "3DMouse NOT FOUND")
+	endif ()
+endif ()
+
+# ------------------------------------------------------------
+# -------------- DOXYGEN documentation generator--------------
+# ------------------------------------------------------------
+option(SKIP_DOXYGEN "Skip building Doxygen documentation" OFF)
+if (NOT SKIP_DOXYGEN)
+
+	find_package(Doxygen)
+	option(BUILD_DOXYGEN_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
+
+	if (BUILD_DOXYGEN_DOCUMENTATION)
+		if (NOT DOXYGEN_FOUND)
+			message(FATAL_ERROR "Doxygen is needed to build the documentation.")
+		endif ()
+
+		set(doxyfile_in ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
+		set(doxyfile ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+
+		configure_file(${doxyfile_in} ${doxyfile} @ONLY)
+
+		add_custom_target(doxygen
+				COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
+				WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+				COMMENT "Generating API documentation with Doxygen"
+				VERBATIM)
+
+		install(DIRECTORY DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/html)
+		install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION share/doc)
+	endif ()
+else ()
+	message(STATUS "Skipped using DOXYGEN")
+endif ()
+
+# ---------------------------------------------------------------
+# ---------------- SPHINX documentation generator----------------
+# ---------------------------------------------------------------
+option(SKIP_SPHINX "Skip building Sphinx documentation" OFF)
+if (NOT SKIP_SPHINX)
+
+	find_package(Sphinx)
+	if (Sphinx_FOUND)
+
+		if (NOT DEFINED SPHINX_THEME)
+			set(SPHINX_THEME sphinx_rtd_theme)
+		endif ()
+
+		if (NOT DEFINED SPHINX_THEME_DIR)
+			set(SPHINX_THEME_DIR)
+		endif ()
+
+		# configured documentation tools and intermediate build results
+		set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+
+		# Sphinx cache with pickled ReST documents
+		set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/_doctrees")
+
+		# HTML output directory
+		set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/html")
+
+		configure_file(
+				"${CMAKE_CURRENT_SOURCE_DIR}/docs/conf.py.in"
+				"${BINARY_BUILD_DIR}/conf.py"
+				@ONLY)
+
+		add_custom_target(Sphinx_html
+				${SPHINX_EXECUTABLE}
+				-q -b html
+				-c "${BINARY_BUILD_DIR}"
+				-d "${SPHINX_CACHE_DIR}"
+				"${CMAKE_CURRENT_SOURCE_DIR}/docs"
+				"${SPHINX_HTML_DIR}"
+				COMMENT "Building HTML documentation with Sphinx")
+	endif ()
+else ()
+	message(STATUS "Skipped using SPHINX")
+endif ()
+
+# ---------------------------------------------------------------
+# -------------------- ASTYLE code beautifier--------------------
+# ---------------------------------------------------------------
+# use "make style" to format all C++ code
+option(SKIP_ASTYLE "Skip using Astyle code formatter" OFF)
+if (NOT SKIP_ASTYLE)
+
+	find_package(Astyle)
+	if (Astyle_FOUND)
+		# Add a custom target
+		add_custom_target("style" COMMAND
+				"${ASTYLE_EXECUTABLE}"
+				--options=${CMAKE_CURRENT_SOURCE_DIR}/astyle.options
+				${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
+				${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+				COMMENT "Formating source code with Astyle."
+				VERBATIM
+				)
+	endif ()
+else ()
+	message(STATUS "Skipped using ASTYLE")
+endif ()
 
 
-# ------------------------------ DOXYGEN -------------------------------
-# Find Doxygen
-find_package(Doxygen)
-option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
-#message( STATUS "Doxygen found: " ${DOXYGEN_EXECUTABLE} )
+# ---------------------------------------------------------------
+# ----------------- CPPLINT code style checker-------------------
+# ---------------------------------------------------------------
+# use "make cpplint" to check all C++ code with cpplint.py
+option(SKIP_CPPLINT "Skip using Cpplint code checker" OFF)
+if (NOT SKIP_CPPLINT)
 
-if(BUILD_DOCUMENTATION)
-	if(NOT DOXYGEN_FOUND)
-		message(FATAL_ERROR "Doxygen is needed to build the documentation.")
-	endif()
+	find_package(cpplint)
+	if (CPPLINT_FOUND)
 
-	set(doxyfile_in ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
-	set(doxyfile ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
+		FILE(GLOB_RECURSE ALL_INCLUDE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
+		FILE(GLOB_RECURSE ALL_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 
-	configure_file(${doxyfile_in} ${doxyfile} @ONLY)
+		if (WIN32)
+			add_custom_target("cpplint"
+					COMMAND
+					${CMAKE_CURRENT_SOURCE_DIR}/cpplint.bat # NOTE: this will probably work only on Linux/OSX
+					WORKING_DIRECTORY
+					"${CMAKE_CURRENT_BINARY_DIR}"
+					COMMENT "Linting code via cpplint.py"
+					VERBATIM
+					)
+		else ()
+			add_custom_target("cpplint"
+					COMMAND
+					"${PYTHON_EXECUTABLE}"
+					"${CPPLINT_SCRIPT}"
+					${ALL_INCLUDE_FILES}
+					${ALL_SRC_FILES}
+					2>&1 | tee cpplint-report.txt # NOTE: this will probably work only on Linux/OSX
+					WORKING_DIRECTORY
+					"${CMAKE_CURRENT_BINARY_DIR}"
+					COMMENT "Linting code via cpplint.py"
+					VERBATIM
+					)
+		endif ()
+	endif ()
+else ()
+	message(STATUS "Skipped using CPPLINT")
+endif ()
 
-	add_custom_target(doxygen
-		COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
-		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-		COMMENT "Generating API documentation with Doxygen"
-		VERBATIM)
+# ---------------------------------------------------------------
+# ---------------------- CPPcheck code analyser------------------
+# ---------------------------------------------------------------
+# use "make cppcheck" to check all C++ code with CPPcheck
+option(SKIP_CPPCHECK "Skip using CPPcheck code analyser" OFF)
+if (NOT SKIP_CPPCHECK)
+	find_package(cppcheck)
 
-	install(DIRECTORY DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/html)
-	install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION share/doc)
-endif()
+	if (cppcheck_FOUND)
+		file(GLOB_RECURSE ALL_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+		if (WIN32)
+			add_custom_target(cppcheck
+					COMMAND
+					${CMAKE_CURRENT_SOURCE_DIR}/run_cppcheck.bat # NOTE: this will probably work only on Linux/OSX
+					WORKING_DIRECTORY
+					"${CMAKE_CURRENT_BINARY_DIR}"
+					COMMENT "Linting code via cpplint.py"
+					VERBATIM
+					)
+		else ()
+			add_custom_target(
+					cppcheck
+					COMMAND cppcheck
+					--enable=warning,style,performance,portability,information,missingInclude
+					--std=c++11
+					--library=qt.cfg
+					--verbose
+					--quiet
+					-j2
+					-I ${CMAKE_CURRENT_SOURCE_DIR}/include/
+					${ALL_SRC_FILES}
+			)
+		endif ()
+	endif ()
+else ()
+	message(STATUS "Skipped using CPPCHECK")
+endif ()
 
 
 # ------------------------------------------------------------
@@ -457,9 +696,10 @@ if( USE_BUILTIN_DEPENDENCIES )
 	set( CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${DEP_BIN}/lib ${DEP_BIN}/bin )
 	set( CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} ${DEP_BIN}/include )
 
-        add_subdirectory(dependencies)
+	add_subdirectory(dependencies)
 
 else()
+	message(STATUS "Skipped using builtin external dependencies.")
 	# Find Lua implementation, assuming lpeg is installed by other means
 	#find_package( Lua51 REQUIRED )
 endif()
@@ -517,53 +757,51 @@ file ( GLOB_RECURSE SRC_HANDMODULE "src/Leap/HandModule/*.cpp" )
 
 # MOUSE3D
 set ( SRC_MOUSE3D
-	src/Mouse3d/Connector.cpp
-	src/Mouse3d/LibMouse3d/EventThread.cpp
-	src/Mouse3d/LibMouse3d/Mouse3dDevices.cpp
-)
+		src/Mouse3d/Connector.cpp
+		src/Mouse3d/LibMouse3d/EventThread.cpp
+		src/Mouse3d/LibMouse3d/Mouse3dDevices.cpp
+		)
 
 if( WIN32 )
 	list(APPEND SRC_MOUSE3D
-		src/Mouse3d/LibMouse3d/Windows/Mouse3DInput.cpp
-		src/Mouse3d/LibMouse3d/Windows/MouseParameters.cpp
-		)
+			src/Mouse3d/LibMouse3d/Windows/Mouse3DInput.cpp
+			src/Mouse3d/LibMouse3d/Windows/MouseParameters.cpp
+			)
 elseif( APPLE )
 	list(APPEND SRC_MOUSE3D
-		src/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.cpp
-		)
+			src/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.cpp
+			)
 elseif( UNIX )
 	list(APPEND SRC_MOUSE3D
-		src/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.cpp
-		src/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.cpp
-		)
+			src/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.cpp
+			src/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.cpp
+			)
 endif()
-
-
 
 # All source files
 set( SRC
-	${SRC_APP}
-	${SRC_CORE}
-	${SRC_MANAGER}
-	${SRC_DATA}
-	${SRC_CLUSTERING}
-	${SRC_IMPORTER}
-	${SRC_LAYOUT}
-	${SRC_LUAGRAPH}
-	${SRC_LUAINTERFACE}
-	${SRC_LUATYPES}
-	${SRC_MATH}
-	${SRC_NETWORK}
-	${SRC_MODEL}
-	${SRC_OSGQTBROWSER}
-	${SRC_QOSG}
-	${SRC_VIEWER}
-	${SRC_UTIL}
-	${SRC_REPOSITORY}
-	${SRC_SPECIALMATRIX}
-	${SRC_CITY}
-	${SRC_SHAPES}
-)
+		${SRC_APP}
+		${SRC_CORE}
+		${SRC_MANAGER}
+		${SRC_DATA}
+		${SRC_CLUSTERING}
+		${SRC_IMPORTER}
+		${SRC_LAYOUT}
+		${SRC_LUAGRAPH}
+		${SRC_LUAINTERFACE}
+		${SRC_LUATYPES}
+		${SRC_MATH}
+		${SRC_NETWORK}
+		${SRC_MODEL}
+		${SRC_OSGQTBROWSER}
+		${SRC_QOSG}
+		${SRC_VIEWER}
+		${SRC_UTIL}
+		${SRC_REPOSITORY}
+		${SRC_SPECIALMATRIX}
+		${SRC_CITY}
+		${SRC_SHAPES}
+		)
 
 if( OpenCV_FOUND )
 	list( APPEND SRC ${SRC_OPENCV} ${SRC_QOPENCV} ${SRC_ARUCO} )
@@ -586,9 +824,8 @@ endif()
 # add Leap
 if( LEAP_FOUND )
 	# WORKAROUND GARAJ comment
-		list( APPEND SRC ${SRC_LEAP} )
-		list( APPEND SRC ${SRC_HANDMODULE} )
-
+	list( APPEND SRC ${SRC_LEAP} )
+	list( APPEND SRC ${SRC_HANDMODULE} )
 endif()
 
 # add MOUSE3D if found
@@ -652,54 +889,52 @@ file( GLOB_RECURSE HEADER_HANDMODULE	"include/Leap/HandModule/*.h" )
 
 # MOUSE3D
 set ( HEADER_MOUSE3D
-	include/Mouse3d/Connector.h
-	include/Mouse3d/LibMouse3d/EventThread.h
-	include/Mouse3d/LibMouse3d/Mouse3dDevices.h
-)
+		include/Mouse3d/Connector.h
+		include/Mouse3d/LibMouse3d/EventThread.h
+		include/Mouse3d/LibMouse3d/Mouse3dDevices.h
+		)
 
 if( WIN32 )
 	list(APPEND HEADER_MOUSE3D
-		include/Mouse3d/LibMouse3d/Windows/Mouse3DInput.h
-		include/Mouse3d/LibMouse3d/Windows/MouseParameters.h
-		include/Mouse3d/LibMouse3d/Windows/I3dMouseParams.h
-		)
+			include/Mouse3d/LibMouse3d/Windows/Mouse3DInput.h
+			include/Mouse3d/LibMouse3d/Windows/MouseParameters.h
+			include/Mouse3d/LibMouse3d/Windows/I3dMouseParams.h
+			)
 elseif( APPLE )
 	list(APPEND HEADER_MOUSE3D
-		include/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.h
-		)
+			include/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.h
+			)
 elseif( UNIX )
 	list(APPEND HEADER_MOUSE3D
-		include/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.h
-		include/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h
-		)
+			include/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.h
+			include/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h
+			)
 endif()
-
-
 
 # All header files
 set( INCL
-	${HEADER_APP}
-	${HEADER_CORE}
-	${HEADER_MANAGER}
-	${HEADER_DATA}
-	${HEADER_CLUSTERING}
-	${HEADER_IMPORTER}
-	${HEADER_LAYOUT}
-	${HEADER_LUAGRAPH}
-	${HEADER_LUAINTERFACE}
-	${HEADER_LUATYPES}
-	${HEADER_MATH}
-	${HEADER_NETWORK}
-	${HEADER_MODEL}
-	${HEADER_OSGQTBROWSER}
-	${HEADER_QOSG}
-	${HEADER_VIEWER}
-	${HEADER_UTIL}
-	${HEADER_REPOSITORY}
-	${HEADER_SPECIALMATRIX}
-	${HEADER_CITY}
-	${HEADER_SHAPES}
-)
+		${HEADER_APP}
+		${HEADER_CORE}
+		${HEADER_MANAGER}
+		${HEADER_DATA}
+		${HEADER_CLUSTERING}
+		${HEADER_IMPORTER}
+		${HEADER_LAYOUT}
+		${HEADER_LUAGRAPH}
+		${HEADER_LUAINTERFACE}
+		${HEADER_LUATYPES}
+		${HEADER_MATH}
+		${HEADER_NETWORK}
+		${HEADER_MODEL}
+		${HEADER_OSGQTBROWSER}
+		${HEADER_QOSG}
+		${HEADER_VIEWER}
+		${HEADER_UTIL}
+		${HEADER_REPOSITORY}
+		${HEADER_SPECIALMATRIX}
+		${HEADER_CITY}
+		${HEADER_SHAPES}
+		)
 
 if( OpenCV_FOUND )
 	list( APPEND INCL ${HEADER_OPENCV} ${HEADER_QOPENCV} ${HEADER_ARUCO} )
@@ -721,8 +956,8 @@ endif()
 
 # LEAP
 if( LEAP_FOUND )
-		list( APPEND INCL ${HEADER_LEAP} )
-		list( APPEND INCL ${HEADER_HANDMODULE} )
+	list( APPEND INCL ${HEADER_LEAP} )
+	list( APPEND INCL ${HEADER_HANDMODULE} )
 endif()
 
 # MOUSE3D
@@ -849,10 +1084,10 @@ target_include_directories( parserlib SYSTEM PUBLIC dependencies/parserlib/sourc
 add_library( gitlib STATIC ${SRC_GITLIB} ${HEADER_GITLIB})
 
 target_include_directories( gitlib
-	SYSTEM PUBLIC
-	include
-	include/Repository/Git
-)
+		SYSTEM PUBLIC
+		include
+		include/Repository/Git
+		)
 
 target_compile_definitions( gitlib PUBLIC -DGITLIB_LIBRARY_STATIC )
 
@@ -874,13 +1109,13 @@ endif()
 
 #-------------------------------- leap module -------------------------------
 if( LEAP_FOUND )
-		add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
+	add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
 
 	target_include_directories( leaplib
-		SYSTEM PUBLIC
-		include
-		include/Leap
-		)
+			SYSTEM PUBLIC
+			include
+			include/Leap
+			)
 
 	target_compile_definitions( leaplib PUBLIC -DLEAPLIB_LIBRARY_STATIC )
 
@@ -896,7 +1131,7 @@ if( LEAP_FOUND )
 	if( COMMAND cotire )
 		# link leaplib_unity target to all libraries to which leaplib links
 		set_target_properties( leaplib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
-			set_target_properties(leaplib PROPERTIES COTIRE_ENABLE_PRECOMPILED_HEADER FALSE)
+		set_target_properties(leaplib PROPERTIES COTIRE_ENABLE_PRECOMPILED_HEADER FALSE)
 		cotire( leaplib CONFIGURATIONS Debug Release )
 	endif()
 endif()
@@ -912,8 +1147,8 @@ add_library( ${3DSOFTVIZ_NAME} STATIC ${INCL}  ${SRC} )
 target_compile_options( ${3DSOFTVIZ_NAME} PUBLIC ${FLAGS_FOR_DEBUG} )
 
 target_compile_definitions( ${3DSOFTVIZ_NAME}
-	PUBLIC ${ALL_COMPILE_DEFINITIONS}
-)
+		PUBLIC ${ALL_COMPILE_DEFINITIONS}
+		)
 
 if( OpenCV_FOUND )
 	list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR}/aruco )
@@ -924,8 +1159,6 @@ list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR}/libnoise )
 list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/easyloggingpp/src )
 list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker/ )
 list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/leathers/Source )
-
-
 list( APPEND ALL_SYSTEM_HEADERS include/Leap )
 
 if( UNIX AND NOT APPLE )
@@ -946,15 +1179,15 @@ include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
 
 if ( Qt5Core_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME}
-		Qt5::Core Qt5::Gui Qt5::Widgets Qt5::OpenGL Qt5::Sql Qt5::WebEngine Qt5::WebEngineWidgets Qt5::Xml Qt5::Network
-		${OPENGL_LIBRARIES} )
+			Qt5::Core Qt5::Gui Qt5::Widgets Qt5::OpenGL Qt5::Sql Qt5::WebEngine Qt5::WebEngineWidgets Qt5::Xml Qt5::Network
+			${OPENGL_LIBRARIES} )
 endif()
 
 if ( Qt4_FOUND )
-#	target_link_libraries( ${3DSOFTVIZ_NAME} ${QT_LIBRARIES} )
+	#	target_link_libraries( ${3DSOFTVIZ_NAME} ${QT_LIBRARIES} )
 	target_link_libraries( ${3DSOFTVIZ_NAME}
-		Qt4::QtCore Qt4::QtGui Qt4::QtOpenGL Qt4::QtSql Qt4::QtWebKit Qt4::QtXml Qt4::QtNetwork
-		${OPENGL_LIBRARIES} )
+			Qt4::QtCore Qt4::QtGui Qt4::QtOpenGL Qt4::QtSql Qt4::QtWebKit Qt4::QtXml Qt4::QtNetwork
+			${OPENGL_LIBRARIES} )
 endif()
 
 if( BUILD_OSGQT )
@@ -963,18 +1196,17 @@ else()
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${OSGQT_LIBRARIES} )
 endif()
 
-
 target_link_libraries( ${3DSOFTVIZ_NAME}
-	gitlib
-	lua
-	noiseutils
-	libnoise
-	osgModeling
-	qtcolorpicker
-	parserlib
-	${OPENSCENEGRAPH_LIBRARIES}
-	${OSGVIEWER_LIBRARIES}
-)
+		gitlib
+		lua
+		noiseutils
+		libnoise
+		osgModeling
+		qtcolorpicker
+		parserlib
+		${OPENSCENEGRAPH_LIBRARIES}
+		${OSGVIEWER_LIBRARIES}
+		)
 
 if( UNIX AND NOT APPLE )
 	target_link_libraries( ${3DSOFTVIZ_NAME} mouse3d )
@@ -1007,12 +1239,14 @@ if( KINECTSDK_FOUND )
 	endif()
 endif()
 
-# if( FGLOVE_FOUND )
-#	target_link_libraries( ${3DSOFTVIZ_NAME} ${FGLOVE_LIBRARIES} )
-# endif()
-if ( PCL_FOUND )
-		target_link_libraries( ${3DSOFTVIZ_NAME} ${PCL_LIBRARIES} )
-endif()
+if (FGLOVE_FOUND)
+	target_link_libraries(${3DSOFTVIZ_NAME} ${FGLOVE_LIBRARIES})
+endif ()
+
+if (PCL_FOUND)
+	target_link_libraries(${3DSOFTVIZ_NAME} ${PCL_LIBRARIES})
+endif ()
+
 if( LEAP_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} leaplib ${LEAP_LIBRARIES} )
 endif()
@@ -1031,7 +1265,7 @@ endif()
 if( COMMAND cotire )
 	# link ${3DSOFTVIZ_NAME}_unity target to all libraries to which ${3DSOFTVIZ_NAME} links
 	set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
-		set_target_properties(${3DSOFTVIZ_NAME} PROPERTIES COTIRE_ENABLE_PRECOMPILED_HEADER FALSE)
+	set_target_properties(${3DSOFTVIZ_NAME} PROPERTIES COTIRE_ENABLE_PRECOMPILED_HEADER FALSE)
 
 	cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Debug Release )
 
@@ -1141,17 +1375,17 @@ endif()
 
 # 3DSoftviz and data
 install( TARGETS ${3DSOFTVIZ_NAME}_app
-	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
-	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
+		BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
+		RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
 
 install( TARGETS gitlib
-	ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
-	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
+		ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+		LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
 
 if( LEAP_FOUND )
 	install( TARGETS leaplib
-		ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
-		LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
+			ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+			LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
 endif()
 
 # add custom install_unity target
@@ -1159,9 +1393,9 @@ if( COMMAND cotire )
 	install(TARGETS ${3DSOFTVIZ_NAME}_app_unity RUNTIME DESTINATION ${INSTALL_BIN} )
 
 	add_custom_target( install_unity
-		COMMAND ${CMAKE_COMMAND} -P "cmake_install.cmake"
-		COMMENT "Install the unity-built project..."
-		WORKING_DIRECTORY ${CMAKE_BINARY_DIR} )
+			COMMAND ${CMAKE_COMMAND} -P "cmake_install.cmake"
+			COMMENT "Install the unity-built project..."
+			WORKING_DIRECTORY ${CMAKE_BINARY_DIR} )
 	add_dependencies( install_unity ${3DSOFTVIZ_NAME}_app_unity )
 	add_dependencies( install_unity gitlib_unity )
 	if( LEAP_FOUND )
@@ -1191,14 +1425,14 @@ if( SPEECHSDK_FOUND )
 endif()
 
 # Install needed .dll files for fglove
-# if( FGLOVE_FOUND )
-#
-#	install( DIRECTORY ${FGLOVE_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin )
-#
-#	install( FILES ${FGLOVE_LIBRARIES} DESTINATION ${INSTALL_BIN}
-#			RUNTIME DESTINATION ${INSTALL_BIN}
-#			LIBRARY DESTINATION ${INSTALL_LIB} )
-# endif()
+if (FGLOVE_FOUND)
+
+	install(DIRECTORY ${FGLOVE_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin)
+
+	install(FILES ${FGLOVE_LIBRARIES} DESTINATION ${INSTALL_BIN}
+			RUNTIME DESTINATION ${INSTALL_BIN}
+			LIBRARY DESTINATION ${INSTALL_LIB})
+endif ()
 
 # Install needed .dll files for leap
 if( LEAP_FOUND )
@@ -1213,10 +1447,10 @@ endif()
 if( USE_BUILTIN_DEPENDENCIES )
 	# Install all dependencies
 	install( DIRECTORY ${DEP_BIN}/
-		DESTINATION ${INSTALL_DEPS}
-		COMPONENT Dependencies
-		USE_SOURCE_PERMISSIONS
-		)
+			DESTINATION ${INSTALL_DEPS}
+			COMPONENT Dependencies
+			USE_SOURCE_PERMISSIONS
+			)
 endif()
 
 # Include QT libraries in Apple bundle and on Windows
@@ -1225,8 +1459,8 @@ if( WIN32 OR APPLE AND OSX_BUNDLE )
 	if( APPLE AND OSX_BUNDLE )
 		# Install Qt Plugins
 		install( DIRECTORY "${QT_PLUGINS_DIR}/imageformats"
-			DESTINATION ${INSTALL_PLUGIN}/plugins
-			COMPONENT Runtime )
+				DESTINATION ${INSTALL_PLUGIN}/plugins
+				COMPONENT Runtime )
 
 		# Install Qt Config
 		install( CODE "
@@ -1333,21 +1567,20 @@ include( CPack )
 # -------------------------------------------------------
 # BDD Igloo tests
 # -------------------------------------------------------
-
 set( TEST_RUNNER tests/all_tests.cpp )
 
-#-------------------------------- gitlib module tests -------------------------------
+#--------------- gitlib module tests --------------------
 file( GLOB_RECURSE SRC_GITLIB_TESTS	"tests/Repository/Git/GitLib/*.cpp" )
 
 add_executable( test_gitlib_module ${TEST_RUNNER} ${SRC_GITLIB_TESTS} )
 add_dependencies( test_gitlib_module igloo )
 
 target_include_directories( test_gitlib_module 	PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/include
-	include/Repository/Git 	)
+		${CMAKE_CURRENT_SOURCE_DIR}/include
+		include/Repository/Git 	)
 target_compile_options( test_gitlib_module PUBLIC ${FLAGS_FOR_DEBUG} )
 if ( Qt5Core_FOUND )
-#	qt5_use_modules( test_gitlib_module Core )
+	#	qt5_use_modules( test_gitlib_module Core )
 	target_link_libraries( test_gitlib_module Qt5::Core gitlib )
 elseif( Qt4_FOUND )
 	target_link_libraries( test_gitlib_module ${QT_LIBRARIES} gitlib )
@@ -1360,131 +1593,7 @@ if( COMMAND cotire )
 endif()
 
 
-#-------------------------------- run all tests -------------------------------
+#--------------------- run all tests --------------------
 enable_testing()
 add_test( testing_gitlib_module test_gitlib_module )
-
-
-# ------------------------------ SPHINX -------------------------------
-# Find Sphinx Executable
-
-find_package(Sphinx)
-if (Sphinx_FOUND)
-	if(NOT DEFINED SPHINX_THEME)
-		set(SPHINX_THEME sphinx_rtd_theme)
-	endif()
-
-	if(NOT DEFINED SPHINX_THEME_DIR)
-		set(SPHINX_THEME_DIR)
-	endif()
-
-	# configured documentation tools and intermediate build results
-	set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
-
-	# Sphinx cache with pickled ReST documents
-	set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/_doctrees")
-
-	# HTML output directory
-	set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/html")
-
-	configure_file(
-		"${CMAKE_CURRENT_SOURCE_DIR}/docs/conf.py.in"
-		"${BINARY_BUILD_DIR}/conf.py"
-		@ONLY)
-
-	add_custom_target(Sphinx_html
-		${SPHINX_EXECUTABLE}
-		-q -b html
-		-c "${BINARY_BUILD_DIR}"
-		-d "${SPHINX_CACHE_DIR}"
-		"${CMAKE_CURRENT_SOURCE_DIR}/docs"
-		"${SPHINX_HTML_DIR}"
-		COMMENT "Building HTML documentation with Sphinx")
-endif()
-
-
-# ------------------------------ ASTYLE -------------------------------
-# use "make style" to format all C++ code
-
-# Find Astyle Executable
-find_package(Astyle)
-
-if (Astyle_FOUND)
-	# Add a custom target
-	add_custom_target( "style" COMMAND
-		"${ASTYLE_EXECUTABLE}"
-		--options=${CMAKE_CURRENT_SOURCE_DIR}/astyle.options
-		${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
-		${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
-		COMMENT "Formating source code with Astyle."
-		VERBATIM
-	)
-endif()
-
-
-# ------------------------------ CPPLINT -------------------------------
-# use "make cpplint" to check all C++ code with cpplint.py
-
-# Find cpplint
-find_package(cpplint)
-
-if( CPPLINT_FOUND )
-	FILE( GLOB_RECURSE ALL_INCLUDE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h )
-	FILE( GLOB_RECURSE ALL_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp )
-	if( WIN32 )
-		add_custom_target( "cpplint"
-			COMMAND
-				${CMAKE_CURRENT_SOURCE_DIR}/cpplint.bat	# NOTE: this will probably work only on Linux/OSX
-			WORKING_DIRECTORY
-				"${CMAKE_CURRENT_BINARY_DIR}"
-			COMMENT "Linting code via cpplint.py"
-			VERBATIM
-		)
-	else()
-		add_custom_target( "cpplint"
-		COMMAND
-			"${PYTHON_EXECUTABLE}"
-			"${CPPLINT_SCRIPT}"
-			${ALL_INCLUDE_FILES}
-			${ALL_SRC_FILES}
-			2>&1 | tee cpplint-report.txt	# NOTE: this will probably work only on Linux/OSX
-		WORKING_DIRECTORY
-			"${CMAKE_CURRENT_BINARY_DIR}"
-		COMMENT "Linting code via cpplint.py"
-		VERBATIM
-	)
-	endif()
-endif()
-
-# ------------------------------ CPPcheck -------------------------------
-# use "make cppcheck" to check all C++ code with CPPcheck
-
-# Find cppchceck
-find_package(cppcheck)
-
-if( cppcheck_FOUND )
-	file( GLOB_RECURSE ALL_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp )
-	if( WIN32 )
-		add_custom_target( cppcheck
-			COMMAND
-				${CMAKE_CURRENT_SOURCE_DIR}/run_cppcheck.bat	# NOTE: this will probably work only on Linux/OSX
-			WORKING_DIRECTORY
-				"${CMAKE_CURRENT_BINARY_DIR}"
-			COMMENT "Linting code via cpplint.py"
-			VERBATIM
-		)
-	else()
-		add_custom_target(
-				cppcheck
-				COMMAND cppcheck
-				--enable=warning,style,performance,portability,information,missingInclude
-				--std=c++11
-				--library=qt.cfg
-				--verbose
-				--quiet
-				-j2
-				-I ${CMAKE_CURRENT_SOURCE_DIR}/include/
-				${ALL_SRC_FILES}
-		)
-	endif()
-endif()
+# -------------------------------------------------------
