@@ -10,3 +10,4 @@ Pomocné materiály pre vývojárov, pracujúcich na projekte.
    test
    logbenchlib
    methodology
+   vagrant
