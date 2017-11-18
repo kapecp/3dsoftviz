@@ -211,7 +211,7 @@ find_package( OpenSceneGraph COMPONENTS
 message( STATUS "Using OpenSceneGraph version: " ${OPENSCENEGRAPH_VERSION} )
 
 # OpenSceneGraph v3.5.5 removed osgQt (osgQt is now in it's own repository)
-if( ${OPENSCENEGRAPH_VERSION} VERSION_GREATER_EQUAL 3.5.5 )
+if( ${OPENSCENEGRAPH_VERSION} VERSION_GREATER 3.5.4 )
 	message( "Building osgQt" )
 	set( BUILD_OSGQT TRUE )
 else()
