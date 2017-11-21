@@ -457,7 +457,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 	set( CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${DEP_BIN}/lib ${DEP_BIN}/bin )
 	set( CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} ${DEP_BIN}/include )
 
-        add_subdirectory(dependencies)
+	add_subdirectory(dependencies)
 
 else()
 	# Find Lua implementation, assuming lpeg is installed by other means

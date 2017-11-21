@@ -258,7 +258,7 @@ set ( DEP_NAMES
        )
 
 # Macro for adding external projects for each dependency
-macro ( build_dependecies _DEP_NAME )
+macro ( build_dependency _DEP_NAME )
        ExternalProject_Add ( dep_${_DEP_NAME}
               PREFIX ${_DEP_NAME}
               SOURCE_DIR ${DEP_SOURCE}/${_DEP_NAME}
@@ -271,7 +271,7 @@ endmacro ()
 
 # Adds external projects for each dependency
 foreach (DEP ${DEP_NAMES})
-       build_dependecies( ${DEP} )
+       build_dependency( ${DEP} )
 endforeach(DEP)
 
 # Ensure correct order of build (dependencies between external dependencies)
