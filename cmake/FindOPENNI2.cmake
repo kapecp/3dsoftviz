@@ -8,13 +8,14 @@
 
 find_path( OPENNI2_INCLUDE_DIR
 	NAMES OpenNI.h
-	HINTS 
-                /home/mikajel/Downloads/OpenNI-Linux-x64-2.2/Include
-		#/home/marek/OpenNI-Linux-x64-2.2/Include
-		/home/kapec/Desktop/work-in-progress/OpenNI2/Include
-		/home/kapecp/Desktop/Kinect/OpenNI2/Include
-		/usr/local/include/ni2
+	HINTS
+		/usr/include/
+		/usr/include/ni2
 		/usr/include/openni2
+		/usr/local/include/
+		/usr/local/include/ni2
+		/usr/local/include/openni2
+
 		PATHS
 			$ENV{OPENNI2_INCLUDE}
 
@@ -22,12 +23,13 @@ find_path( OPENNI2_INCLUDE_DIR
 find_library( OPENNI2_LIBRARY
 	NAMES OpenNI2 
 
-	HINTS 
-                /home/mikajel/Downloads/OpenNI-Linux-x64-2.2/Redist
-		#/home/marek/OpenNI-Linux-x64-2.2/Redist
-		/home/kapec/Desktop/work-in-progress/OpenNI2/Bin/x64-Release
-		/home/kapecp/Desktop/Kinect/OpenNI2/Bin/x64-Release/
+	HINTS
+		/usr/lib/x86_64-linux-gnu/
+		/usr/lib/x86_64-linux-gnu/ni2
+		/usr/lib/x86_64-linux-gnu/openni2
+		/usr/local/lib/
 		/usr/local/lib/ni2
+		/usr/local/lib/openni2
 		/usr/lib/OpenNI2/Drivers
 		PATHS
 			$ENV{OPENNI2_LIB}

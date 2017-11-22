@@ -5,7 +5,8 @@ find_file(CPPLINT_SCRIPT
 
 	NAMES cpplint.py cpplint cpplint.exe
 	PATHS
-
+		/bin
+		/usr/bin
 		/usr/local/bin
 		c:/Python27/Scripts
 )
