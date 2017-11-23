@@ -373,7 +373,6 @@ if (NOT SKIP_DOXYGEN)
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_dir}
                 COMMENT "Generating API documentation with Doxygen"
                 VERBATIM)
-            message("--------------------- ${CMAKE_CURRENT_BINARY_DIR}")
         install(DIRECTORY DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/html)
         install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION share/doc)
     endif ()
