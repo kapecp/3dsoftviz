@@ -373,9 +373,9 @@ if (NOT SKIP_DOXYGEN)
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_dir}
                 COMMENT "Generating API documentation with Doxygen"
                 VERBATIM)
-
-        install(DIRECTORY DESTINATION ${CMAKE_CURRENT_BINARY_dir}/html)
-        install(DIRECTORY ${CMAKE_CURRENT_BINARY_dir}/html DESTINATION share/doc)
+            message("--------------------- ${CMAKE_CURRENT_BINARY_DIR}")
+        install(DIRECTORY DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/html)
+        install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION share/doc)
     endif ()
 else ()
     message(STATUS "Skipped using DOXYGEN")
@@ -419,7 +419,7 @@ if (NOT SKIP_SPHINX)
                 -d "${SPHINX_CACHE_DIR}"
                 "${CMAKE_CURRENT_SOURCE_DIR}/docs"
                 "${SPHINX_HTML_DIR}"
-                COMMENT "Building HTML documentation with Sphinx")
+                COMMENT "Building  documentation with Sphinx")
     endif ()
 else ()
     message(STATUS "Skipped using SPHINX")
