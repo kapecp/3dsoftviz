@@ -26,6 +26,14 @@ set( 3DSOFTVIZ_DOMAIN "${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_DOMAIN_SECOND}" )
 # ------------------------------------------------------------
 # ----------------------Build settings------------------------
 # ------------------------------------------------------------
+
+# Use CCache compiler cache to speed-up build
+option( USE_CCACHE "Use CCache compiler cache to speed-up build." OFF)
+if( USE_CCACHE )
+	set(CMAKE_CXX_COMPILER_LAUNCHER ccache) #make sure you have /usr/bin/ccache
+	message(STATUS "Using ${CMAKE_CXX_COMPILER_LAUNCHER}")
+endif()
+
 # Additional CMake scripts
 set( CMAKE_MODULE_PATH
 		"${CMAKE_CURRENT_SOURCE_DIR}/cmake"
