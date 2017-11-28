@@ -7,23 +7,35 @@
 #=============================================================================
 if( USE_LEAP_ORION )
 	set ( LEAP_DEP_DIR "leap-orion")
-else()
-	set ( LEAP_DEP_DIR "leap")
+elseif ( WIN32 )
+	set ( LEAP_DEP_DIR "leap/leap-windows")
+elseif ( APPLE )
+	set ( LEAP_DEP_DIR "leap/leap-mac")
+elseif ( UNIX )
+	set ( LEAP_DEP_DIR "leap/leap-linux")
 endif()
 
 find_path( LEAP_INCLUDE_DIR NAMES leap.h Leap.h
 	PATHS
 	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/${LEAP_DEP_DIR}/include )
 
-find_library( LEAP_LIBRARY NAMES leap libLeap.so
-	PATHS
-	${CMAKE_CURRENT_SOURCE_DIR}/dependencies/${LEAP_DEP_DIR}/lib )
-
-if( WIN32 )
+if ( WIN32 )
+	find_library( LEAP_LIBRARY NAMES leap Leap.lib
+		PATHS
+		${CMAKE_CURRENT_SOURCE_DIR}/dependencies/${LEAP_DEP_DIR}/lib )
+	
 	find_path( LEAP_DLL
 		NAMES leap.dll
 		PATHS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/${LEAP_DEP_DIR}/dist
 	)
+elseif ( APPLE )
+	find_library( LEAP_LIBRARY NAMES leap libLeap.dylib
+		PATHS
+		${CMAKE_CURRENT_SOURCE_DIR}/dependencies/${LEAP_DEP_DIR}/lib )
+elseif ( UNIX )
+	find_library( LEAP_LIBRARY NAMES leap libLeap.so
+		PATHS
+		${CMAKE_CURRENT_SOURCE_DIR}/dependencies/${LEAP_DEP_DIR}/lib )
 endif()
 
 # handle the QUIETLY and REQUIRED arguments and set LEAP_FOUND to TRUE if
