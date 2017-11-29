@@ -182,7 +182,6 @@ public:
 	void setCamera( osg::ref_ptr<osg::Camera> camera )
 	{
 		this->camera = camera;
-
 		QMapIterator<qlonglong, osg::ref_ptr<Data::Edge> > i( *in_edges );
 
 
