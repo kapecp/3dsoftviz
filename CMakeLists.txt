@@ -710,8 +710,8 @@ endif()
 # ---------------------------------------------------------------
 
 #-------------------------------- Source files -------------------------------
-# add cmake modul that generates a list of source files
-include( cmake/Sources.cmake )
+# add cmake module that generates a list of source files
+add_subdirectory(src)
 
 # TODO: task-7199 Move "Build modules as libraries" the low in the hierarchy
 file( GLOB_RECURSE SRC_GITLIB   "src/Repository/Git/GitLib/*.cpp" )
@@ -826,7 +826,7 @@ endif()
 # ---------------------------------------------------------------
 
 # 3Dsoftviz library
-add_library( ${3DSOFTVIZ_NAME} STATIC ${INCL}  ${SRC} )
+add_library( ${3DSOFTVIZ_NAME} STATIC ${INCL} ${SRC} )
 
 # set compile flags only for our code ( suppresses warnings on system headers )
 target_compile_options( ${3DSOFTVIZ_NAME} PUBLIC ${FLAGS_FOR_DEBUG} )
@@ -1016,7 +1016,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 endif()
 
 # 3Dsoftviz executable
-add_executable( ${3DSOFTVIZ_NAME}_app ${INCL}  ${SRC_MAIN} )
+add_executable( ${3DSOFTVIZ_NAME}_app ${INCL}  src/${SRC_MAIN} )
 
 set_target_properties( ${3DSOFTVIZ_NAME}_app PROPERTIES OUTPUT_NAME ${3DSOFTVIZ_NAME} )
 target_compile_options( ${3DSOFTVIZ_NAME}_app PUBLIC ${FLAGS_FOR_DEBUG} )
