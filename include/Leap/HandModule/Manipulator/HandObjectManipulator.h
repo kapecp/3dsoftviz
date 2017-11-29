@@ -29,6 +29,7 @@ public:
 	 * @param rightHand - Leap representation of right hand (sensor output data).
 	 */
 	void updateHands( Leap::Hand leftHand, Leap::Hand rightHand, HandPalm* leftPalm, HandPalm* rightPalm, osg::ref_ptr<osg::Camera> camera );
+	void updateHands( Leap::HandPalm* leftHand, Leap::HandPalm* rightHand, HandPalm* leftPalm, HandPalm* rightPalm, osg::ref_ptr<osg::Camera> camera );
 
 	/**
 	 Method used in updateHands(). Iterates over fingers and for each call methods: updateJoints() and

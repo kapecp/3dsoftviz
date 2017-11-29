@@ -163,7 +163,7 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 	QObject::connect( chb_camera_rot, SIGNAL( clicked( bool ) ),
 					  viewerWidget->getCameraManipulator(), SLOT( setCameraCanRot( bool ) ) );
 
-	Lua::LuaInterface::getInstance()->executeFile( "main.lua" );
+//	Lua::LuaInterface::getInstance()->executeFile( "main.lua" );
 	viewerWidget->getPickHandler()->setSelectionObserver( this );
 
 	QObject::connect( viewerWidget->getCameraManipulator(), SIGNAL( sendTranslatePosition( osg::Vec3d ) ),
@@ -1398,7 +1398,7 @@ QWidget* CoreWindow::createEvolutionTab( QFrame* line )
 	return wMore;
 }
 
-QWidget* CoreWindow::createMagicLensTab ( QFrame* line )
+QWidget* CoreWindow::createMagicLensTab( QFrame* line )
 {
 	QWidget* wLens = new QWidget();
 	QFormLayout* lLens = new QFormLayout( wLens );
@@ -3942,18 +3942,18 @@ void CoreWindow::restartLayouting()
 void CoreWindow::magicLensOnOff( bool )
 {
 	double aspectRatio = static_cast<double>( width() )/static_cast<double>( height() );
-	if(viewerWidget->getNumSlaves()==0){
+	if ( viewerWidget->getNumSlaves()==0 ) {
 		osg::ref_ptr<osg::Camera> lensCamera = new osg::Camera;
-		lensCamera->setCullMask(0x2);
-		lensCamera->setGraphicsContext(viewerWidget->getGraphicsWindow());
-		lensCamera->setViewport(new osg::Viewport((viewerWidget->width()/4),(viewerWidget->height()/4),viewerWidget->width()/2,viewerWidget->height()/2));
-		lensCamera->setReferenceFrame(osg::Transform::RELATIVE_RF);
+		lensCamera->setCullMask( 0x2 );
+		lensCamera->setGraphicsContext( viewerWidget->getGraphicsWindow() );
+		lensCamera->setViewport( new osg::Viewport( ( viewerWidget->width()/4 ),( viewerWidget->height()/4 ),viewerWidget->width()/2,viewerWidget->height()/2 ) );
+		lensCamera->setReferenceFrame( osg::Transform::RELATIVE_RF );
 		//viewerWidget->addSlave(lensCamera.get(), osg::Matrix::scale(aspectRatio,aspectRatio,1), osg::Matrix(), true);
-		viewerWidget->addSlave(lensCamera.get(), osg::Matrixd(), osg::Matrix::scale(2,2,1), true);
-		}
-		else{
-			viewerWidget->removeSlave(0);
-		}
+		viewerWidget->addSlave( lensCamera.get(), osg::Matrixd(), osg::Matrix::scale( 2,2,1 ), true );
+	}
+	else {
+		viewerWidget->removeSlave( 0 );
+	}
 }
 
 // TODO - toto by sa mohlo robit uz pri oznaceni zhluku a nie explicitne cez button
@@ -4106,7 +4106,10 @@ void CoreWindow::startLeapAR()
 		return;
 	}
 
-	this->mLeapThrAR = new Leap::LeapThread( this,new Leap::CustomLeapManager( getCameraManipulator(), AppCore::Core::getInstance()->getLayoutThread(), AppCore::Core::getInstance( NULL )->getCoreGraph(), coreGraph->getHandsGroup() ) );
+	this->mLeapThrAR = new Leap::LeapThread( this,new Leap::CustomLeapManager( getCameraManipulator(),
+			AppCore::Core::getInstance()->getLayoutThread(),
+			AppCore::Core::getInstance( NULL )->getCoreGraph(),
+			coreGraph->getHandsGroup() ) );
 
 	this->mLeapThrAR->start();
 	b_start_leapAR->setText( "Stop LeapAR" );

@@ -11,7 +11,7 @@
 
 const float RADIUS = 0.07f;
 
-Leap::Joint::Joint( int level, int position, osg::ref_ptr<osg::Group> fingerJointGroup, int colorSwitch )
+Leap::Joint::Joint( int level, int position, osg::ref_ptr<osg::Group> fingerJointGroup, HandColors colorSwitch )
 	:level( level ), position( position ), colorSwitch( colorSwitch ), nextJoint( nullptr ), fingerJointGroup( fingerJointGroup )
 {
 	this->generateGeometry( RADIUS, colorSwitch );
@@ -29,7 +29,7 @@ void Leap::Joint::initStructure()
 	}
 }
 
-void Leap::Joint::generateGeometry( float radius, int colorSwitch )
+void Leap::Joint::generateGeometry( float radius, HandColors colorSwitch )
 {
 	osg::ref_ptr<osg::Geode> handGeode( new osg::Geode );
 	osg::ref_ptr<osg::Sphere> handSphere = new osg::Sphere( osg::Vec3f( 0.0f,0.0f,0.0f ), radius );

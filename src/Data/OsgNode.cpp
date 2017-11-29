@@ -487,7 +487,7 @@ osg::ref_ptr<osg::Node> Data::OsgNode::createNodeSphere( const float& scaling, o
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
 	geode->addDrawable( nodeSphere );
-	geode->setNodeMask(0x2);
+	geode->setNodeMask( 0x2 );
 
 	osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform();
 	at->setAutoRotateMode( osg::AutoTransform::ROTATE_TO_SCREEN );

@@ -56,8 +56,8 @@ void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand r
 
 		leftPalm->setMatrix(
 			osg::Matrix::translate( static_cast<double>( this->center[0] ) + this->direction[0] + static_cast<double>( lVector.x )/100.0,
-									static_cast<double>( this->center[1] )+this->direction[1] +static_cast<double>( lVector.y )/100.0,
-									static_cast<double>( this->center[2] )+this->direction[2] +static_cast<double>( lVector.z )/100.0 ) );
+									static_cast<double>( this->center[1] ) + this->direction[1] + static_cast<double>( lVector.y )/100.0,
+									static_cast<double>( this->center[2] ) + this->direction[2] + static_cast<double>( lVector.z )/100.0 ) );
 
 		osg::Viewport* viewport = camera->getViewport();
 		osg::Matrix win = camera->getViewport()->computeWindowMatrix();
@@ -65,8 +65,8 @@ void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand r
 		osg::Matrix proj = camera->getProjectionMatrix();
 		osg::Matrix model = leftPalm->getWorldMatrices()[0];
 		osg::Vec3 world_coords = osg::Vec3( static_cast<double>( this->center[0] ) + this->direction[0] + static_cast<double>( lVector.x )/100.0,
-											static_cast<double>( this->center[1] )+this->direction[1] +static_cast<double>( lVector.y )/100.0,
-											static_cast<double>( this->center[2] )+this->direction[2] +static_cast<double>( lVector.z )/100.0 );
+											static_cast<double>( this->center[1] ) + this->direction[1] + static_cast<double>( lVector.y )/100.0,
+											static_cast<double>( this->center[2] ) + this->direction[2] + static_cast<double>( lVector.z )/100.0 );
 		osg::Vec3 screenCoords = world_coords * view * proj * win;
 		screenCoords.set( ( ( screenCoords.x() / viewport->width() ) * 640 ), ( screenCoords.y() / viewport->height() ) * 480, screenCoords.z() );
 		this->mapper->setNodeScreenCoords( screenCoords );
@@ -88,15 +88,26 @@ void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand r
 
 		rVector = changeHandUpDirectionAxis( rVector );
 		rightPalm->setMatrix(
-			osg::Matrix::translate( this->center[0]+this->direction[0] + static_cast<double>( rVector.x )/100.0,
-									this->center[1]+this->direction[1] + static_cast<double>( rVector.y )/100.0,
-									this->center[2] +this->direction[2] + static_cast<double>( rVector.z )/100.0 ) );
+			osg::Matrix::translate( this->center[0] + this->direction[0] + static_cast<double>( rVector.x )/100.0,
+									this->center[1] + this->direction[1] + static_cast<double>( rVector.y )/100.0,
+									this->center[2] + this->direction[2] + static_cast<double>( rVector.z )/100.0 ) );
 		// update prstov pravej ruky
 		this->updateFingers( rightPalm, rightHand.fingers(), diffRightHand );
 		// update kosti medzi prstamu
 		this->updateInterFingerBones( rightPalm->interFingerBoneGroup, rightHand.fingers(), diffRightHand );
 	}
 
+}
+
+void Leap::HandObjectManipulator::updateHands( Leap::HandPalm* leftHand, Leap::HandPalm* rightHand, HandPalm* leftPalm, HandPalm* rightPalm, osg::ref_ptr<osg::Camera> camera )
+{
+	if ( leftHand != nullptr && leftPalm != nullptr ) {
+		leftPalm->setMatrix( leftHand->getMatrix() );
+	}
+
+	if ( rightHand != nullptr && rightPalm != nullptr ) {
+		rightPalm->setMatrix( rightHand->getMatrix() );
+	}
 }
 
 void Leap::HandObjectManipulator::updateFingers( HandPalm* palm, Leap::FingerList fingers, float diff )
@@ -130,7 +141,7 @@ void Leap::HandObjectManipulator::updateJoints( osg::Group* fingerJointGroup, Le
 			joint->setMatrix( osg::Matrix::translate(
 								  this->center[0] + this->direction[0] + static_cast<double>( posVector.x )/100.0,
 								  this->center[1] + this->direction[1] + static_cast<double>( posVector.y )/100.0,
-								  this->center[2] + this->direction[2] + static_cast <double>( posVector.z )/100.0 ) );
+								  this->center[2] + this->direction[2] + static_cast<double>( posVector.z )/100.0 ) );
 		}
 	}
 	// vykreslenie klbov prstov

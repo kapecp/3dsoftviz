@@ -9,6 +9,7 @@
 #include "Leap/HandModule/Model/HandBone.h"
 
 #include <osg/Group>
+#include <qdatastream.h>
 
 namespace Leap {
 class HandPalm : public HandNode
@@ -22,7 +23,7 @@ public:
 	  * @param handsGroup - Group of hands containing both palms and it's fingers.
 	  * @param colorSwitch - Value representing colour of palm (differs between hands)
 	 */
-	HandPalm( float radius, osg::ref_ptr<osg::Group> handsGroup, int colorSwitch );
+	HandPalm( float radius, osg::ref_ptr<osg::Group> handsGroup, HandColors colorSwitch );
 	/**
 	 * Starts creation of joint hierarchy for fingers and instatiates bones.
 	*/
@@ -34,12 +35,15 @@ public:
 	 * @param radius - Radius of sphere drawable in geode.
 	 * @param colorSwitch - Value representing colour of palm.
 	*/
-	void generateGeometry( float radius, int colorSwitch );
+	void generateGeometry( float radius, HandColors colorSwitch );
+
+	void addToStream( QDataStream* stream );
+	void setFromStream( QDataStream* stream );
 
 	osg::ref_ptr<osg::Group> fingerGroup;
 	// 1 = GREEN JOINTS
 	// 2 = BLUE JOINTS
-	int colorSwitch;
+	HandColors colorSwitch;
 	osg::ref_ptr<osg::Group> interFingerBoneGroup;
 };
 }

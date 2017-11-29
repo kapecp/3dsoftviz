@@ -17,6 +17,8 @@
 #include "osg/PositionAttitudeTransform"
 
 #include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
+#include "Leap/HandModule/Model/HandPalm.h"
+#include "Network/UserAvatar.h"
 
 namespace Layout {
 class LayoutThread;
@@ -119,7 +121,7 @@ public:
 	{
 		return usersID[Client];
 	}
-	osg::PositionAttitudeTransform* getAvatarTransform( QTcpSocket* client )
+	Network::UserAvatar* getAvatarTransform( QTcpSocket* client )
 	{
 		return avatars[client];
 	}
@@ -160,6 +162,9 @@ public:
 		return cw;
 	}
 
+	void sendHands( Leap::HandPalm* leftPalm, Leap::HandPalm* rightPalm );
+	virtual void customEvent( QEvent* event );
+
 private slots:
 	void readyRead();
 	void disconnected();
@@ -177,7 +182,7 @@ private:
 	QSet<QTcpSocket*> clients;
 	QMap<QTcpSocket*,QString> users;
 	QMap<QTcpSocket*,int> usersID;
-	QMap<QTcpSocket*,osg::PositionAttitudeTransform*> avatars;
+	QMap<QTcpSocket*,Network::UserAvatar*> avatars;
 	Layout::LayoutThread* thread;
 	Vwr::CoreGraph* coreGraph;
 	ExecutorFactory* executorFactory;
