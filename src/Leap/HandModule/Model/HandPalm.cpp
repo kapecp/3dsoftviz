@@ -31,7 +31,7 @@ Leap::HandPalm::HandPalm( float radius = 0.1f, osg::ref_ptr<osg::Group> handsGro
 
 void Leap::HandPalm::initStructure()
 {
-	LOG( INFO ) << "Leap/HandleModule/HandPalm/initStrucure()";
+//	LOG( INFO ) << "Leap/HandleModule/HandPalm/initStrucure()";
 	if ( this->fingerGroup.get()->getNumChildren() == 0 ) {
 		int i = 0;
 		int j = 0;

@@ -133,10 +133,12 @@ void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand right
 
 		this->handObjectManipulator->updateHands( leftHand, rightHand, leftPalm, rightPalm, this->coreGraph->getCamera() );
 
-		QDateTime dt = QDateTime::currentDateTime();
-		if ( lastSendTime.addMSecs( 500 ) <= dt ) {
-			lastSendTime = dt;
-			Network::Server::getInstance()->sendHands( leftPalm, rightPalm );
+		if ( leftHand.isValid() || rightHand.isValid()) {
+			QDateTime dt = QDateTime::currentDateTime();
+			if ( lastSendTime.addMSecs( 100 ) <= dt ) {
+				lastSendTime = dt;
+				Network::Server::getInstance()->invokeSendHands( leftPalm, rightPalm );
+			}
 		}
 	}
 

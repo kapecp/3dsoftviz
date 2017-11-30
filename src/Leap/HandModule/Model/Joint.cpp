@@ -24,7 +24,7 @@ void Leap::Joint::initStructure()
 	if ( this->nextJoint == nullptr ) {
 		if ( this->level != 4 ) {
 			this->nextJoint = new Joint( this->level + 1, this->position, this->fingerJointGroup, this->colorSwitch );
-			LOG( INFO ) <<"Leap/Joint/initStructure() level" + std::to_string( level );
+			//LOG( INFO ) <<"Leap/Joint/initStructure() level" + std::to_string( level );
 		}
 	}
 }

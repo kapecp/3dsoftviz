@@ -33,6 +33,7 @@ ExecutorFactory::ExecutorFactory()
 	executorList.insert( quint8( SetRestrictionExecutor::INSTRUCTION_NUMBER ), new SetRestrictionExecutor );
 	executorList.insert( quint8( UnSetRestrictionExecutor::INSTRUCTION_NUMBER ), new UnSetRestrictionExecutor );
 	executorList.insert( quint8( AttractAttentionExecutor::INSTRUCTION_NUMBER ), new AttractAttentionExecutor );
+	executorList.insert( quint8( SendHandsExecutor::INSTRUCTION_NUMBER ), new SendHandsExecutor );
 
 }
 

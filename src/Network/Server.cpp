@@ -21,11 +21,6 @@
 #include <leathers/old-style-cast>
 #include <leathers/sign-conversion>
 
-class HandsUpdatedEvent : public QEvent
-{
-
-};
-
 namespace Network {
 
 Server* Server::instance;
@@ -962,13 +957,30 @@ void Server::sendHands( Leap::HandPalm* leftPalm, Leap::HandPalm* rightPalm )
 	}
 }
 
+void Server::invokeSendHands( Leap::HandPalm* leftHand, Leap::HandPalm* rightHand )
+{
+	QApplication::postEvent(this, new HandsUpdatedEvent( leftHand, rightHand ));
+}
+
 void Server::customEvent( QEvent* event )
 {
 	if ( event != nullptr ) {
-		if ( event->type() == )
+		if ( event->type() == HANDS_UPDATED_EVENT) {
+			HandsUpdatedEvent* e = static_cast<HandsUpdatedEvent*>(event);
+			this->sendHands( e->getLeftHand(), e->getRightHand() );
 		}
+		else
+			QTcpServer::customEvent( event );
+	}
 }
 
 } // namespace Network
+
+HandsUpdatedEvent::HandsUpdatedEvent( Leap::HandPalm* leftHand, Leap::HandPalm* rightHand )
+	: QEvent( HANDS_UPDATED_EVENT )
+{
+	this->leftHand = leftHand;
+	this->rightHand = rightHand;
+}
 
 #include <leathers/pop>
