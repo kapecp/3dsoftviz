@@ -3,28 +3,28 @@
 	url = git@github.com:LuaDist/libnoise.git
 [submodule "dependencies/luajit"]
 	path = dependencies/luajit
-	url = https://github.com/LuaDist/luajit.git
+	url = git@github.com:LuaDist/luajit.git
 [submodule "dependencies/diluculum"]
 	path = dependencies/diluculum
-	url = https://github.com/LuaDist/diluculum.git
+	url = git@github.com:LuaDist/diluculum.git
 [submodule "dependencies/lpeg"]
 	path = dependencies/lpeg
-	url = https://github.com/LuaDist/lpeg.git
+	url = git@github.com:LuaDist/lpeg.git
 [submodule "dependencies/leg"]
 	path = dependencies/leg
-	url = https://github.com/LuaDist/leg.git
+	url = git@github.com:LuaDist/leg.git
 [submodule "dependencies/luametrics"]
 	path = dependencies/luametrics
-	url = https://github.com/LuaDist/luametrics.git
+	url = git@github.com:LuaDist/luametrics.git
 [submodule "dependencies/aruco"]
 	path = dependencies/aruco
 	url = git@github.com:LuaDist/aruco.git
 [submodule "dependencies/luafilesystem"]
 	path = dependencies/luafilesystem
-	url = https://github.com/LuaDist/luafilesystem.git
+	url = git@github.com:LuaDist/luafilesystem.git
 [submodule "dependencies/lua"]
 	path = dependencies/lua
-	url = https://github.com/LuaDist/lua.git
+	url = git@github.com:LuaDist/lua.git
 [submodule "dependencies/osgModeling"]
 	path = dependencies/osgModeling
 	url = git@github.com:kapecp/osgmodeling.git
@@ -33,7 +33,7 @@
 	url = git@github.com:kapecp/igloo.git
 [submodule "dependencies/lualogging"]
 	path = dependencies/lualogging
-	url = https://github.com/LuaDist/lualogging.git
+	url = git@github.com:LuaDist/lualogging.git
 [submodule "dependencies/easyloggingpp"]
 	path = dependencies/easyloggingpp
 	url = git@github.com:easylogging/easyloggingpp.git
@@ -87,7 +87,7 @@
 	url = git@github.com:kapecp/leathers.git
 [submodule "dependencies/luacomments"]
 	path = dependencies/luacomments
-	url = https://github.com/LuaDist/luacomments.git
+	url = git@github.com:LuaDist/luacomments.git
 [submodule "dependencies/osgQt"]
 	path = dependencies/osgQt
 	url = git@github.com:openscenegraph/osgQt.git
