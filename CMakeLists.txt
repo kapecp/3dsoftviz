@@ -1016,7 +1016,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 endif()
 
 # 3Dsoftviz executable
-add_executable( ${3DSOFTVIZ_NAME}_app ${INCL}  src/${SRC_MAIN} )
+add_executable( ${3DSOFTVIZ_NAME}_app ${INCL}  ${SRC_MAIN} )
 
 set_target_properties( ${3DSOFTVIZ_NAME}_app PROPERTIES OUTPUT_NAME ${3DSOFTVIZ_NAME} )
 target_compile_options( ${3DSOFTVIZ_NAME}_app PUBLIC ${FLAGS_FOR_DEBUG} )

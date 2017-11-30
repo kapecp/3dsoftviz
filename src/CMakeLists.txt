@@ -1,7 +1,7 @@
 #-------------------------------- Source files -------------------------------
 # cmake module generating a list of source files
 
-set( SRC_MAIN "main.cpp" PARENT_SCOPE)
+set( SRC_MAIN "src/main.cpp" PARENT_SCOPE)
 file( GLOB_RECURSE SRC_APP		"Application/*.cpp" )
 file( GLOB_RECURSE SRC_CORE		"Core/*.cpp" )
 file( GLOB_RECURSE SRC_DATA		"Data/*.cpp" )
