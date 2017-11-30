@@ -1589,6 +1589,7 @@ endif()
 # 'cotire' the executable
 if( COMMAND cotire )
 	set_target_properties( test_gitlib_module PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
+	set_target_properties(test_gitlib_module PROPERTIES COTIRE_ENABLE_PRECOMPILED_HEADER FALSE)
 	cotire( test_gitlib_module CONFIGURATIONS Debug Release )
 endif()
 
