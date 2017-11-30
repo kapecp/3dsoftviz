@@ -148,8 +148,27 @@ set( ALL_COMPILE_DEFINITIONS )
 set( CMAKE_AUTOMOC ON )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
-#add dependencies-search module
+#add dependencies with search module
 include(cmake/SearchDependencies.cmake)
+
+# ------------------------------------------------------------
+# -----Dependencies - Add custom target dependencies----------
+# ------------------------------------------------------------
+
+#generate doxygen documentation
+include(cmake/doxygen.cmake)
+
+#generate sphinx documentation
+include(cmake/sphinx.cmake)
+
+#format souce code
+include(cmake/astyle.cmake)
+
+#check code style
+include(cmake/cpplint.cmake)
+
+#analyze all code
+include(cmake/cppcheck.cmake)
 
 
 # ------------------------------------------------------------
