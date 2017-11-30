@@ -4,7 +4,7 @@
 #include "Data/Cluster.h"
 
 #include "Util/ApplicationConfig.h"
-
+#include "Util/CameraHelper.h"
 #include <osg/Geometry>
 #include <osg/ShapeDrawable>
 #include <osg/Depth>
