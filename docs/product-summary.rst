@@ -1,7 +1,7 @@
-.. contents::
-
+Big picture a sumarizácia features nástroja 3DSoftviz
+========================================
 Integrácia Kinect-u
-===================
+--------------------
 
 Zdroj: Tímový projekt č. 18 2013/2014
 
@@ -26,9 +26,12 @@ forme diagramu prípadu použitia na Obrázku nižšie. Medzi najvýznamnejs
 patrí použitie rúk na ovládanie grafu a hýbanie myškou, taktiež významnú
 úlohu hrajú implementované gestá.
 
-|image0|
-
-Figure 1: Prípady použitia Kinnectu v projekte
+.. figure:: images/product-summary/kinect-usecases.png
+    :scale: 50 %
+    :alt: kinnect-usecases.png
+    :align: center
+    
+    Prípady použitia Kinectu v projekte
 
 Používateľ je pomocou jednej ruky schopný ovládať myš, kde gestá ruky sú
 namapované na akcie myši. Používateľ vie pomocou oboch rúk ovládať graf,
@@ -51,7 +54,7 @@ Medzi ďalšie vykonané zmeny patrí:
 -  otáčania kamery pomocou pohybov, pozície hlavy alebo značkou
 
 Reprezentácia vnorených grafov, obmedzovanie layoutu, doplnenie funkcií pre spájanie a rozklikávanie uzlov
-==========================================================================================================
+-----------------------------------------------------------------------------------------------------------
 
 Zdroj: Tímový projekt č. 18 2010/2011
 
@@ -64,12 +67,8 @@ Návrh vychádza z existujúcej štruktúry, teda dátovej reprezentácie
 hrana,
 
 graf. Do týchto existujúcich prvkov, respektíve tried, sú doplnené
-atribúty a
-
-metódy potrebné pre vytváranie kompozitnej dátovej štruktúry na úrovni
-uzlov
-
-grafu, ktoré majú buď rodičovské uzly (nadradené), alebo obsahujú
+atribúty a metódy potrebné pre vytváranie kompozitnej dátovej štruktúry na úrovni
+uzlov grafu, ktoré majú buď rodičovské uzly (nadradené), alebo obsahujú
 vnorené uzly.
 
 Pridaná možnosť určiť obmedzenie, kde v priestore sa môže nachádzať daný
@@ -108,22 +107,31 @@ na povrch gule, do gule a do roviny. Interakcia prebieha nasledovne:
 Bola pridaná funkcionalita pre spájanie a rozdeľovanie uzlov, ktoré sa
 neskôr začlenili pod záložku clustering.
 
-|image1|
-
+.. figure:: images/product-summary/node-merging-and-splitting.png
+    :scale: 50 %
+    :alt: node-merging-and-splitting.png
+    :align: center
+    
 Pribudli možnosti používateľského rozhrania pre prácu s databázou –
 ukladanie a načítavanie grafov (Obr. nižšie).
 
-|image2|
+.. figure:: images/product-summary/db-ui.png
+    :scale: 50 %
+    :alt: db-ui.png
+    :align: center
 
 Bol doplnený modul Data o pridávanie pomocných uzlov, ktoré ovplyvňujú
 rozloženie multihrán (Obr. nižšie).
 
-|image3|
+.. figure:: images/product-summary/multiedge-example.png
+	:scale: 50%
+	:alt: feature-screen.png
+	:align: center 
 
-Zobrazenie grafu s jednou multihranou
+	Zobrazenie grafu s jednou multihranou
 
 Filtrovanie zobrazeného hypergrafu pomocou dopytovacieho jazyka, doplnenie magickej šošovky
-===========================================================================================
+--------------------------------------------------------------------------------------------
 
 Zdroj: Bc. Zuzana Číková: Využitie dopytovacích jazykov a magických
 šošoviek pri vizualizácii grafov (diplomová práca)
@@ -157,10 +165,13 @@ Rozšírenie projektu 3DSoftviz (vtedy 3DVisual) o 2 väčšie ucelené čast
    strede obrazovky, ktorá zobrazuje vizualizáciu vyfiltrovaného a
    modifikovaného hypergrafu.
 
-    |image4|
+.. figure:: images/product-summary/magic-lens-example-1.png
+	:scale: 50%
+	:alt: magic-lens-example-1.png
+	:align: center
 
-Vizualizácia hypergrafu bez použitia šošovky (vľavo) a s použitím
-šošovky fil- trujúcej vzťahy typu inheritance (vpravo).
+	Vizualizácia hypergrafu bez použitia šošovky (vľavo) a s použitím
+	šošovky filtrujúcej vzťahy typu inheritance (vpravo).
 
 Pridané boli dva ovládacie prvky:
 
@@ -171,12 +182,15 @@ Pridané boli dva ovládacie prvky:
    ostane vo vizualizačnom okne zobrazený iba pôvodný hypergraf,
    prípadne prázdna scéna, pokiaľ dopyt ešte nebol zadaný.
 
-|image5|
+.. figure:: images/product-summary/magic-lens-example-2.png
+	:scale: 50%
+	:alt: magic-lens-example-2.png
+	:align: center
 
-Zobrazenie tried implementujúcich tri konkrétne rozhrania.
+	Zobrazenie tried implementujúcich tri konkrétne rozhrania.
 
 Vizuálne uzly
-=============
+-------------
 
 Zdroj: Bc. Jakub Ukrop: Vizuálne sprístupňovanie informácií uložených v
 grafoch (diplomová práca)
@@ -187,12 +201,15 @@ odlíšenie uzlov podľa niektorého z parametrov priradeného uzlu pri na-
 čítavaní zo súboru.
 
 Otvorené uzly majú ofarbený rám, uzavreté uzly sú ofarbené celé. Ukážka
-ofar- benia je na obrázku nižšie.
+ofarbenia je na obrázku nižšie.
 
-|image6|
+.. figure:: images/product-summary/visual-node-example-1.png
+	:scale: 50%
+	:alt: visual-node-example-1.png
+	:align: center
 
-Všetky druhy vizuálnych uzlov: text, 3D objekt, webová stránka a
-obrázok.
+	Všetky druhy vizuálnych uzlov: text, 3D objekt, webová stránka a
+	obrázok.
 
 Veľkosť uzla alebo skupiny uzlov je nastaviteľná manuálne používateľom.
 Slúži najmä na zvýraznenie podrobností obsahu uzla.
@@ -214,12 +231,15 @@ Podporované sú 4 typy obsahu:
 Typ obsahu je možne meniť za behu aplikácie. Hrany, podobne ako uzavreté
 uzly, sú zobrazené ako 2D textúry natočené ku kamere.
 
-|image7|
+.. figure:: images/product-summary/visual-node-example-2.png
+	:scale: 50%
+	:alt: visual-node-example-2.png
+	:align: center
 
-Graf predsokratovských filozofov a ich vzťahov.
+	Graf predsokratovských filozofov a ich vzťahov.
 
 Kolaboratívne virtuálne prostredie 
-===================================
+-----------------------------------
 
 Zdroj: Bc. Ivan Pleško:
 
@@ -238,43 +258,18 @@ inštancií (jedna serverová, druhá klientská). Obaja používatelia sa
 pozerajú na ten istý graf, no každý z takej perspektívy, ktorá mu
 vyhovuje.
 
-|image8|
+.. figure:: images/product-summary/colab-example-1.png
+	:scale: 50%
+	:alt: colab-example-1.png
+	:align: center
 
-*Dvaja používatelia si prezerajú ten istý graf, každý z takej
-perspektívy, ktorá mu vyhovuje *
+	Dvaja používatelia si prezerajú ten istý graf, každý z takej
+	perspektívy, ktorá mu vyhovuje.
 
-|image9|
+.. figure:: images/product-summary/colab-example-2.png
+	:scale: 50%
+	:alt: colab-example-2.png
+	:align: center
 
-Používateľ Server pozoruje používateľ Nick, ktorý našiel
-zaujímavú oblasť grafu a zvýraznil ju obalením do gule.
-
-.. |image0| image:: images/feature-review/kinnect-usecases.png
-   :width: 5.26389in
-   :height: 4.50000in
-.. |image1| image:: images/feature-review/mode-merging-and-splitting.png
-   :width: 1.87500in
-   :height: 0.75000in
-.. |image2| image:: images/feature-review/db-ui.png
-   :width: 5.11111in
-   :height: 3.16667in
-.. |image3| image:: images/feature-review/multiedge-example.png
-   :width: 3.91667in
-   :height: 2.12500in
-.. |image4| image:: images/feature-review/magic-lens-example-1.png
-   :width: 6.29583in
-   :height: 2.19097in
-.. |image5| image:: images/feature-review/magic-lens-example-2.png.png
-   :width: 6.29583in
-   :height: 4.42569in
-.. |image6| image:: images/feature-review/visual-node-example-1.png
-   :width: 6.29583in
-   :height: 2.52847in
-.. |image7| image:: images/feature-review/visual-nose-example-2.png
-   :width: 6.29583in
-   :height: 3.38333in
-.. |image8| image:: images/feature-review/colab-example-1.png
-   :width: 6.29583in
-   :height: 3.48125in
-.. |image9| image:: images/feature-review/colab-examle-2.png
-   :width: 6.29583in
-   :height: 4.05278in
+	Používateľ Server pozoruje používateľ Nick, ktorý našiel
+	zaujímavú oblasť grafu a zvýraznil ju obalením do gule.
