@@ -1593,7 +1593,6 @@ if( USE_INCLUDE_WHAT_YOU_USE )
 	else()
 		message( STATUS "Using include-what-you-use" )
 
-		set_property( TARGET ${3DSOFTVIZ_NAME}_app PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path} )
 		set( iwyu_path_and_options
 			${iwyu_path}
 			-Xiwyu
@@ -1608,6 +1607,35 @@ if( USE_INCLUDE_WHAT_YOU_USE )
 		set_property( TARGET ${3DSOFTVIZ_NAME}_app	PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path_and_options} )
 	endif()
 endif()
+
+
+# -------------------------------------------------------
+# clang-tidy
+# -------------------------------------------------------
+option( USE_CLANG_TIDY "Use clang-tidy." OFF )
+if( USE_CLANG_TIDY )
+	find_program( clang_tidy NAMES clang-tidy PATHS /usr/local/opt/llvm/bin )
+
+	if( NOT clang_tidy )
+		message( STATUS "Could not find the program clang-tidy" )
+	else()
+		message( STATUS "Using clang-tidy" )
+
+		set( clang_tidy_and_options
+			${clang_tidy}
+			# do not use checks:
+			# to many warnings in easylogging++: -cppcoreguidelines-pro-type-vararg,-cppcoreguidelines-pro-bounds-array-to-pointer-decay
+			# include order used in LLVM, not our style: -llvm-include-order
+			-checks=*,-llvm-include-order,-cppcoreguidelines-pro-type-vararg,-cppcoreguidelines-pro-bounds-array-to-pointer-decay
+			)
+
+		set_property( TARGET gitlib					PROPERTY CXX_CLANG_TIDY ${clang_tidy_and_options} )
+		set_property( TARGET leaplib				PROPERTY CXX_CLANG_TIDY ${clang_tidy_and_options} )
+		set_property( TARGET ${3DSOFTVIZ_NAME}		PROPERTY CXX_CLANG_TIDY ${clang_tidy_and_options} )
+		set_property( TARGET ${3DSOFTVIZ_NAME}_app	PROPERTY CXX_CLANG_TIDY ${clang_tidy_and_options} )
+	endif()
+endif()
+
 
 # -------------------------------------------------------
 # Install
