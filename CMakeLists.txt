@@ -1580,6 +1580,62 @@ else()
 	target_link_libraries( ${3DSOFTVIZ_NAME}_app ${3DSOFTVIZ_NAME} )
 endif()
 
+# -------------------------------------------------------
+# include-what-you-use
+# -------------------------------------------------------
+option( USE_INCLUDE_WHAT_YOU_USE "Use include-what-you-use." OFF )
+if( USE_INCLUDE_WHAT_YOU_USE )
+
+	find_program( iwyu_path NAMES include-what-you-use iwyu )
+
+	if( NOT iwyu_path )
+		message( STATUS "Could not find the program include-what-you-use" )
+	else()
+		message( STATUS "Using include-what-you-use" )
+
+		set( iwyu_path_and_options
+			${iwyu_path}
+			-Xiwyu
+			--mapping_file=${CMAKE_CURRENT_SOURCE_DIR}/resources/iwyu/mappings/qt5_4.imp
+			# TODO: use multiple mapping files (according to doc multiple --mapping_file can be used, but results in error)
+			# --mapping_file=/Users/kapec/Downloads/include-what-you-use/mappings/libcxx.imp
+			)
+
+		set_property( TARGET gitlib					PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path_and_options} )
+		set_property( TARGET leaplib				PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path_and_options} )
+		set_property( TARGET ${3DSOFTVIZ_NAME}		PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path_and_options} )
+		set_property( TARGET ${3DSOFTVIZ_NAME}_app	PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path_and_options} )
+	endif()
+endif()
+
+
+# -------------------------------------------------------
+# clang-tidy
+# -------------------------------------------------------
+option( USE_CLANG_TIDY "Use clang-tidy." OFF )
+if( USE_CLANG_TIDY )
+	find_program( clang_tidy NAMES clang-tidy PATHS /usr/local/opt/llvm/bin )
+
+	if( NOT clang_tidy )
+		message( STATUS "Could not find the program clang-tidy" )
+	else()
+		message( STATUS "Using clang-tidy" )
+
+		set( clang_tidy_and_options
+			${clang_tidy}
+			# do not use checks:
+			# to many warnings in easylogging++: -cppcoreguidelines-pro-type-vararg,-cppcoreguidelines-pro-bounds-array-to-pointer-decay
+			# include order used in LLVM, not our style: -llvm-include-order
+			-checks=*,-llvm-include-order,-cppcoreguidelines-pro-type-vararg,-cppcoreguidelines-pro-bounds-array-to-pointer-decay
+			)
+
+		set_property( TARGET gitlib					PROPERTY CXX_CLANG_TIDY ${clang_tidy_and_options} )
+		set_property( TARGET leaplib				PROPERTY CXX_CLANG_TIDY ${clang_tidy_and_options} )
+		set_property( TARGET ${3DSOFTVIZ_NAME}		PROPERTY CXX_CLANG_TIDY ${clang_tidy_and_options} )
+		set_property( TARGET ${3DSOFTVIZ_NAME}_app	PROPERTY CXX_CLANG_TIDY ${clang_tidy_and_options} )
+	endif()
+endif()
+
 
 # -------------------------------------------------------
 # Install
@@ -1823,6 +1879,7 @@ endif()
 # 'cotire' the executable
 if( COMMAND cotire )
 	set_target_properties( test_gitlib_module PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
+	set_target_properties(test_gitlib_module PROPERTIES COTIRE_ENABLE_PRECOMPILED_HEADER FALSE)
 	cotire( test_gitlib_module CONFIGURATIONS Debug Release )
 endif()
 
