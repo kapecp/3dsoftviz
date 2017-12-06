@@ -4,7 +4,7 @@
 #include "Data/Cluster.h"
 
 #include "Util/ApplicationConfig.h"
-
+#include "Util/CameraHelper.h"
 #include <osg/Geometry>
 #include <osg/ShapeDrawable>
 #include <osg/Depth>
@@ -17,6 +17,7 @@
 #include <QTextStream>
 #include <Shapes/Cuboid.h>
 
+#include <Util/CameraHelper.h>
 
 Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Graph* graph, float scaling, osg::Vec3f position )
 	:DbNode( id,name,type,graph,scaling )
@@ -450,7 +451,6 @@ osg::ref_ptr<osg::Node> Data::OsgNode::createNodeSquare( const float& scaling, o
 	nodeQuad->setStateSet( bbState );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-	geode->setNodeMask( geode->getNodeMask() & static_cast<unsigned int>( ~0x2 ) );
 	geode->addDrawable( nodeQuad );
 
 	osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform();
@@ -488,6 +488,7 @@ osg::ref_ptr<osg::Node> Data::OsgNode::createNodeSphere( const float& scaling, o
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
 	geode->addDrawable( nodeSphere );
+	geode->setNodeMask(0x2);
 
 	osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform();
 	at->setAutoRotateMode( osg::AutoTransform::ROTATE_TO_SCREEN );

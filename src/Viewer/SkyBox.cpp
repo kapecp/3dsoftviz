@@ -173,6 +173,7 @@ osg::Node* SkyBox::createSkyBox( int skyboxType )
 	transform->setCullingActive( false );
 	transform->addChild( geode );
 
+
 	osg::ClearNode* clearNode = new osg::ClearNode;
 	//  clearNode->setRequiresClear(false);
 	clearNode->setCullCallback( new TexMatCallback( *tm ) );
