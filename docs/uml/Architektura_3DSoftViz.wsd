@@ -24,24 +24,9 @@ package "Architektura 3DSoftViz" {
 [Leap] -down- [QOSG]
 [Kinect] -down- [QOSG]
 
+[City] -left- [Viewer]
+[City] -down- [QOSG]
+[City] -up- [Data]
+
 }
-
-@enduml
-
-
-
-@startuml
-
-[Data] <- [Layout]
-[OpenCV] <-> [Kinect]
-[Core] -left-> [Kinect]
-[Core] -left-> [OpenCV]
-[Core] -> [QOSG]
-[Core] -down-> [Layout]
-[Core] -down-> [Viewer]
-[Viewer] -up- [QOSG]
-[Data] -left- [Manager]
-[Manager] <-up- [Importer]
-[Manager] -down- [ModelDAO]
-
 @enduml

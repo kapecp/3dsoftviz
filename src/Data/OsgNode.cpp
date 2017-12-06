@@ -4,7 +4,7 @@
 #include "Data/Cluster.h"
 
 #include "Util/ApplicationConfig.h"
-
+#include "Util/CameraHelper.h"
 #include <osg/Geometry>
 #include <osg/ShapeDrawable>
 #include <osg/Depth>
@@ -17,6 +17,7 @@
 #include <QTextStream>
 #include <Shapes/Cuboid.h>
 
+#include <Util/CameraHelper.h>
 
 Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Graph* graph, float scaling, osg::Vec3f position )
 	:DbNode( id,name,type,graph,scaling )
