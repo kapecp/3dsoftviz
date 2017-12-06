@@ -152,7 +152,7 @@ set( CMAKE_INCLUDE_CURRENT_DIR ON )
 include(cmake/SearchDependencies.cmake)
 
 # ------------------------------------------------------------
-# -----Dependencies - Add custom target dependencies----------
+# ----------Support tools - Add custom build targets----------
 # ------------------------------------------------------------
 
 #generate doxygen documentation
