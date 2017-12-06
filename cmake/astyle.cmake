@@ -10,14 +10,24 @@ if (NOT SKIP_ASTYLE)
         message(STATUS "Astyle FOUND")
 
         # Add a custom target
-        add_custom_target("style" COMMAND
-                "${ASTYLE_EXECUTABLE}"
-                --options=${CMAKE_CURRENT_SOURCE_DIR}/../astyle.options
-                ${CMAKE_CURRENT_SOURCE_DIR}/../include/*.h
-                ${CMAKE_CURRENT_SOURCE_DIR}/../src/*.cpp
-                COMMENT "Formating source code with Astyle."
-                VERBATIM
-                )
+        if (WIN32)
+            add_custom_target("style"
+                    COMMAND
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../run_astyle.bat
+                    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../"
+                    COMMENT "Formating source code with Astyle."
+                    VERBATIM
+                    )
+        else()
+            add_custom_target("style"
+                    COMMAND
+                    "${ASTYLE_EXECUTABLE}"
+                    --options=${CMAKE_CURRENT_SOURCE_DIR}/../astyle.options
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../include/*.h
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../src/*.cpp
+                    COMMENT "Formating source code with Astyle."
+                    VERBATIM
+                    )
     endif ()
 else ()
     message(STATUS "Skipped using ASTYLE")
