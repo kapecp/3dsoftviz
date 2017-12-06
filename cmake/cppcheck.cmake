@@ -14,9 +14,9 @@ if (NOT SKIP_CPPCHECK)
         if (WIN32)
             add_custom_target(cppcheck
                     COMMAND
-                    ${CMAKE_CURRENT_SOURCE_DIR}/../run_cppcheck.bat # NOTE: this will probably work only on Linux/OSX
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../run_cppcheck.bat
                     WORKING_DIRECTORY
-                    "${CMAKE_CURRENT_BINARY_dir}"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/../"
                     COMMENT "Linting code via cpplint.py"
                     VERBATIM
                     )

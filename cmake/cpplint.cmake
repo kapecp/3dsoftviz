@@ -16,9 +16,9 @@ if (NOT SKIP_CPPLINT)
         if (WIN32)
             add_custom_target("cpplint"
                     COMMAND
-                    ${CMAKE_CURRENT_SOURCE_DIR}/../cpplint.bat # NOTE: this will probably work only on Linux/OSX
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../run_cpplint.bat
                     WORKING_DIRECTORY
-                    "${CMAKE_CURRENT_BINARY_dir}"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/../"
                     COMMENT "Linting code via cpplint.py"
                     VERBATIM
                     )
@@ -29,9 +29,9 @@ if (NOT SKIP_CPPLINT)
                     "${CPPLINT_SCRIPT}"
                     ${ALL_INCLUDE_FILES}
                     ${ALL_SRC_FILES}
-                    2>&1 | tee cpplint-report.txt # NOTE: this will probably work only on Linux/OSX
+                    2>&1 | tee cpplint-report.txt
                     WORKING_DIRECTORY
-                    "${CMAKE_CURRENT_BINARY_dir}"
+                    "${CMAKE_CURRENT_SOURCE_DIR}"
                     COMMENT "Linting code via cpplint.py"
                     VERBATIM
                     )
