@@ -718,7 +718,7 @@ file( GLOB_RECURSE SRC_GITLIB   "src/Repository/Git/GitLib/*.cpp" )
 file ( GLOB_RECURSE SRC_LEAPLIB "src/Leap/LeapLib/*.cpp" )
 
 #-------------------------------- Header files -------------------------------
-# add CMake module - get all header files
+# process include directory - get all header files
 include(include/Headers.cmake)
 
 # TODO: task-7199 Move "Build modules as libraries" the low in the hierarchy
@@ -726,7 +726,7 @@ file( GLOB_RECURSE HEADER_GITLIB  "include/Repository/Git/GitLib/*.h" )
 file( GLOB_RECURSE HEADER_LEAPLIB "include/Leap/LeapLib/*.h" )
 
 #-------------------------------------- Group source files --------------------------------------
-# add CMake module - generates a group into which sources will be placed in project files
+# generate a group into which sources will be placed in VS project files
 if (MSVC)
         include(cmake/SourceGroupFiles.cmake)
 endif ()
