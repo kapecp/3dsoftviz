@@ -1,0 +1,24 @@
+@startuml
+scale 800 width
+
+!define cr(x) Core
+!define cw(x) QOSG.CoreWindow
+!define lth(x) Layout.LayoutThread
+!define mswn(x) QOSG.MessageWindows
+!define crgr(x) Viewer.CoreGraph
+!define fraalg(x) Layout.FRAlgorithm
+!define ac(x) Util.ApplicationConfig
+!define mg(x) Manager.Manager
+
+package Core{
+cr() -- mswn()
+cr() -- cw()
+cr() -- crgr()
+cr() -- fraalg()
+cr() -- lth()
+cr() -- mg()
+cr() -- ac()
+}
+
+main -- Core
+@enduml

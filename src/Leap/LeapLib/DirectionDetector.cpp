@@ -1,5 +1,8 @@
-#include "LeapLib/DirectionDetector.h"
-#include "LeapMath.h"
+#include "LeapLib/DirectionDetector.h" // IWYU pragma: associated
+// IWYU pragma: no_include <Leap.h>
+// IWYU pragma: no_include <LeapMath.h>
+// IWYU pragma: no_include <cmath>
+
 
 float Leap::DirectionDetector::getPitch( Hand hand )
 {
