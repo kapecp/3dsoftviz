@@ -4,6 +4,17 @@
 # according to the terms of the MIT license.
 # For details see the COPYRIGHT file distributed with 3DSoftviz.
 
+option( USE_CCACHE "Use CCache compiler cache to speed-up build." OFF)
+if( USE_CCACHE )
+    find_program(CCACHE_PROGRAM ccache)
+    if( CCACHE_PROGRAM )
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+        message(STATUS "Using ${CCACHE_PROGRAM}")
+    else()
+        message(STATUS "ccache NOT FOUND")
+    endif()
+endif()
+
 project( 3DSoftviz C CXX )
 cmake_minimum_required( VERSION 2.8.11 )
 
@@ -26,6 +37,7 @@ set( 3DSOFTVIZ_DOMAIN "${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_DOMAIN_SECOND}" )
 # ------------------------------------------------------------
 # ----------------------Build settings------------------------
 # ------------------------------------------------------------
+
 # Additional CMake scripts
 set( CMAKE_MODULE_PATH
 		"${CMAKE_CURRENT_SOURCE_DIR}/cmake"
