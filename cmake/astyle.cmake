@@ -18,7 +18,7 @@ if (NOT SKIP_ASTYLE)
                     COMMENT "Formating source code with Astyle."
                     VERBATIM
                     )
-        else()
+        else ()
             add_custom_target("style"
                     COMMAND
                     "${ASTYLE_EXECUTABLE}"
@@ -28,6 +28,7 @@ if (NOT SKIP_ASTYLE)
                     COMMENT "Formating source code with Astyle."
                     VERBATIM
                     )
+        endif ()
     endif ()
 else ()
     message(STATUS "Skipped using ASTYLE")
