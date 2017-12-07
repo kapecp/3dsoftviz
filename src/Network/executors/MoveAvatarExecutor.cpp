@@ -7,6 +7,8 @@
 #include <leathers/old-style-cast>
 #include <leathers/sign-conversion>
 
+#include <qmath.h>
+
 namespace Network {
 
 void MoveAvatarExecutor::execute_client()
@@ -19,10 +21,16 @@ void MoveAvatarExecutor::execute_client()
 
 	*stream >> x >> y >> z >> a >> b >> c >> d >> distance >> id;
 
-	osg::Vec3d center = osg::Vec3d( x,y,z );
-	osg::Quat rotation = osg::Quat( a,b,c,d );
+	double angel(M_PI/-2.0);
+	osg::Vec3d vec(1,0,0);
+	osg::Quat rot;
+	rot.makeRotate(angel,vec);
 
-	osg::Vec3d direction = rotation * osg::Vec3d( 0, 0, 1 );
+
+	osg::Vec3d center = osg::Vec3d( x,y,z );
+	osg::Quat rotation = osg::Quat( a,b,c,d ) * rot;
+
+	osg::Vec3d direction = rotation * osg::Vec3d( 0, -1, 0 );
 	direction *= distance;
 
 	if ( client->userToSpy() != id ) {
@@ -76,10 +84,15 @@ void MoveAvatarExecutor::execute_server()
 		client->write( block );
 	}
 
-	osg::Vec3d center = osg::Vec3d( x,y,z );
-	osg::Quat rotation = osg::Quat( a,b,c,d );
+	double angel(M_PI/-2.0);
+	osg::Vec3d vec(1,0,0);
+	osg::Quat rot;
+	rot.makeRotate(angel,vec);
 
-	osg::Vec3d direction = rotation * osg::Vec3d( 0, 0, 1 );
+	osg::Vec3d center = osg::Vec3d( x,y,z );
+	osg::Quat rotation = osg::Quat( a,b,c,d ) * rot;
+
+	osg::Vec3d direction = rotation * osg::Vec3d( 0, -1, 0 );
 	direction *= distance;
 
 	osg::PositionAttitudeTransform* PAtransform = server->getAvatarTransform( out_socket );

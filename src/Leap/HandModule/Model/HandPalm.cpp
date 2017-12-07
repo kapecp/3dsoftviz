@@ -31,6 +31,8 @@ Leap::HandPalm::HandPalm( float radius = 0.1f, osg::ref_ptr<osg::Group> handsGro
 
 void Leap::HandPalm::initStructure()
 {
+	QMutexLocker locker(&updateLock);
+
 //	LOG( INFO ) << "Leap/HandleModule/HandPalm/initStrucure()";
 	if ( this->fingerGroup.get()->getNumChildren() == 0 ) {
 		int i = 0;
@@ -71,6 +73,8 @@ void Leap::HandPalm::initStructure()
 
 void Leap::HandPalm::generateGeometry( float radius, HandColors colorSwitch )
 {
+	QMutexLocker locker(&updateLock);
+
 	osg::ref_ptr<osg::Geode> handGeode( new osg::Geode );
 	osg::ref_ptr<osg::Sphere> handSphere = new osg::Sphere( osg::Vec3f( 0.0f,0.0f,0.0f ), radius );
 
@@ -84,42 +88,96 @@ void Leap::HandPalm::generateGeometry( float radius, HandColors colorSwitch )
 
 void Leap::HandPalm::addToStream( QDataStream* stream )
 {
-	auto mat = getMatrix();
+	QMutexLocker locker(&updateLock);
 
-//	if (colorSwitch == HandColors::RIGHT)
-//		LOG( INFO )
-//			<< (float)mat(0,0) << " " << (float)mat(0,1) << " " << (float)mat(0,2) << " " << (float)mat(0,3) << ", "
-//			<< (float)mat(1,0) << " " << (float)mat(1,1) << " " << (float)mat(1,2) << " " << (float)mat(1,3) << ", "
-//			<< (float)mat(2,0) << " " << (float)mat(2,1) << " " << (float)mat(2,2) << " " << (float)mat(2,3) << ", "
-//			<< (float)mat(3,0) << " " << (float)mat(3,1) << " " << (float)mat(3,2) << " " << (float)mat(3,3) << ", ";
+	Leap::HandNode::addToStream( stream );
 
-	( * stream ) << ( float )mat( 0,0 ) << ( float )mat( 0,1 ) << ( float )mat( 0,2 ) << ( float )mat( 0,3 )
-				 << ( float )mat( 1,0 ) << ( float )mat( 1,1 ) << ( float )mat( 1,2 ) << ( float )mat( 1,3 )
-				 << ( float )mat( 2,0 ) << ( float )mat( 2,1 ) << ( float )mat( 2,2 ) << ( float )mat( 2,3 )
-				 << ( float )mat( 3,0 ) << ( float )mat( 3,1 ) << ( float )mat( 3,2 ) << ( float )mat( 3,3 );
+	// add all fingers joints into stream
+	for ( unsigned int i = 0; i < 5; i++ ) {
+		osg::Group* joints = static_cast<osg::Group*>( this->fingerGroup->getChild( i ) );
+		for ( unsigned int j = 0; j < joints->getNumChildren(); j++ ) {
+			auto joint = static_cast<Joint*>( joints->getChild( j ) );
+			joint->addToStream( stream );
+		}
+	}
+
+	// add all fingers bones into stream
+	for ( unsigned int i = 5; i < 10; i++ ) {
+		osg::Group* bones = static_cast<osg::Group*>( this->fingerGroup->getChild( i ) );
+		for ( unsigned int j = 0; j < bones->getNumChildren(); j++ ) {
+			auto bone = static_cast<HandBone*>( bones->getChild( j ) );
+			bone->addToStream( stream );
+		}
+	}
+
+	// add inter finger bones into steam
+	for ( unsigned int i = 0; i < this->interFingerBoneGroup->getNumChildren(); i++ ) {
+		auto bone = static_cast<HandBone*>( this->interFingerBoneGroup->getChild( i ) );
+		bone->addToStream( stream );
+	}
 }
 
 void Leap::HandPalm::setFromStream( QDataStream* stream )
 {
-	if ( stream != nullptr && !stream->atEnd() ) {
+	QMutexLocker locker(&updateLock);
 
-		float mat00, mat01, mat02, mat03,
-			  mat10, mat11, mat12, mat13,
-			  mat20, mat21, mat22, mat23,
-			  mat30, mat31, mat32, mat33;
+	Leap::HandNode::setFromStream( stream );
 
-		( * stream )
-				>> mat00 >> mat01 >> mat02 >> mat03
-				>> mat10 >> mat11 >> mat12 >> mat13
-				>> mat20 >> mat21 >> mat22 >> mat23
-				>> mat30 >> mat31 >> mat32 >> mat33;
-
-		this->setMatrix( osg::Matrix( mat00, mat01, mat02, mat03,
-									  mat10, mat11, mat12, mat13,
-									  mat20, mat21, mat22, mat23,
-									  mat30, mat31, mat32, mat33 ) );
+	// add all fingers joints into stream
+	for ( unsigned int i = 0; i < 5; i++ ) {
+		osg::Group* joints = static_cast<osg::Group*>( this->fingerGroup->getChild( i ) );
+		for ( unsigned int j = 0; j < joints->getNumChildren(); j++ ) {
+			auto joint = static_cast<Joint*>( joints->getChild( j ) );
+			joint->setFromStream( stream );
+		}
 	}
-	else {
-		LOG( INFO ) << "Stream is empty";
+
+	// add all fingers bones into stream
+	for ( unsigned int i = 5; i < 10; i++ ) {
+		osg::Group* bones = static_cast<osg::Group*>( this->fingerGroup->getChild( i ) );
+		for ( unsigned int j = 0; j < bones->getNumChildren(); j++ ) {
+			auto bone = static_cast<HandBone*>( bones->getChild( j ) );
+			bone->setFromStream( stream );
+		}
+	}
+
+	// add inter finger bones into steam
+	for ( unsigned int i = 0; i < this->interFingerBoneGroup->getNumChildren(); i++ ) {
+		auto bone = static_cast<HandBone*>( this->interFingerBoneGroup->getChild( i ) );
+		bone->setFromStream( stream );
+	}
+}
+
+void Leap::HandPalm::setFromPalm( HandPalm* palm )
+{
+	QMutexLocker locker(&updateLock);
+	unsigned int minCount = 0;
+
+	if ( palm != nullptr ) {
+
+		osg::Group* palmFingerGroup = palm->fingerGroup;
+		osg::Group* handFingerGroup = this->fingerGroup;
+		if ( handFingerGroup != nullptr && palmFingerGroup != nullptr) {
+			minCount = std::min<unsigned int>( std::min<unsigned int>( handFingerGroup->getNumChildren(), palmFingerGroup->getNumChildren() ), 10 );
+			for ( unsigned int i = 0; i < minCount; i++ ) {
+				osg::MatrixTransform* handFinger = static_cast<osg::MatrixTransform*>( handFingerGroup->getChild( i ) );
+				osg::MatrixTransform* palmFinger = static_cast<osg::MatrixTransform*>( palmFingerGroup->getChild( i ) );
+				handFinger->setMatrix( palmFinger->getMatrix() );
+			}
+		}
+
+		osg::Group* palmFingerBoneGroup = palm->interFingerBoneGroup;
+		osg::Group* handFingerBoneGroup = this->interFingerBoneGroup;
+		if ( handFingerBoneGroup != nullptr && palmFingerBoneGroup != nullptr ) {
+			minCount = std::min<unsigned int>( std::min<unsigned int>( palmFingerBoneGroup->getNumChildren(), handFingerBoneGroup->getNumChildren() ), 10);
+
+			for ( unsigned int i = 0; i < minCount; i++ ) {
+				osg::MatrixTransform* handBone = static_cast<osg::MatrixTransform*>( handFingerBoneGroup->getChild( i ) );
+				osg::MatrixTransform* palmBone = static_cast<osg::MatrixTransform*>( palmFingerBoneGroup->getChild( i ) );
+				handBone->setMatrix( palmBone->getMatrix() );
+			}
+		}
+
+		this->setMatrix( palm->getMatrix() );
 	}
 }

@@ -7,6 +7,8 @@
 #include <osg/MatrixTransform>
 #include <osg/ShapeDrawable>
 
+#include <QDataStream>
+
 namespace Leap {
 
 enum HandColors {
@@ -35,6 +37,10 @@ public:
 	 * @brief initStructure - interface method for generating child elements of the node
 	 */
 	virtual void initStructure();
+
+	virtual void addToStream( QDataStream* stream );
+	virtual void setFromStream( QDataStream* stream );
+
 };
 }
 #endif // HANDNODE_H

@@ -1,23 +1,23 @@
 #include <Network/UserAvatar.h>
-#include <Core/Core.h>
 
 namespace Network {
 
 UserAvatar::UserAvatar( QString label )
 {
 	this->label = label;
-
 	this->initStructure();
 }
 
-void UserAvatar::UpdateHands( Leap::HandPalm* leftHand, Leap::HandPalm* rightHand )
+void UserAvatar::UpdateHands( QDataStream* stream )
 {
-	this->handManager->updateHands( leftHand, rightHand );
+	this->leftHand->setFromStream( stream );
+	this->rightHand->setFromStream( stream );
 }
 
 void UserAvatar::initStructure()
 {
 	osg::Cone* cone = new osg::Cone( osg::Vec3( 0,0,0 ), 4.0f, 6.0f );
+	cone->setRotation( osg::Quat( double(M_PI/2), osg::Vec3d(1,0,0) ) );
 	osg::ShapeDrawable* coneDrawable = new osg::ShapeDrawable( cone );
 	osg::Geode* coneGeode = new osg::Geode();
 	coneGeode->addDrawable( coneDrawable );
@@ -28,14 +28,9 @@ void UserAvatar::initStructure()
 
 	this->addChild( coneGeode );
 
-	auto core = AppCore::Core::getInstance();
-	if ( core != NULL ) {
-		this->handsGroup = new osg::Group();
-		this->handManager = new Leap::CustomLeapManager( core->getCoreWindow()->getCameraManipulator(),
-				core->getLayoutThread(),
-				core->getCoreGraph(),
-				this->handsGroup.get() );
-	}
+	this->handsGroup = new osg::Group();
+	this->leftHand = new Leap::HandPalm( 0.1f, this->handsGroup, Leap::HandColors::LEFT );
+	this->rightHand = new Leap::HandPalm( 0.1f, this->handsGroup, Leap::HandColors::RIGHT );
 
 	this->addChild( this->handsGroup );
 

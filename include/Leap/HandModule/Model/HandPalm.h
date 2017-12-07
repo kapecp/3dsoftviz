@@ -9,7 +9,9 @@
 #include "Leap/HandModule/Model/HandBone.h"
 
 #include <osg/Group>
-#include <qdatastream.h>
+#include <QDataStream>
+
+#include <QMutex>
 
 namespace Leap {
 class HandPalm : public HandNode
@@ -37,14 +39,18 @@ public:
 	*/
 	void generateGeometry( float radius, HandColors colorSwitch );
 
-	void addToStream( QDataStream* stream );
-	void setFromStream( QDataStream* stream );
+	void addToStream( QDataStream* stream ) override;
+	void setFromStream( QDataStream* stream ) override;
+
+	void setFromPalm( HandPalm* palm );
+
 
 	osg::ref_ptr<osg::Group> fingerGroup;
-	// 1 = GREEN JOINTS
-	// 2 = BLUE JOINTS
 	HandColors colorSwitch;
 	osg::ref_ptr<osg::Group> interFingerBoneGroup;
+
+private:
+	QMutex updateLock;
 };
 }
 #endif // HANDPALM_H

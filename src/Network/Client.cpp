@@ -810,14 +810,7 @@ void Client::updateHands( QTcpSocket* sender, QDataStream* stream )
 	if ( avatarList.contains( id ) ) {
 
 		Network::UserAvatar* avatar = avatarList[id];
-
-		Leap::HandPalm* leftHand = new Leap::HandPalm( 0.1f, nullptr, Leap::HandColors::LEFT );
-		Leap::HandPalm* rightHand = new Leap::HandPalm( 0.1f, nullptr, Leap::HandColors::RIGHT );
-
-		leftHand->setFromStream( stream );
-		rightHand->setFromStream( stream );
-
-		avatar->UpdateHands( leftHand, rightHand );
+		avatar->UpdateHands( stream );
 	}
 	else {
 		LOG( INFO ) << "Unknown avatar ID '" << id << "'";

@@ -144,14 +144,17 @@ void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand right
 
 }
 
-void Leap::CustomLeapManager::updateHands( Leap::HandPalm* leftHand, Leap::HandPalm* rightHand )
+void Leap::CustomLeapManager::updateHands( QDataStream* stream )
 {
 	if ( this->handsGroup != nullptr ) {
 		//0 a 3 z dovodu ze v grupe je palmNode, fingerGroup, palmNode, fingerGroup
 		HandPalm* leftPalm = static_cast<HandPalm*>( handsGroup->getChild( 3 ) );
 		HandPalm* rightPalm = static_cast<HandPalm*>( handsGroup->getChild( 0 ) );
 
-		this->handObjectManipulator->updateHands( leftHand, rightHand, leftPalm, rightPalm, this->coreGraph->getCamera() );
+		leftPalm->setFromStream( stream );
+		rightPalm->setFromStream( stream );
+
+		//this->handObjectManipulator->updateHands( leftHand, rightHand, leftPalm, rightPalm, this->coreGraph->getCamera() );
 	}
 }
 

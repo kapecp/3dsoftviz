@@ -102,11 +102,11 @@ void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand r
 void Leap::HandObjectManipulator::updateHands( Leap::HandPalm* leftHand, Leap::HandPalm* rightHand, HandPalm* leftPalm, HandPalm* rightPalm, osg::ref_ptr<osg::Camera> camera )
 {
 	if ( leftHand != nullptr && leftPalm != nullptr ) {
-		leftPalm->setMatrix( leftHand->getMatrix() );
+		leftPalm->setFromPalm( leftHand );
 	}
 
 	if ( rightHand != nullptr && rightPalm != nullptr ) {
-		rightPalm->setMatrix( rightHand->getMatrix() );
+		rightPalm->setFromPalm( rightHand );
 	}
 }
 
