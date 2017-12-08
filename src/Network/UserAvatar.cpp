@@ -17,7 +17,7 @@ void UserAvatar::UpdateHands( QDataStream* stream )
 void UserAvatar::initStructure()
 {
 	osg::Cone* cone = new osg::Cone( osg::Vec3( 0,0,0 ), 4.0f, 6.0f );
-	cone->setRotation( osg::Quat( double(M_PI/2), osg::Vec3d(1,0,0) ) );
+    //cone->setRotation( osg::Quat( double(M_PI/2), osg::Vec3d(1,0,0) ) );
 	osg::ShapeDrawable* coneDrawable = new osg::ShapeDrawable( cone );
 	osg::Geode* coneGeode = new osg::Geode();
 	coneGeode->addDrawable( coneDrawable );
@@ -28,7 +28,7 @@ void UserAvatar::initStructure()
 
 	this->addChild( coneGeode );
 
-	this->handsGroup = new osg::Group();
+    this->handsGroup = new osg::Group();
 	this->leftHand = new Leap::HandPalm( 0.1f, this->handsGroup, Leap::HandColors::LEFT );
 	this->rightHand = new Leap::HandPalm( 0.1f, this->handsGroup, Leap::HandColors::RIGHT );
 

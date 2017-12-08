@@ -7,8 +7,6 @@
 #include <leathers/old-style-cast>
 #include <leathers/sign-conversion>
 
-#include <qmath.h>
-
 namespace Network {
 
 void MoveAvatarExecutor::execute_client()
@@ -28,9 +26,9 @@ void MoveAvatarExecutor::execute_client()
 
 
 	osg::Vec3d center = osg::Vec3d( x,y,z );
-	osg::Quat rotation = osg::Quat( a,b,c,d ) * rot;
+    osg::Quat rotation = osg::Quat( a,b,c,d );// * rot;
 
-	osg::Vec3d direction = rotation * osg::Vec3d( 0, -1, 0 );
+    osg::Vec3d direction = rotation * osg::Vec3d( 0, 0, 1 );
 	direction *= distance;
 
 	if ( client->userToSpy() != id ) {
@@ -90,9 +88,9 @@ void MoveAvatarExecutor::execute_server()
 	rot.makeRotate(angel,vec);
 
 	osg::Vec3d center = osg::Vec3d( x,y,z );
-	osg::Quat rotation = osg::Quat( a,b,c,d ) * rot;
+    osg::Quat rotation = osg::Quat( a,b,c,d );// * rot;
 
-	osg::Vec3d direction = rotation * osg::Vec3d( 0, -1, 0 );
+    osg::Vec3d direction = rotation * osg::Vec3d( 0, 0, 1 );
 	direction *= distance;
 
 	osg::PositionAttitudeTransform* PAtransform = server->getAvatarTransform( out_socket );
