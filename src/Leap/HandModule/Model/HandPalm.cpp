@@ -92,28 +92,19 @@ void Leap::HandPalm::addToStream( QDataStream* stream )
 
 	Leap::HandNode::addToStream( stream );
 
-	// add all fingers joints into stream
-	for ( unsigned int i = 0; i < 5; i++ ) {
-		osg::Group* joints = static_cast<osg::Group*>( this->fingerGroup->getChild( i ) );
-		for ( unsigned int j = 0; j < joints->getNumChildren(); j++ ) {
-			auto joint = static_cast<Joint*>( joints->getChild( j ) );
-			joint->addToStream( stream );
-		}
-	}
-
-	// add all fingers bones into stream
-	for ( unsigned int i = 5; i < 10; i++ ) {
-		osg::Group* bones = static_cast<osg::Group*>( this->fingerGroup->getChild( i ) );
-		for ( unsigned int j = 0; j < bones->getNumChildren(); j++ ) {
-			auto bone = static_cast<HandBone*>( bones->getChild( j ) );
-			bone->addToStream( stream );
+	// add all fingers joints and bones into stream
+	for ( unsigned int i = 0; i < 10; i++ ) {
+		osg::Group* nodes = static_cast<osg::Group*>( this->fingerGroup->getChild( i ) );
+		for ( unsigned int j = 0; j < nodes->getNumChildren(); j++ ) {
+			auto node = static_cast<HandNode*>( nodes->getChild( j ) );
+			node->addToStream( stream );
 		}
 	}
 
 	// add inter finger bones into steam
 	for ( unsigned int i = 0; i < this->interFingerBoneGroup->getNumChildren(); i++ ) {
-		auto bone = static_cast<HandBone*>( this->interFingerBoneGroup->getChild( i ) );
-		bone->addToStream( stream );
+		auto node = static_cast<HandNode*>( this->interFingerBoneGroup->getChild( i ) );
+		node->addToStream( stream );
 	}
 }
 
@@ -123,61 +114,18 @@ void Leap::HandPalm::setFromStream( QDataStream* stream )
 
 	Leap::HandNode::setFromStream( stream );
 
-	// add all fingers joints into stream
-	for ( unsigned int i = 0; i < 5; i++ ) {
-		osg::Group* joints = static_cast<osg::Group*>( this->fingerGroup->getChild( i ) );
-		for ( unsigned int j = 0; j < joints->getNumChildren(); j++ ) {
-			auto joint = static_cast<Joint*>( joints->getChild( j ) );
-			joint->setFromStream( stream );
-		}
-	}
-
-	// add all fingers bones into stream
-	for ( unsigned int i = 5; i < 10; i++ ) {
-		osg::Group* bones = static_cast<osg::Group*>( this->fingerGroup->getChild( i ) );
-		for ( unsigned int j = 0; j < bones->getNumChildren(); j++ ) {
-			auto bone = static_cast<HandBone*>( bones->getChild( j ) );
-			bone->setFromStream( stream );
+	// add all fingers joints and bones into stream
+	for ( unsigned int i = 0; i < 10; i++ ) {
+		osg::Group* nodes = static_cast<osg::Group*>( this->fingerGroup->getChild( i ) );
+		for ( unsigned int j = 0; j < nodes->getNumChildren(); j++ ) {
+			auto node = static_cast<HandNode*>( nodes->getChild( j ) );
+			node->setFromStream( stream );
 		}
 	}
 
 	// add inter finger bones into steam
 	for ( unsigned int i = 0; i < this->interFingerBoneGroup->getNumChildren(); i++ ) {
-		auto bone = static_cast<HandBone*>( this->interFingerBoneGroup->getChild( i ) );
-		bone->setFromStream( stream );
-	}
-}
-
-void Leap::HandPalm::setFromPalm( HandPalm* palm )
-{
-	QMutexLocker locker(&updateLock);
-	unsigned int minCount = 0;
-
-	if ( palm != nullptr ) {
-
-		osg::Group* palmFingerGroup = palm->fingerGroup;
-		osg::Group* handFingerGroup = this->fingerGroup;
-		if ( handFingerGroup != nullptr && palmFingerGroup != nullptr) {
-			minCount = std::min<unsigned int>( std::min<unsigned int>( handFingerGroup->getNumChildren(), palmFingerGroup->getNumChildren() ), 10 );
-			for ( unsigned int i = 0; i < minCount; i++ ) {
-				osg::MatrixTransform* handFinger = static_cast<osg::MatrixTransform*>( handFingerGroup->getChild( i ) );
-				osg::MatrixTransform* palmFinger = static_cast<osg::MatrixTransform*>( palmFingerGroup->getChild( i ) );
-				handFinger->setMatrix( palmFinger->getMatrix() );
-			}
-		}
-
-		osg::Group* palmFingerBoneGroup = palm->interFingerBoneGroup;
-		osg::Group* handFingerBoneGroup = this->interFingerBoneGroup;
-		if ( handFingerBoneGroup != nullptr && palmFingerBoneGroup != nullptr ) {
-			minCount = std::min<unsigned int>( std::min<unsigned int>( palmFingerBoneGroup->getNumChildren(), handFingerBoneGroup->getNumChildren() ), 10);
-
-			for ( unsigned int i = 0; i < minCount; i++ ) {
-				osg::MatrixTransform* handBone = static_cast<osg::MatrixTransform*>( handFingerBoneGroup->getChild( i ) );
-				osg::MatrixTransform* palmBone = static_cast<osg::MatrixTransform*>( palmFingerBoneGroup->getChild( i ) );
-				handBone->setMatrix( palmBone->getMatrix() );
-			}
-		}
-
-		this->setMatrix( palm->getMatrix() );
+		auto node = static_cast<HandNode*>( this->interFingerBoneGroup->getChild( i ) );
+		node->setFromStream( stream );
 	}
 }

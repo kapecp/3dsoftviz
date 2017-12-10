@@ -29,7 +29,6 @@ public:
 	 * @param rightHand - Leap representation of right hand (sensor output data).
 	 */
 	void updateHands( Leap::Hand leftHand, Leap::Hand rightHand, HandPalm* leftPalm, HandPalm* rightPalm, osg::ref_ptr<osg::Camera> camera );
-	void updateHands( Leap::HandPalm* leftHand, Leap::HandPalm* rightHand, HandPalm* leftPalm, HandPalm* rightPalm, osg::ref_ptr<osg::Camera> camera );
 
 	/**
 	 Method used in updateHands(). Iterates over fingers and for each call methods: updateJoints() and
@@ -74,9 +73,9 @@ public:
 	void setHandMapper( HandMapper* mapper );
 
 private:
-	osg::Vec3d center;
-	osg::Vec3d up;
-	osg::Vec3d direction;
+	Vector center;
+	Vector up;
+	Vector direction;
 	HandMapper* mapper;
 	char upDirectionAxis;
 };

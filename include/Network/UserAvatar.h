@@ -19,7 +19,7 @@ protected:
 	virtual void initStructure();
 
 private:
-	osg::ref_ptr<osg::Group> handsGroup;
+	osg::ref_ptr<osg::MatrixTransform> handsGroup;
 	osg::ref_ptr<Leap::HandPalm> leftHand;
 	osg::ref_ptr<Leap::HandPalm> rightHand;
 

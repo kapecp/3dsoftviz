@@ -37,8 +37,10 @@ void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand r
 	float diffLeftHand;
 	float diffRightHand;
 
-	this->center = osg::Vec3f( 0.0f,0.0f,0.0f );
-	this->direction = osg::Vec3f( 0.0f,5.0f,0.0f );
+	this->center = Leap::Vector( 0.0f, -2.0f, 0.0f );
+	this->direction = Leap::Vector( 0.0f, 5.0f, 0.0f );
+
+	this->center = changeHandUpDirectionAxis( this->center );
 
 	// update lavej ruky
 	if ( leftHand.isValid() ) {
@@ -97,17 +99,6 @@ void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand r
 		this->updateInterFingerBones( rightPalm->interFingerBoneGroup, rightHand.fingers(), diffRightHand );
 	}
 
-}
-
-void Leap::HandObjectManipulator::updateHands( Leap::HandPalm* leftHand, Leap::HandPalm* rightHand, HandPalm* leftPalm, HandPalm* rightPalm, osg::ref_ptr<osg::Camera> camera )
-{
-	if ( leftHand != nullptr && leftPalm != nullptr ) {
-		leftPalm->setFromPalm( leftHand );
-	}
-
-	if ( rightHand != nullptr && rightPalm != nullptr ) {
-		rightPalm->setFromPalm( rightHand );
-	}
 }
 
 void Leap::HandObjectManipulator::updateFingers( HandPalm* palm, Leap::FingerList fingers, float diff )

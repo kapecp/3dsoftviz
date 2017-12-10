@@ -42,8 +42,6 @@ public:
 	void addToStream( QDataStream* stream ) override;
 	void setFromStream( QDataStream* stream ) override;
 
-	void setFromPalm( HandPalm* palm );
-
 
 	osg::ref_ptr<osg::Group> fingerGroup;
 	HandColors colorSwitch;
