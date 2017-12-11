@@ -12,6 +12,7 @@
 #include <leathers/push>
 #include <leathers/float-equal>
 #include <leathers/old-style-cast>
+#include <leathers/used-but-marked-unused>
 
 Model::EdgeDAO::EdgeDAO( void )
 {

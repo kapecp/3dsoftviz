@@ -21,6 +21,8 @@
 #include <sstream>
 #include <iostream>
 #include <QDebug>
+#include <leathers/push>
+#include <leathers/used-but-marked-unused>
 
 namespace Layout {
 
@@ -51,8 +53,8 @@ FRAlgorithm::FRAlgorithm() :
 	vp( osg::Vec3f() ),
 	dist( 0 ),
 	// No node is focused on the beginning
-	mLastFocusedNode( 0 ),
-	M( 10 )
+    mLastFocusedNode( 0 ),
+    M( 10 )
 {
 	// Duransky start - pociatocne nastavenie nasobica odpudivych sil na rovnakej rovine na hodnotu 1
 	setRepulsiveForceVertigo( 1 );
@@ -78,8 +80,8 @@ FRAlgorithm::FRAlgorithm( Data::Graph* graph ) :
 	last( osg::Vec3f() ),
 	newLoc( osg::Vec3f() ),
 	up( osg::Vec3f() ),
-	vp( osg::Vec3f() ),
-	M( 7 )
+    vp( osg::Vec3f() ),
+    M( 7 )
 {
 	this->Randomize();
 }
@@ -800,7 +802,7 @@ void FRAlgorithm::addProjectiveForce( Data::Node* u, Data::Node* v )
 {
 	if ( mayOverlap( u, v ) ) {
 		osg::Vec3f pvec = getProjVector( u, v );            // compute projective vector
-		if ( pvec.length() != 0 ) {
+        if ( pvec.length() != 0 ) {
 			float pdist = pvec.normalize();					// projective distance between nodes
 			float pideal = getMinProjDistance( u, v, pvec ); 	// minimal projective distance
 			float projF = proj( pdist, pideal );				// projective force
@@ -834,8 +836,8 @@ osg::Vec3f FRAlgorithm::getProjVector( Data::Node* u, Data::Node* v )
 float FRAlgorithm::getMinProjDistance( Data::Node* u, Data::Node* v, osg::Vec3f pv )
 {
 	float ideal = 0;
-	if ( pv.length() != 0 ) {
-		ideal = u->getRadius() + v->getRadius() + M;
+    if ( pv.length() != 0 ) {
+        ideal = u->getRadius() + v->getRadius() + M;
 	}
 	return ideal;
 }
@@ -850,5 +852,7 @@ float FRAlgorithm::proj( float distance, float ideal )
 }
 
 } // namespace Layout
+
+#include <leathers/pop>
 
 //int getRepulsiveForceVertigo();

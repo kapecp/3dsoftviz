@@ -29,6 +29,7 @@
 #include <leathers/old-style-cast>
 #include <leathers/conversion>
 #include <leathers/double-promotion>
+#include <leathers/used-but-marked-unused>
 
 double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;
 double Vwr::CameraManipulator::TARGET_MOVEMENT_SPEED;

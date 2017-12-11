@@ -7,6 +7,9 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/calib3d/calib3d.hpp"
 
+#include <leathers/push>
+#include <leathers/used-but-marked-unused>
+
 namespace ArucoModul {
 
 ArucoCore::ArucoCore()
@@ -262,3 +265,5 @@ void ArucoCore::setBaseMarkerIndex( int baseMarkerIndex )
 }
 
 } // namespace ArucoModul
+
+#include <leathers/pop>

@@ -3,6 +3,9 @@
 
 #include "QDebug"
 
+#include <leathers/push>
+#include <leathers/used-but-marked-unused>
+
 Vwr::GraphNavigation::GraphNavigation() :
 	isNavEnabled( true ),
 	viewer( AppCore::Core::getInstance()->getCoreWindow()->GetViewerQt() ),
@@ -211,3 +214,5 @@ double Vwr::GraphNavigation::getDistanceToEdge( osg::Vec3f mouse, osg::Vec3f lin
 		return getDistanceToNode( mouse, tmp );
 	}
 }
+
+#include <leathers/pop>
