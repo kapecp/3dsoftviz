@@ -33,4 +33,4 @@ Login do VM: vagrant
 Heslo do VM: vagrant
 
 Následne je možné v pripravenom prostredí buildnúť 3dsoftviz podla návodu k buildu
-
+Je  potrebné vo vytvorenej VM dostať SSH klúč z host počítaču, alebo vygenerovať nový a pridať ho na github/gitlab!
