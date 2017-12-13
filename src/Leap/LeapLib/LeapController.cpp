@@ -2,7 +2,7 @@
 
 LeapLib::LeapController::LeapController( LeapManager* leapManager )
 {
-    leapListener = new LeapLib::LeapListener( leapManager );
+	leapListener = new LeapLib::LeapListener( leapManager );
 }
 
 LeapLib::LeapController::~LeapController()

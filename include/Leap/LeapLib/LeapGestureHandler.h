@@ -15,16 +15,16 @@ public:
 
 	LeapGestureHandler( LeapManager* leapManager );
 	~LeapGestureHandler();
-    void handleGestures( Leap::Frame frame );
+	void handleGestures( Leap::Frame frame );
 
 	LeapManager* leapManager;
 	LeapActions* leapActions;
 private:
-    Leap::Frame* startFrame;
+	Leap::Frame* startFrame;
 	bool isStartFrameSet;
 	int frameCounter;
 
-    void setStartFrame( Leap::Frame frame );
+	void setStartFrame( Leap::Frame frame );
 };
 }
 

@@ -28,23 +28,23 @@ public:
 	 */
 
 	LeapGestureHandler* leapGestureHandler;
-    SoftvizLeap::CustomLeapManager* leapManager;
+	SoftvizLeap::CustomLeapManager* leapManager;
 	bool arMode;
 
 	LeapListener( LeapManager* leapManager );
 	~LeapListener( void );
 
-    void onInit( const Leap::Controller& );
-    void onConnect( const Leap::Controller& );
-    void onDisconnect( const Leap::Controller& );
-    void onExit( const Leap::Controller& );
-    void onFrame( const Leap::Controller& );
-    void onFocusGained( const Leap::Controller& );
-    void onFocusLost( const Leap::Controller& );
-    void onDeviceChange( const Leap::Controller& );
-    void onServiceConnect( const Leap::Controller& );
-    void onServiceDisconnect( const Leap::Controller& );
-    void onImages( const Leap::Controller& controller );
+	void onInit( const Leap::Controller& );
+	void onConnect( const Leap::Controller& );
+	void onDisconnect( const Leap::Controller& );
+	void onExit( const Leap::Controller& );
+	void onFrame( const Leap::Controller& );
+	void onFocusGained( const Leap::Controller& );
+	void onFocusLost( const Leap::Controller& );
+	void onDeviceChange( const Leap::Controller& );
+	void onServiceConnect( const Leap::Controller& );
+	void onServiceDisconnect( const Leap::Controller& );
+	void onImages( const Leap::Controller& controller );
 };
 }
 

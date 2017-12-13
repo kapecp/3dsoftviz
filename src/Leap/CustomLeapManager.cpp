@@ -14,7 +14,7 @@ SoftvizLeap::CustomLeapManager::CustomLeapManager( Vwr::CameraManipulator* camer
 	:cameraManipulator( cameraManipulator ), layout( layout ), coreGraph( coreGraph ), handsGroup( handsGroup )
 {
 	arMode = false;
-    this->handObjectManipulator = new SoftvizLeap::HandObjectManipulator( new SoftvizLeap::HandMapper( this->coreGraph ), 'y' );
+	this->handObjectManipulator = new SoftvizLeap::HandObjectManipulator( new SoftvizLeap::HandMapper( this->coreGraph ), 'y' );
 	//init handPalms here
 	if ( this->handsGroup != nullptr ) {
 		arMode = true;

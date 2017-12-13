@@ -22,11 +22,11 @@ public:
 	~Application();
 
 #if  defined(Q_WS_X11) || defined(Q_OS_LINUX)
-	#if QT_VERSION >= 0x050000
+#if QT_VERSION >= 0x050000
 	//todo
-	#elif QT_VERSION < 0x050000
+#elif QT_VERSION < 0x050000
 	virtual bool x11EventFilter( XEvent* event );
-	#endif
+#endif
 
 	void startEmitter( Mouse3dUnixDevice* device );
 

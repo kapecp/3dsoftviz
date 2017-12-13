@@ -2,7 +2,7 @@
 
 bool LeapLib::FingerPositionDetector::isHandExtended( Leap::Hand hand )
 {
-    Leap::FingerList fingers = hand.fingers();
+	Leap::FingerList fingers = hand.fingers();
 
 	for ( int i=0; i < fingers.count(); ++i ) {
 		if ( !fingers[i].isExtended() ) {
@@ -15,7 +15,7 @@ bool LeapLib::FingerPositionDetector::isHandExtended( Leap::Hand hand )
 
 bool LeapLib::FingerPositionDetector::isIndexFingerExtended( Leap::Hand hand )
 {
-    Leap::FingerList fingers = hand.fingers();
+	Leap::FingerList fingers = hand.fingers();
 
 	if ( fingers[0].isExtended() ) {
 		return false;

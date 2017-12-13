@@ -6,12 +6,12 @@
 
 float LeapLib::DirectionDetector::getPitch( Leap::Hand hand )
 {
-    return hand.direction().pitch() * Leap::RAD_TO_DEG;
+	return hand.direction().pitch() * Leap::RAD_TO_DEG;
 }
 
 float LeapLib::DirectionDetector::getRoll( Leap::Hand hand )
 {
-    return hand.palmNormal().roll() * Leap::RAD_TO_DEG;
+	return hand.palmNormal().roll() * Leap::RAD_TO_DEG;
 }
 
 LeapLib::DirectionDetector::Direction LeapLib::DirectionDetector::getPalmDirection( Leap::Hand hand )
@@ -21,25 +21,25 @@ LeapLib::DirectionDetector::Direction LeapLib::DirectionDetector::getPalmDirecti
 
 	float absRoll = std::abs( roll );
 
-    if ( absRoll < LeapLib::DirectionDetector::ANGLE_LIMIT ) {
-        if ( pitch > LeapLib::DirectionDetector::ANGLE_LIMIT ) {
-            return LeapLib::DirectionDetector::Direction::UP;
+	if ( absRoll < LeapLib::DirectionDetector::ANGLE_LIMIT ) {
+		if ( pitch > LeapLib::DirectionDetector::ANGLE_LIMIT ) {
+			return LeapLib::DirectionDetector::Direction::UP;
 		}
-        if ( -pitch > LeapLib::DirectionDetector::ANGLE_LIMIT ) {
-            return LeapLib::DirectionDetector::Direction::DOWN;
+		if ( -pitch > LeapLib::DirectionDetector::ANGLE_LIMIT ) {
+			return LeapLib::DirectionDetector::Direction::DOWN;
 		}
 	}
 
 	float absPitch = std::abs( pitch );
 
-    if ( absPitch < LeapLib::DirectionDetector::ANGLE_LIMIT ) {
-        if ( roll > LeapLib::DirectionDetector::ANGLE_LIMIT ) {
-            return LeapLib::DirectionDetector::Direction::RIGHT;
+	if ( absPitch < LeapLib::DirectionDetector::ANGLE_LIMIT ) {
+		if ( roll > LeapLib::DirectionDetector::ANGLE_LIMIT ) {
+			return LeapLib::DirectionDetector::Direction::RIGHT;
 		}
-        if ( -roll > LeapLib::DirectionDetector::ANGLE_LIMIT ) {
-            return LeapLib::DirectionDetector::Direction::LEFT;
+		if ( -roll > LeapLib::DirectionDetector::ANGLE_LIMIT ) {
+			return LeapLib::DirectionDetector::Direction::LEFT;
 		}
 	}
 
-    return LeapLib::DirectionDetector::Direction::STEADY;
+	return LeapLib::DirectionDetector::Direction::STEADY;
 }

@@ -22,9 +22,9 @@ if (NOT SKIP_ASTYLE)
             add_custom_target("style"
                     COMMAND
                     "${ASTYLE_EXECUTABLE}"
-                    --options=${CMAKE_CURRENT_SOURCE_DIR}/../astyle.options
-                    ${CMAKE_CURRENT_SOURCE_DIR}/../include/*.h
-                    ${CMAKE_CURRENT_SOURCE_DIR}/../src/*.cpp
+					--options=${CMAKE_CURRENT_SOURCE_DIR}/../astyle.options
+					${CMAKE_CURRENT_SOURCE_DIR}/../include/*.h
+					${CMAKE_CURRENT_SOURCE_DIR}/../src/*.cpp
                     COMMENT "Formating source code with Astyle."
                     VERBATIM
                     )

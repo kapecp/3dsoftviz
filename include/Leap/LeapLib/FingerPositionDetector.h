@@ -18,10 +18,10 @@ public:
 	 * @param hand - Hand object from Leap sensor
 	 * @return true if the hand has all fingers extended.
 	 */
-    static bool isHandExtended( Leap::Hand hand );
+	static bool isHandExtended( Leap::Hand hand );
 
 
-    static bool isIndexFingerExtended( Leap::Hand hand );
+	static bool isIndexFingerExtended( Leap::Hand hand );
 };
 
 }

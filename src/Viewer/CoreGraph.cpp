@@ -1214,7 +1214,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createLeapBackground()
 	GeomHUD->setTexCoordArray( 0,texCoords );
 
 
-    leapCameraStream = new LeapLib::LeapCameraStream();
+	leapCameraStream = new LeapLib::LeapCameraStream();
 	leapCameraStream->setDataVariance( osg::Object::DYNAMIC );
 
 	osg::ref_ptr<osg::Texture2D> textureHUD = new osg::Texture2D( leapCameraStream );

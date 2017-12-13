@@ -12,8 +12,8 @@
 
 LeapLib::LeapListener::LeapListener( LeapManager* leapManager )
 {
-    this->leapGestureHandler = new LeapLib::LeapGestureHandler( leapManager );
-    this->leapManager = dynamic_cast<SoftvizLeap::CustomLeapManager*>( leapManager );
+	this->leapGestureHandler = new LeapLib::LeapGestureHandler( leapManager );
+	this->leapManager = dynamic_cast<SoftvizLeap::CustomLeapManager*>( leapManager );
 	this->arMode = leapManager->arMode;
 	LOG( INFO ) << "Leap/LeapLib/LeapListener Constructor";
 }
@@ -34,10 +34,10 @@ void LeapLib::LeapListener::onInit( const Leap::Controller& controller )
 void LeapLib::LeapListener::onConnect( const Leap::Controller& controller )
 {
 	// we put our gestures here to initialize them
-    controller.enableGesture( Leap::Gesture::TYPE_CIRCLE );
-    controller.enableGesture( Leap::Gesture::TYPE_KEY_TAP );
-    controller.enableGesture( Leap::Gesture::TYPE_SCREEN_TAP );
-    controller.enableGesture( Leap::Gesture::TYPE_SWIPE );
+	controller.enableGesture( Leap::Gesture::TYPE_CIRCLE );
+	controller.enableGesture( Leap::Gesture::TYPE_KEY_TAP );
+	controller.enableGesture( Leap::Gesture::TYPE_SCREEN_TAP );
+	controller.enableGesture( Leap::Gesture::TYPE_SWIPE );
 
 	controller.config().setFloat( "Gesture.Swipe.MinLength",60.0f );
 	controller.config().setFloat( "Gesture.Circle.MinArc", 6.28f );
@@ -55,15 +55,15 @@ void LeapLib::LeapListener::onExit( const Leap::Controller& controller )
 }
 void LeapLib::LeapListener::onImages( const Leap::Controller& controller )
 {
-    Leap::ImageList images = controller.images();
-    Leap::Image image = images[0];
+	Leap::ImageList images = controller.images();
+	Leap::Image image = images[0];
 
 	if ( image.data() == NULL ) {
 		return;
 	}
 
-    Leap::Frame frame = controller.frame();
-    Leap::HandList hands = frame.hands();
+	Leap::Frame frame = controller.frame();
+	Leap::HandList hands = frame.hands();
 
 	this->leapManager->updateCoreGraphBackground( image.data(), 0 );
 
@@ -71,16 +71,16 @@ void LeapLib::LeapListener::onImages( const Leap::Controller& controller )
 
 void LeapLib::LeapListener::onFrame( const Leap::Controller& controller )
 {
-    Leap::Frame frame = controller.frame();
-    Leap::HandList hands = frame.hands();
+	Leap::Frame frame = controller.frame();
+	Leap::HandList hands = frame.hands();
 	bool leftHandExtended = false;
 	bool rightHandExtended = false;
-    Leap::Hand leftHand;
-    Leap::Hand rightHand;
+	Leap::Hand leftHand;
+	Leap::Hand rightHand;
 
 	//jurik
 	//takin just first gesture (gestures are defined for each finger)
-    Leap::Gesture gesture = frame.gestures()[0];
+	Leap::Gesture gesture = frame.gestures()[0];
 
 	if ( arMode ) {
 		for ( int i=0; i< hands.count(); ++i ) {
@@ -188,7 +188,7 @@ void LeapLib::LeapListener::onFocusLost( const Leap::Controller& controller )
 
 void LeapLib::LeapListener::onDeviceChange( const Leap::Controller& controller )
 {
-    const Leap::DeviceList devices = controller.devices();
+	const Leap::DeviceList devices = controller.devices();
 
 	for ( int i = 0; i < devices.count(); ++i ) {
 		std::cout << "id: " << devices[i].toString() << std::endl;
