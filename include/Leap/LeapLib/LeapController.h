@@ -8,14 +8,14 @@
 
 #include "Leap.h"
 
-namespace Leap {
+namespace LeapLib {
 
 /**
  * @author Filip Mikle
  * @brief The Leap controller class
  * @brief Controls when the leap sensor starts and stops
  */
-class LEAPLIB_EXPORT LeapController:Controller
+class LEAPLIB_EXPORT LeapController : public Leap::Controller
 {
 public:
 	LeapListener* leapListener;

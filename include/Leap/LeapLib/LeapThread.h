@@ -9,7 +9,7 @@
 #include <QObject>
 #include <QThread>
 
-namespace Leap {
+namespace LeapLib {
 
 /**
  * @author Peter Sutarik
