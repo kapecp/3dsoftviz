@@ -10,19 +10,19 @@
 #endif
 
 
-Leap::HandMapper::HandMapper( Vwr::CoreGraph* coreGraph )
+SoftvizLeap::HandMapper::HandMapper( Vwr::CoreGraph* coreGraph )
 	:coreGraph( coreGraph ), cameraOffset( cv::Point( 0,0 ) ), calibrationCounter( 0 ),
 	 calibrationLastPoint( cv::Point( 0,0 ) )
 {
 
 }
 
-Leap::HandMapper::~HandMapper()
+SoftvizLeap::HandMapper::~HandMapper()
 {
 
 }
 
-cv::vector<cv::Point> Leap::HandMapper::getHandPointList( cv::vector<cv::vector<cv::Point>> contourPointList )
+cv::vector<cv::Point> SoftvizLeap::HandMapper::getHandPointList( cv::vector<cv::vector<cv::Point>> contourPointList )
 {
 	for ( std::size_t n = 0; n < contourPointList.size(); n++ ) {
 		if ( contourPointList[n].size() > 3 && contourPointList[n].size() < 7 ) {
@@ -33,7 +33,7 @@ cv::vector<cv::Point> Leap::HandMapper::getHandPointList( cv::vector<cv::vector<
 	return cv::vector<cv::Point>();
 }
 
-float Leap::HandMapper::calculateAveragePalmFingerDistance( cv::vector<cv::Point> handPointList,
+float SoftvizLeap::HandMapper::calculateAveragePalmFingerDistance( cv::vector<cv::Point> handPointList,
 		int imageWidth, int imageHeight )
 {
 	float averageDst = 0;
@@ -59,7 +59,7 @@ float Leap::HandMapper::calculateAveragePalmFingerDistance( cv::vector<cv::Point
 }
 
 
-Leap::Vector Leap::HandMapper::recalculateDepthNode( Leap::Vector vector, float diff )
+Leap::Vector SoftvizLeap::HandMapper::recalculateDepthNode( Leap::Vector vector, float diff )
 {
 
 	if ( this->coreGraph->isLeapStreamActive() ) {
@@ -131,7 +131,7 @@ Leap::Vector Leap::HandMapper::recalculateDepthNode( Leap::Vector vector, float 
 	return vector;
 }
 
-void Leap::HandMapper::setNodeScreenCoords( osg::Vec3 nodeScreenCoords )
+void SoftvizLeap::HandMapper::setNodeScreenCoords( osg::Vec3 nodeScreenCoords )
 {
 	this->nodeScreenCoords = nodeScreenCoords;
 }

@@ -3,18 +3,18 @@
 #include <vector>
 #include <easylogging++.h>
 
-Leap::HandObjectManipulator::HandObjectManipulator( HandMapper* mapper, char upDirectionAxis )
+SoftvizLeap::HandObjectManipulator::HandObjectManipulator( HandMapper* mapper, char upDirectionAxis )
 	:mapper( mapper ), upDirectionAxis( upDirectionAxis )
 {
 
 }
 
-Leap::HandObjectManipulator::~HandObjectManipulator()
+SoftvizLeap::HandObjectManipulator::~HandObjectManipulator()
 {
 
 }
 
-Leap::Vector Leap::HandObjectManipulator::changeHandUpDirectionAxis( Leap::Vector vector )
+Leap::Vector SoftvizLeap::HandObjectManipulator::changeHandUpDirectionAxis( Leap::Vector vector )
 {
 	float temp;
 	if ( this->upDirectionAxis == 'y' ) {
@@ -30,7 +30,7 @@ Leap::Vector Leap::HandObjectManipulator::changeHandUpDirectionAxis( Leap::Vecto
 	return vector;
 }
 
-void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand rightHand,
+void SoftvizLeap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand rightHand,
 		HandPalm* leftPalm, HandPalm* rightPalm, osg::ref_ptr<osg::Camera> camera )
 {
 	float mid = 300;
@@ -99,7 +99,7 @@ void Leap::HandObjectManipulator::updateHands( Leap::Hand leftHand, Leap::Hand r
 
 }
 
-void Leap::HandObjectManipulator::updateFingers( HandPalm* palm, Leap::FingerList fingers, float diff )
+void SoftvizLeap::HandObjectManipulator::updateFingers( HandPalm* palm, Leap::FingerList fingers, float diff )
 {
 	int i = 0;
 	// update jointov vsetkych prstov
@@ -115,11 +115,11 @@ void Leap::HandObjectManipulator::updateFingers( HandPalm* palm, Leap::FingerLis
 }
 
 
-void Leap::HandObjectManipulator::updateJoints( osg::Group* fingerJointGroup, Leap::Finger fingerLeap, int fingerPosition, float diff )
+void SoftvizLeap::HandObjectManipulator::updateJoints( osg::Group* fingerJointGroup, Leap::Finger fingerLeap, int fingerPosition, float diff )
 {
 	// vykreslenie klbov zapastia ( klby v scene su ratene 0,1,2,3 s tym ze 4-ty je klb zapestia )
 	if ( fingerPosition !=  2 && fingerPosition!= 3 ) {
-		Joint* joint = static_cast<Joint*>( fingerJointGroup->getChild( 4 ) );
+        SoftvizLeap::Joint* joint = static_cast<SoftvizLeap::Joint*>( fingerJointGroup->getChild( 4 ) );
 		Leap::Vector posVector = Leap::Vector( 0.0f,0.0f,0.0f );
 		if ( fingerLeap.bone( static_cast<Leap::Bone::Type>( 0 ) ).isValid() ) {
 			posVector = fingerLeap.bone( static_cast<Leap::Bone::Type>( 0 ) ).prevJoint();
@@ -136,7 +136,7 @@ void Leap::HandObjectManipulator::updateJoints( osg::Group* fingerJointGroup, Le
 	// vykreslenie klbov prstov
 	unsigned  int i = 0;
 	for ( i= 0; i < 4; i++ ) {
-		Leap::Joint* joint = static_cast<Leap::Joint*>( fingerJointGroup->getChild( i ) );
+        SoftvizLeap::Joint* joint = static_cast<SoftvizLeap::Joint*>( fingerJointGroup->getChild( i ) );
 
 		Leap::Vector posVector = Leap::Vector( 0.0f,0.0f,0.0f );
 		if ( fingerLeap.bone( static_cast<Leap::Bone::Type>( i ) ).isValid() ) {
@@ -154,7 +154,7 @@ void Leap::HandObjectManipulator::updateJoints( osg::Group* fingerJointGroup, Le
 	}
 }
 
-void Leap::HandObjectManipulator::updateFingerBones( osg::Group*  fingerBoneGroup, Leap::Finger fingerLeap, float diff )
+void SoftvizLeap::HandObjectManipulator::updateFingerBones( osg::Group*  fingerBoneGroup, Leap::Finger fingerLeap, float diff )
 {
 	unsigned int i = 0;
 	// ak ma prst 3 kosti (middle a  ring), tak je treba pouzit offset na data z leapu (leap 4 kosti, my 3)
@@ -164,7 +164,7 @@ void Leap::HandObjectManipulator::updateFingerBones( osg::Group*  fingerBoneGrou
 	}
 
 	for ( i = 0; i < fingerBoneGroup->getNumChildren(); i++ ) {
-		Leap::HandBone* bone = static_cast<Leap::HandBone*>( fingerBoneGroup->getChild( i ) );
+        SoftvizLeap::HandBone* bone = static_cast<SoftvizLeap::HandBone*>( fingerBoneGroup->getChild( i ) );
 
 		Leap::Vector posVector = Leap::Vector( 0.0f,0.0f,0.0f );
 		Leap::Vector dirVector = Leap::Vector( 0.0f,0.0f,0.0f );
@@ -172,7 +172,7 @@ void Leap::HandObjectManipulator::updateFingerBones( osg::Group*  fingerBoneGrou
 
 		if ( fingerLeap.bone( static_cast<Leap::Bone::Type>( i + offset ) ).isValid() ) {
 			float length;
-			Leap::HandBone* bone = static_cast<Leap::HandBone*>( fingerBoneGroup->getChild( i ) );
+            SoftvizLeap::HandBone* bone = static_cast<SoftvizLeap::HandBone*>( fingerBoneGroup->getChild( i ) );
 			// ziskanie dat z Leap senzoru
 			posVector = fingerLeap.bone( static_cast<Leap::Bone::Type>( i + offset ) ).center();
 //			dirVector = fingerLeap.bone( static_cast<Leap::Bone::Type>( i + offset ) ).direction();
@@ -211,7 +211,7 @@ void Leap::HandObjectManipulator::updateFingerBones( osg::Group*  fingerBoneGrou
 	}
 }
 
-void Leap::HandObjectManipulator::updateInterFingerBones( osg::Group*  interFingerBoneGroup, Leap::FingerList fingers, float diff )
+void SoftvizLeap::HandObjectManipulator::updateInterFingerBones( osg::Group*  interFingerBoneGroup, Leap::FingerList fingers, float diff )
 {
 	int i;
 	Leap::Vector arrayJoints [4];
@@ -247,7 +247,7 @@ void Leap::HandObjectManipulator::updateInterFingerBones( osg::Group*  interFing
 	}
 
 	for ( i = 0; i < 3; i++ ) {
-		Leap::HandBone* bone = static_cast<Leap::HandBone*>( interFingerBoneGroup->getChild( static_cast<unsigned int>( i ) ) );
+        SoftvizLeap::HandBone* bone = static_cast<SoftvizLeap::HandBone*>( interFingerBoneGroup->getChild( static_cast<unsigned int>( i ) ) );
 
 		osg::RefMatrixd* boneMatrix = new osg::RefMatrixd();
 		boneMatrix->makeIdentity();
@@ -275,7 +275,7 @@ void Leap::HandObjectManipulator::updateInterFingerBones( osg::Group*  interFing
 	}
 }
 
-void Leap::HandObjectManipulator::updateInterFingerWristBone( osg::Group*  interFingerBoneGroup, Leap::FingerList fingers, float diff )
+void SoftvizLeap::HandObjectManipulator::updateInterFingerWristBone( osg::Group*  interFingerBoneGroup, Leap::FingerList fingers, float diff )
 {
 	Leap::Vector positionOfInnerJoint;
 	Leap::Vector positionOfOuterJoint;
@@ -302,7 +302,7 @@ void Leap::HandObjectManipulator::updateInterFingerWristBone( osg::Group*  inter
 	boneLength = ( boneLength/100.0f )/0.2f;
 
 	// 4-ta kost v interFingerBoneGroup
-	Leap::HandBone* bone = static_cast<Leap::HandBone*>( interFingerBoneGroup->getChild( 3 ) );
+    SoftvizLeap::HandBone* bone = static_cast<SoftvizLeap::HandBone*>( interFingerBoneGroup->getChild( 3 ) );
 
 	osg::RefMatrixd* boneMatrix = new osg::RefMatrixd();
 	boneMatrix->makeIdentity();

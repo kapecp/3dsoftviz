@@ -14,7 +14,7 @@ const int TYPE_MIDDLE = 2; /*< The middle finger */
 const int TYPE_RING = 3; /*< The ring finger */
 const int BONE_COUNT = 4; /*< The ring finger */
 
-Leap::HandPalm::HandPalm( float radius, osg::ref_ptr<osg::Group> handsGroup, int colorSwitch )
+SoftvizLeap::HandPalm::HandPalm( float radius, osg::ref_ptr<osg::Group> handsGroup, int colorSwitch )
 	: fingerGroup( new osg::Group() ), interFingerBoneGroup( new osg::Group() ), colorSwitch( colorSwitch )
 {
 	this->generateGeometry( radius, colorSwitch );
@@ -27,7 +27,7 @@ Leap::HandPalm::HandPalm( float radius, osg::ref_ptr<osg::Group> handsGroup, int
 	\
 }
 
-void Leap::HandPalm::initStructure()
+void SoftvizLeap::HandPalm::initStructure()
 {
 	LOG( INFO ) << "Leap/HandleModule/HandPalm/initStrucure()";
 	if ( this->fingerGroup.get()->getNumChildren() == 0 ) {
@@ -67,7 +67,7 @@ void Leap::HandPalm::initStructure()
 	}
 }
 
-void Leap::HandPalm::generateGeometry( float radius, int colorSwitch )
+void SoftvizLeap::HandPalm::generateGeometry( float radius, int colorSwitch )
 {
 	osg::ref_ptr<osg::Geode> handGeode( new osg::Geode );
 	osg::ref_ptr<osg::Sphere> handSphere = new osg::Sphere( osg::Vec3f( 0.0f,0.0f,0.0f ), radius );
