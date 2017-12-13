@@ -2,20 +2,20 @@
 
 #include "LeapLib/LeapThread.h"
 
-Leap::LeapThread::LeapThread( QObject* parent, LeapManager* leapManager ) : QThread( parent )
+LeapLib::LeapThread::LeapThread( QObject* parent, LeapManager* leapManager ) : QThread( parent )
 {
 	LOG( INFO ) << "LeapThread::LeapThread, created";
 	leapController = new LeapController( leapManager );
 }
 
-Leap::LeapThread::~LeapThread( void )
+LeapLib::LeapThread::~LeapThread( void )
 {
 	leapController->stopListening();
 	delete ( leapController );
 	LOG( INFO ) << "LeapThread::~LeapThread, destroyed";
 }
 
-void Leap::LeapThread::run()
+void LeapLib::LeapThread::run()
 {
 	LOG( INFO ) << "[Leap::LeapThread::run()]";
 	leapController->startListening();

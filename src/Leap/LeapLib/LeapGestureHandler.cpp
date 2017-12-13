@@ -6,18 +6,18 @@
 #include "LeapLib/FingerPositionDetector.h"
 
 
-Leap::LeapGestureHandler::LeapGestureHandler( LeapManager* leapManager )
+LeapLib::LeapGestureHandler::LeapGestureHandler( LeapManager* leapManager )
 {
-	leapActions = new Leap::LeapActions( leapManager );
+    leapActions = new LeapLib::LeapActions( leapManager );
 	this->leapManager = leapManager;
 	LOG( INFO ) << "LeapGestureHandler() Constructor";
 	this->isStartFrameSet = false;
 	this->frameCounter = 0 ;
-	startFrame = new Frame();
+    startFrame = new Leap::Frame();
 
 }
 
-Leap::LeapGestureHandler::~LeapGestureHandler()
+LeapLib::LeapGestureHandler::~LeapGestureHandler()
 {
 	if ( leapManager != NULL ) {
 		delete ( leapManager );
@@ -26,7 +26,7 @@ Leap::LeapGestureHandler::~LeapGestureHandler()
 }
 
 
-void Leap::LeapGestureHandler::setStartFrame( Frame frame )
+void LeapLib::LeapGestureHandler::setStartFrame( Leap::Frame frame )
 {
 	if ( !this->isStartFrameSet ) {
 		*startFrame = frame;
@@ -35,37 +35,37 @@ void Leap::LeapGestureHandler::setStartFrame( Frame frame )
 	}
 }
 
-void Leap::LeapGestureHandler::handleGestures( Frame frame )
+void LeapLib::LeapGestureHandler::handleGestures( Leap::Frame frame )
 {
 
-	HandList hands = frame.hands();
-	Leap::DirectionDetector::Direction leftHandDirection ;
-	Leap::DirectionDetector::Direction rightHandDirection ;
-	Vector* leftHandVelocity = new Vector( 0,0,0 );
-	Vector* rightHandVelocity = new Vector( 0,0,0 );
-	Vector* deltaVelocity = new Vector( 0,0,0 ) ;
+    Leap::HandList hands = frame.hands();
+    LeapLib::DirectionDetector::Direction leftHandDirection ;
+    LeapLib::DirectionDetector::Direction rightHandDirection ;
+    Leap::Vector* leftHandVelocity = new Leap::Vector( 0,0,0 );
+    Leap::Vector* rightHandVelocity = new Leap::Vector( 0,0,0 );
+    Leap::Vector* deltaVelocity = new Leap::Vector( 0,0,0 ) ;
 	bool leftHandExtended = false;
 	bool rightHandExtended = false;
 	bool ignoreGestures = false;
 
-	Hand leftHand, rightHand ;
+    Leap::Hand leftHand, rightHand ;
 
 
 
 
 	for ( int i=0; i< hands.count(); ++i ) {
 		if ( hands[i].isRight() ) {
-			rightHandDirection = Leap::DirectionDetector::getPalmDirection( hands[i] );
+            rightHandDirection = LeapLib::DirectionDetector::getPalmDirection( hands[i] );
 			*rightHandVelocity = hands[i].palmVelocity();
 			rightHand = hands[i];
 
-			rightHandExtended = Leap::FingerPositionDetector::isHandExtended( hands[i] );
+            rightHandExtended = LeapLib::FingerPositionDetector::isHandExtended( hands[i] );
 		}
 		else {
-			leftHandDirection = Leap::DirectionDetector::getPalmDirection( hands[i] );
+            leftHandDirection = LeapLib::DirectionDetector::getPalmDirection( hands[i] );
 			*leftHandVelocity = hands[i].palmVelocity();
 			//leapActions->scaleEdges( direction );
-			leftHandExtended = Leap::FingerPositionDetector::isHandExtended( hands[i] );
+            leftHandExtended = LeapLib::FingerPositionDetector::isHandExtended( hands[i] );
 			leftHand = hands[i];
 		}
 	}
@@ -88,7 +88,7 @@ void Leap::LeapGestureHandler::handleGestures( Frame frame )
 	if ( leftHandVelocity->x !=0 && rightHandVelocity->x != 0 ) {
 		if ( !leftHandExtended && !rightHandExtended ) {
 			ignoreGestures = true;
-			deltaVelocity = new Vector( rightHandVelocity->x - leftHandVelocity->x,rightHandVelocity->y - leftHandVelocity->y,rightHandVelocity->z - leftHandVelocity->z );
+            deltaVelocity = new Leap::Vector( rightHandVelocity->x - leftHandVelocity->x,rightHandVelocity->y - leftHandVelocity->y,rightHandVelocity->z - leftHandVelocity->z );
 			leapActions->scaleGraph( deltaVelocity );
 //			Concurrency::wait(50);
 
@@ -99,7 +99,7 @@ void Leap::LeapGestureHandler::handleGestures( Frame frame )
 
 		for ( int i = 0; i < hands.count(); i++ ) {
 
-			if ( Leap::FingerPositionDetector::isIndexFingerExtended( hands[i] ) ) {
+            if ( LeapLib::FingerPositionDetector::isIndexFingerExtended( hands[i] ) ) {
 
 
 				leapActions->selectNode( hands[i] );
@@ -109,19 +109,19 @@ void Leap::LeapGestureHandler::handleGestures( Frame frame )
 		}
 
 
-		const GestureList gestures = frame.gestures();
+        const Leap::GestureList gestures = frame.gestures();
 		for ( int g = 0; g < gestures.count(); ++g ) {
-			Gesture gesture = gestures[g];
-			HandList hands = gesture.hands();
-			Hand firstHand = hands[0];
+            Leap::Gesture gesture = gestures[g];
+            Leap::HandList hands = gesture.hands();
+            Leap::Hand firstHand = hands[0];
 
 			switch ( gesture.type() ) {
-				case Gesture::TYPE_CIRCLE: {
+                case Leap::Gesture::TYPE_CIRCLE: {
 //                LOG( INFO ) << "GESTO CIRCLE....zoomGraph().";
 //                leapActions->zoomGraph(gesture);
 //                break;
 				}
-				case Gesture::TYPE_SWIPE: {
+                case Leap::Gesture::TYPE_SWIPE: {
 					//if (!Leap::FingerPositionDetector::isHandExtended(gesture.hands()[0])){
 					LOG( INFO ) << "GESTO swipe ....rotateGraph().";
 					leapActions->rotateGraph( gesture );
@@ -129,12 +129,12 @@ void Leap::LeapGestureHandler::handleGestures( Frame frame )
 					break;
 
 				}
-				case Gesture::TYPE_KEY_TAP: {
+                case Leap::Gesture::TYPE_KEY_TAP: {
 					LOG( INFO ) << "GESTO KEY_TAP....onKeyTap().";
 //                leapActions->onKeyTap(gesture);
 					break;
 				}
-				case Gesture::TYPE_SCREEN_TAP: {
+                case Leap::Gesture::TYPE_SCREEN_TAP: {
 					LOG( INFO ) << "GESTO SCREEN_TAP....onScreenTap().";
 //                leapActions->onScreenTap(gesture);
 					break;
