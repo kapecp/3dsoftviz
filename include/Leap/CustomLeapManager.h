@@ -19,12 +19,12 @@ namespace Layout {
 class LayoutThread;
 }
 
-namespace Leap {
+namespace SoftvizLeap {
 
 class HandPalm;
 class HandObjectManipulator;
 
-class CustomLeapManager : public LeapManager
+class CustomLeapManager : public LeapLib::LeapManager
 {
 public:
 	CustomLeapManager( Vwr::CameraManipulator* cameraManipulator,Layout::LayoutThread* layout,

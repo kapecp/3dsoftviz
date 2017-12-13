@@ -10,7 +10,7 @@
 #include <osg/Group>
 #include <opencv2/core/core.hpp>
 
-namespace Leap {
+namespace SoftvizLeap {
 
 class HandMapper;
 

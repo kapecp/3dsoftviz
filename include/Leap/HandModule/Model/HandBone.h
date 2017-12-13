@@ -7,7 +7,7 @@
 #include "Leap/HandModule/Model/HandNode.h"
 #include "Leap/HandModule/Model/Joint.h"
 
-namespace Leap {
+namespace SoftvizLeap {
 class HandBone : public HandNode
 {
 public:

@@ -10,7 +10,7 @@ namespace Vwr {
 class CoreGraph;
 }
 
-namespace Leap {
+namespace SoftvizLeap {
 
 class HandMapper
 {

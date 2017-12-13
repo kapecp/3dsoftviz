@@ -7,7 +7,7 @@
 #include <osg/MatrixTransform>
 #include <osg/ShapeDrawable>
 
-namespace Leap {
+namespace SoftvizLeap {
 
 class HandNode: public osg::MatrixTransform
 {

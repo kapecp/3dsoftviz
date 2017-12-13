@@ -10,7 +10,7 @@
 
 #include <osg/Group>
 
-namespace Leap {
+namespace SoftvizLeap {
 class HandPalm : public HandNode
 {
 public:

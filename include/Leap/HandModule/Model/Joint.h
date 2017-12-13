@@ -5,7 +5,7 @@
 #define JOINT_H
 
 #include "Leap/HandModule/Model/HandNode.h"
-namespace Leap {
+namespace SoftvizLeap {
 class Joint : public HandNode
 {
 public:
