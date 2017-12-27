@@ -5,6 +5,8 @@
 #include "LeapLib/DirectionDetector.h"
 #include "LeapLib/FingerPositionDetector.h"
 
+#include <QtGlobal>
+
 
 Leap::LeapGestureHandler::LeapGestureHandler( LeapManager* leapManager )
 {
@@ -85,7 +87,7 @@ void Leap::LeapGestureHandler::handleGestures( Frame frame )
 //            printf("%g  %g  %g\n", leftHandMovement.x, leftHandMovement.y, leftHandMovement.z);
 	//Concurrency::wait(250);
 //    }
-	if ( leftHandVelocity->x !=0 && rightHandVelocity->x != 0 ) {
+	if ( !qFuzzyCompare( leftHandVelocity->x, 0) && !qFuzzyCompare( rightHandVelocity->x, 0 ) ) {
 		if ( !leftHandExtended && !rightHandExtended ) {
 			ignoreGestures = true;
 			deltaVelocity = new Vector( rightHandVelocity->x - leftHandVelocity->x,rightHandVelocity->y - leftHandVelocity->y,rightHandVelocity->z - leftHandVelocity->z );

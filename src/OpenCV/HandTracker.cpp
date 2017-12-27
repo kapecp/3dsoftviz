@@ -180,7 +180,7 @@ cv::vector<std::pair<cv::Point,double>> OpenCV::HandTracker::findHand( cv::Mat m
 						cv::Point p2=palm_points[distvec[i+1].second];
 						cv::Point p3=palm_points[distvec[i+2].second];
 						soln_circle=circleFromPoints( p1,p2,p3 ); //Final palm center,radius
-						if ( soln_circle.second!=0 && soln_circle.second< 75 && soln_circle.second> 10 ) {
+						if ( !qFuzzyCompare(soln_circle.second, 0) && (soln_circle.second < 75) && (soln_circle.second > 10) ) {
 							break;
 						}
 					}

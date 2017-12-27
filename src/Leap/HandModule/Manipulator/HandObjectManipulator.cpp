@@ -199,7 +199,7 @@ void Leap::HandObjectManipulator::updateFingerBones( osg::Group*  fingerBoneGrou
 									 this->center[2] +this->direction[2] + static_cast<double>( posVector.z )/100.0 ) );
 
 			// rotation of bone
-			if ( dirVector.x != 0 || dirVector.y !=0 || dirVector.z !=0 ) {
+			if ( !qFuzzyCompare( dirVector.x, 0 ) || !qFuzzyCompare( dirVector.y, 0 ) || !qFuzzyCompare( dirVector.z, 0 ) ) {
 				boneMatrix->preMult( osg::Matrix::rotate( osg::Vec3f( 0.0f,0.0f,1.0f ),
 									 osg::Vec3f( dirVector.x/100.0f,dirVector.y/100.0f,dirVector.z/100.0f ) ) );
 			}
@@ -260,7 +260,7 @@ void Leap::HandObjectManipulator::updateInterFingerBones( osg::Group*  interFing
 								 this->center[2] +this->direction[2] + static_cast<double>( arrayInterFingerBonesPositions[i].z )/100.0 ) );
 
 		// rotation of bone
-		if ( arrayOfInterFingerBonesRotations[i].x != 0 || arrayOfInterFingerBonesRotations[i].y !=0 || arrayOfInterFingerBonesRotations[i].z !=0 ) {
+		if ( !qFuzzyCompare( arrayOfInterFingerBonesRotations[i].x, 0 ) || !qFuzzyCompare( arrayOfInterFingerBonesRotations[i].y, 0 ) || !qFuzzyCompare(arrayOfInterFingerBonesRotations[i].z, 0 ) ) {
 
 			boneMatrix->preMult( osg::Matrix::rotate( osg::Vec3f( 0.0f,0.0f,1.0f ),
 								 osg::Vec3f( arrayOfInterFingerBonesRotations[i].x/100.0f,

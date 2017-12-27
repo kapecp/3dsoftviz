@@ -179,7 +179,7 @@ bool Model::NodeDAO::addNodesColorToDB( QSqlDatabase* conn, QMap<qlonglong, osg:
 	while ( iNodes != nodes->constEnd() ) {
 		//ulozime farbu len nodom, ktore maju farbu inu nez default
 
-		if ( iNodes.value()->getColor().r() != 1 || iNodes.value()->getColor().g() != 1 ||iNodes.value()->getColor().b() != 1 ||iNodes.value()->getColor().a() != 1 ) {
+		if ( !qFuzzyCompare(iNodes.value()->getColor().r(), 1) || !qFuzzyCompare(iNodes.value()->getColor().g(), 1) || !qFuzzyCompare(iNodes.value()->getColor().b(), 1) || !qFuzzyCompare(iNodes.value()->getColor().a(), 1) ) {
 			if ( meta ) {
 				if ( newMetaNodeID.contains( iNodes.value()->getId() ) ) {
 					nodeIdIter = newMetaNodeID.find( iNodes.value()->getId() );
