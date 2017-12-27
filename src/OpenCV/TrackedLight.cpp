@@ -47,7 +47,7 @@ void OpenCV::TrackedLight::mapFrameToHemishere( const cv::Point2f fisheye_center
 	offset = positionFrame - fisheye_center;
 	offset.x /= fisheye_radius;
 	offset.y /= fisheye_radius;
-	offset *= ( float )( fisheye_angle / 180 ) ;
+	offset *= static_cast<float>( fisheye_angle / 180 ) ;
 
 	_positionHemisphere.x() = offset.x;
 	_positionHemisphere.y() = offset.y;

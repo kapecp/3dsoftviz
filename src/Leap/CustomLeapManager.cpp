@@ -117,7 +117,7 @@ void Leap::CustomLeapManager::scaleNodes( bool scaleUp )
 int Leap::CustomLeapManager::updateCoreGraphBackground( const unsigned char* buffer, float depth )
 {
 	if ( this->coreGraph->isLeapStreamActive() ) {
-		this->coreGraph->updateBackgroundStream( ( unsigned char* )buffer );
+		this->coreGraph->updateBackgroundStream( const_cast<unsigned char*>(buffer) );
 	}
 	return 1;
 }

@@ -224,10 +224,10 @@ void GhostSoftShadowMap::createUniforms()
 {
 	_uniformList.clear();
 
-	osg::Uniform* baseTextureSampler = new osg::Uniform( "osgShadow_baseTexture",( int )_baseTextureUnit );
+	osg::Uniform* baseTextureSampler = new osg::Uniform( "osgShadow_baseTexture",static_cast<int>(_baseTextureUnit ));
 	_uniformList.push_back( baseTextureSampler );
 
-	osg::Uniform* shadowTextureSampler = new osg::Uniform( "osgShadow_shadowTexture",( int )_shadowTextureUnit );
+	osg::Uniform* shadowTextureSampler = new osg::Uniform( "osgShadow_shadowTexture",static_cast<int>(_shadowTextureUnit ));
 	_uniformList.push_back( shadowTextureSampler );
 
 	_ambientBiasUniform = new osg::Uniform( "osgShadow_ambientBias",_ambientBias );
@@ -242,7 +242,7 @@ void GhostSoftShadowMap::createUniforms()
 	_jitterTextureUnit=_shadowTextureUnit+1;
 	initJittering( _stateset.get() );
 
-	osg::Uniform* jitterTextureSampler = new osg::Uniform( "osgShadow_jitterTexture",( int )_jitterTextureUnit );
+	osg::Uniform* jitterTextureSampler = new osg::Uniform( "osgShadow_jitterTexture",static_cast<int>(_jitterTextureUnit ));
 	_uniformList.push_back( jitterTextureSampler );
 
 
@@ -308,10 +308,10 @@ void GhostSoftShadowMap::initJittering( osg::StateSet* ss )
 				v[3] = v[1];
 
 				// Jitter positions. ( 0.5f / w ) == ( 1.0f / 2*w )
-				v[0] += ( ( float )rand() * 2.f / RAND_MAX - 1.f ) * ( 0.5f / gridW );
-				v[1] += ( ( float )rand() * 2.f / RAND_MAX - 1.f ) * ( 0.5f / gridH );
-				v[2] += ( ( float )rand() * 2.f / RAND_MAX - 1.f ) * ( 0.5f / gridW );
-				v[3] += ( ( float )rand() * 2.f / RAND_MAX - 1.f ) * ( 0.5f / gridH );
+				v[0] += ( static_cast<float>(rand()) * 2.f / RAND_MAX - 1.f ) * ( 0.5f / gridW );
+				v[1] += ( static_cast<float>(rand()) * 2.f / RAND_MAX - 1.f ) * ( 0.5f / gridH );
+				v[2] += ( static_cast<float>(rand()) * 2.f / RAND_MAX - 1.f ) * ( 0.5f / gridW );
+				v[3] += ( static_cast<float>(rand()) * 2.f / RAND_MAX - 1.f ) * ( 0.5f / gridH );
 
 				// Warp to disk; values in [-1,1]
 				d[0] = sqrtf( v[1] ) * cosf( 2.f * 3.1415926f * v[0] );
@@ -321,10 +321,10 @@ void GhostSoftShadowMap::initJittering( osg::StateSet* ss )
 
 				// store d into unsigned values [0,255]
 				const unsigned int tmp = ( ( r * size * size ) + ( t * size ) + s ) * 4;
-				data3D[ tmp + 0 ] = ( unsigned char )( ( 1.f + d[0] ) * 127 );
-				data3D[ tmp + 1 ] = ( unsigned char )( ( 1.f + d[1] ) * 127 );
-				data3D[ tmp + 2 ] = ( unsigned char )( ( 1.f + d[2] ) * 127 );
-				data3D[ tmp + 3 ] = ( unsigned char )( ( 1.f + d[3] ) * 127 );
+				data3D[ tmp + 0 ] = static_cast<unsigned char>(( ( 1.f + d[0] ) * 127 ));
+				data3D[ tmp + 1 ] = static_cast<unsigned char>(( ( 1.f + d[1] ) * 127 ));
+				data3D[ tmp + 2 ] = static_cast<unsigned char>(( ( 1.f + d[2] ) * 127 ));
+				data3D[ tmp + 3 ] = static_cast<unsigned char>(( ( 1.f + d[3] ) * 127 ));
 
 			}
 		}
