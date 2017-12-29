@@ -154,7 +154,7 @@ void ArucoCore::detectMarkers()
 int ArucoCore::getMatrix( int markerId, double* modelviewmatrix )
 {
 	if ( mMarkers.size() > 0 && markerId != -1 ) {
-		mMarkers[markerId].glGetModelViewMatrix( modelviewmatrix );
+		mMarkers[static_cast<unsigned long>(markerId)].glGetModelViewMatrix( modelviewmatrix );
 		return 0;
 	}
 	return -1;

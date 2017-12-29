@@ -153,7 +153,7 @@ void ArucoThread::run()
 				for ( int i = 0; i< markerArraySize; i++ ) {
 					double		 actPosArray[3];			// x, y, z
 					double		 actQuatArray[4];		// angle(w), x, y, z
-					int curMarkerId = aCore.getPosAndQuat( i, actPosArray, actQuatArray );
+					int curMarkerId = aCore.getPosAndQuat( static_cast<uint>(i), actPosArray, actQuatArray );
 
 					// qDebug() << i << " : ID [" << curMarkerId << "] " << actPosArr[i].x() << " / " << actQuatArr[i].x();
 

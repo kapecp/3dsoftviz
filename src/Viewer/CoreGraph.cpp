@@ -670,7 +670,7 @@ void CoreGraph::setLightDiffuseColor( int index, osg::Vec4 color )
 
 void CoreGraph::setLightActive( int index, bool active )
 {
-	getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0 + index, active ? osg::StateAttribute::ON : osg::StateAttribute::OFF );
+	getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0 + static_cast<uint>(index), active ? osg::StateAttribute::ON : osg::StateAttribute::OFF );
 }
 
 
@@ -684,7 +684,7 @@ int CoreGraph::getOrCreateLight( int index )
 
 	// light
 	osg::Light* pLight = new osg::Light;
-	pLight->setLightNum( uniqueLightNumber++ );
+	pLight->setLightNum( static_cast<int>(uniqueLightNumber++) );
 	pLight->setDiffuse( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
 	pLight->setPosition( osg::Vec4( 0, 0, 0, 1 ) );		// w = 0 directional light
 	// w = 1 point light (position)

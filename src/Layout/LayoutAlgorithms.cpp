@@ -94,7 +94,7 @@ struct Edge {
 };
 
 struct IndentEdges : public QVector<Edge> {
-	IndentEdges( uint count ) : QVector<Edge>( count ) {};
+	IndentEdges( int count ) : QVector<Edge>( count ) {}
 };
 
 void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimension, uint elementCount, const osg::BoundingBox& region, float spacing, QList<ElementLayout>* layouts, osg::BoundingBox* aroundRegion )
@@ -148,7 +148,7 @@ void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimens
 			const uint firstEdgeOffset = curWidth < curDepth ? 0 : 1;
 			uint edgeIndex = firstEdgeOffset; // index strany, near = 0, right = 1, far = 2, left = 3
 			while ( remainedElementsCountToAddForIndent > 0 ) { // ak este ostavaju nejake elementy na rozmiestnenie pre odsadenie
-				auto& edge = ( *curIndent )[edgeIndex]; // vypocet informacii pre rozmiestnovanie na danej hrane
+				auto& edge = ( *curIndent )[static_cast<int>(edgeIndex)]; // vypocet informacii pre rozmiestnovanie na danej hrane
 				const int coefForAlong = ( edgeIndex / 2 ) % 2 == 0 ? -1 : 1; // znamienko pre posun popri hrane (ci sa ma hodnota pridavat alebo odoberat)
 				const float defaultMaxEdgeSize = edgeIndex % 2 == 0 ? curWidth : curDepth; // max dlzka popri hrane
 				const float defaultBeginAlongPos = ( defaultMaxEdgeSize / 2 - elementHalfWidth ) * coefForAlong; // zaciatok umiestovania na hrane
@@ -176,7 +176,7 @@ void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimens
 			uint countOnWidth = static_cast<uint>(roundf( elementsCountToAddForIndent / 2 * widthRatio ));
 			uint countOnDepth = static_cast<uint>(roundf( elementsCountToAddForIndent / 2 * depthRatio ));
 			uint countOnEdges[] = { countOnWidth, countOnDepth, countOnWidth, countOnDepth };
-			const int diffCount = ( countOnWidth + countOnDepth ) * 2 - elementsCountToAddForIndent;
+			const int diffCount = static_cast<int>(( countOnWidth + countOnDepth ) * 2 - elementsCountToAddForIndent);
 			if ( diffCount != 0 ) {
 				if ( diffCount > 0 ) {
 					if ( countOnWidth >= countOnDepth ) {
@@ -196,7 +196,7 @@ void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimens
 				}
 			}
 			for ( uint edgeIndex = 0; edgeIndex < EDGES_COUNT; ++edgeIndex ) {
-				auto& edge = ( *curIndent )[edgeIndex];
+				auto& edge = ( *curIndent )[static_cast<int>(edgeIndex)];
 				const int coefForAlong = ( edgeIndex / 2 ) % 2 == 0 ? -1 : 1;
 				edge.maxEdgeSize = edgeIndex % 2 == 0 ? curWidth : curDepth;
 				edge.full = edgeIndex % 2 == 0 ? countOnEdges[edgeIndex] == maxCountOnWidth : countOnEdges[edgeIndex] == maxCountOnDepth;
@@ -213,9 +213,9 @@ void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimens
 
 	// evaluacia pozicii
 	for ( uint indentIndex = 0; indentIndex < static_cast<uint>(indents.count()); ++indentIndex ) {
-		auto& indent = indents[indentIndex];
+		auto& indent = indents[static_cast<int>(indentIndex)];
 		for ( uint edgeIndex = 0; edgeIndex < EDGES_COUNT; ++edgeIndex ) {
-			auto& edge = indent[edgeIndex];
+			auto& edge = indent[static_cast<int>(edgeIndex)];
 			const float rot = static_cast<float>(edgeIndex) * static_cast<float>(osg::PI_2);
 			const int coefForIndent = edgeIndex == 0 || edgeIndex == 3 ? -1 : 1;
 			float alongEdgeValue = edge.beginAlongPos;
@@ -238,13 +238,13 @@ void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimens
 	}
 
 	// naplnenie pozicii do output-u
-	QVector<ElementLayout> tmpLayouts( elementCount );
+	QVector<ElementLayout> tmpLayouts( static_cast<int>(elementCount) );
 	for ( uint indentIndex = 0; indentIndex < static_cast<uint>(indents.count()); ++indentIndex ) {
-		auto& indent = indents[indentIndex];
+		auto& indent = indents[static_cast<int>(indentIndex)];
 		for ( uint edgeIndex = 0; edgeIndex < EDGES_COUNT; ++edgeIndex ) {
-			auto& edge = indent[edgeIndex];
+			auto& edge = indent[static_cast<int>(edgeIndex)];
 			for ( auto& element : edge.elements ) {
-				tmpLayouts[element.index] = element.layout;
+				tmpLayouts[static_cast<int>(element.index)] = element.layout;
 			}
 		}
 	}
@@ -258,7 +258,7 @@ void LayoutAlgorithms::layoutAroundRegion( const osg::BoundingBox& elementDimens
 		else {
 			float newAroundRegionValuesForEdges[4];
 			for ( uint edgeIndex = 0; edgeIndex < EDGES_COUNT; ++edgeIndex ) {
-				const uint indentCountForEdge = indents.last()[edgeIndex].elements.count() > 0 ? indents.count() : indents.count() - 1;
+				const uint indentCountForEdge = indents.last()[static_cast<int>(edgeIndex)].elements.count() > 0 ? static_cast<const uint>(indents.count()) : static_cast<const uint>(indents.count() - 1);
 				const int coefForIndent = edgeIndex == 0 || edgeIndex == 3 ? -1 : 1;
 				newAroundRegionValuesForEdges[edgeIndex] = origRegionValuesForEdges[edgeIndex] + ( indentCountForEdge * elementIndentOffset + spacing ) * coefForIndent;
 			}

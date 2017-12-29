@@ -284,7 +284,7 @@ void GhostSoftShadowMap::initJittering( osg::StateSet* ss )
 	const unsigned int gridW =  8;
 	const unsigned int gridH =  8;
 	unsigned int R = ( gridW * gridH / 2 );
-	texture3D->setTextureSize( size, size, R );
+	texture3D->setTextureSize( size, size, static_cast<int>(R) );
 
 	// then create the 3d image to fill with jittering data
 	osg::Image* image3D = new osg::Image;
@@ -338,7 +338,7 @@ void GhostSoftShadowMap::initJittering( osg::StateSet* ss )
 	// OpenGLES 1.1 doesn't define GL_RGBA4, so we'll just assume RGBA
 	GLenum internalTextureFormat = GL_RGBA;
 #endif
-	image3D->setImage( size, size, R, internalTextureFormat, GL_RGBA, GL_UNSIGNED_BYTE, data3D, osg::Image::USE_NEW_DELETE );
+	image3D->setImage( size, size, static_cast<int>(R), static_cast<int>(internalTextureFormat), GL_RGBA, GL_UNSIGNED_BYTE, data3D, osg::Image::USE_NEW_DELETE );
 
 	texture3D->setImage( image3D );
 

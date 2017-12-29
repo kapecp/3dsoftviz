@@ -125,8 +125,8 @@ void OpenCV::LightDetector::ProcessFrame( cv::Mat& frame, cv::Mat frameGray )
 			mLights.push_back( OpenCV::TrackedLight() );
 		}
 
-		mLights[i].bbox = cv::boundingRect( mContours[i] );
-		cv::minEnclosingCircle( mContours[i], mLights[i].positionFrame, mLights[i].radius );
+		mLights[i].bbox = cv::boundingRect( mContours[static_cast<unsigned long>(i)] );
+		cv::minEnclosingCircle( mContours[static_cast<unsigned long>(i)], mLights[i].positionFrame, mLights[i].radius );
 		mLightCount++;
 	}
 
