@@ -105,7 +105,7 @@ void OpenCV::MarkerlessTracker::track( cv::Mat& frame )
 	// TODO assign ids to circles, backtrack them
 	for ( size_t i = 0; i < tBalls.size(); i++ ) {
 		//(x,y,radius)
-		cv::Point3f circle( static_cast<float>( cvRound( tBalls.at( i ).cent.x ) ), static_cast<float>( cvRound( tBalls.at( i ).cent.y ) ), static_cast<float>( cvRound( tBalls.at( i ).radius ) ) );
+		cv::Point3f circle( cvRound( static_cast<double>( tBalls.at( i ).cent.x ) ), cvRound( static_cast<double>( tBalls.at( i ).cent.y ) ), cvRound( static_cast<double>( tBalls.at( i ).radius ) ) );
 
 		cv::Mat rvec( 3, 1, CV_32FC1 );
 		cv::Mat tvec( 3, 1, CV_32FC1 );

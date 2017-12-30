@@ -66,7 +66,7 @@ void OpenCV::LightDetector::setFisheyeRadius( int radius )
 
 void OpenCV::LightDetector::calculateSurface()
 {
-	mFrameSurface = M_PI * this->mFisheyeRadius * this->mFisheyeRadius;
+	mFrameSurface = static_cast<float>( M_PI * static_cast<double>( this->mFisheyeRadius ) * static_cast<double>( this->mFisheyeRadius ) );
 }
 
 void OpenCV::LightDetector::setKernelOpen( int size )

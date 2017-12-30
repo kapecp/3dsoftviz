@@ -35,8 +35,8 @@ void OpenCV::TrackedLight::extractColor( cv::Mat& frame )
 void OpenCV::TrackedLight::findIntensity( float frame_area, osg::Vec4 frame_color )
 {
 
-	_surface = M_PI * radius * radius;
-	_colorIntensity = ( _surface / frame_area ) * 0.8 + 0.2 * std::abs( _color.length() - frame_color.length() );
+	_surface = static_cast<float>( M_PI * static_cast<double>( radius ) * static_cast<double>( radius ) );
+	_colorIntensity = ( _surface / frame_area ) * 0.8f + 0.2f * std::abs( _color.length() - frame_color.length() );
 	//qDebug() << "intensity "  << _colorIntensity << " radius " << radius;
 }
 
