@@ -242,7 +242,7 @@ osg::Vec3d ArucoThread::normalizePos( const osg::Vec3f actPosArray, const osg::Q
 		computeCorQuatAndPos( actPosArray, actQuatArray );
 	}
 
-	osg::Vec3d actPos( -actPosArray[0], -actPosArray[1], -actPosArray[2] );
+	osg::Vec3d actPos( static_cast<double>(-actPosArray[0]), static_cast<double>(-actPosArray[1]), static_cast<double>(-actPosArray[2]) );
 
 	osg::Quat  actQuat;
 
@@ -262,7 +262,7 @@ osg::Vec3d ArucoThread::normalizePos( const osg::Vec3f actPosArray, const osg::Q
 
 
 	// normalizin from [0,0] in top left corner to [1,1] in roght bottom corner
-	double absZ		= actPosArray[2]  < 0.0 ? - actPosArray[2]	:  actPosArray[2];		// distance of marker
+	double absZ		= static_cast<double>(actPosArray[2])  < 0.0 ? static_cast<double>(-actPosArray[2])	:  static_cast<double>(actPosArray[2]);		// distance of marker
 	double halfSize = absZ / mCamDistRatio;
 
 	double normX = actPos.x() / halfSize;							// horizontal
@@ -287,7 +287,7 @@ void ArucoThread::graphControlling( const osg::Vec3f actPosArray, const osg::Qua
 		computeCorQuatAndPos( actPosArray, actQuatArray );
 	}
 
-	osg::Vec3d actPos( -actPosArray[0], -actPosArray[1], -actPosArray[2] );
+	osg::Vec3d actPos( static_cast<double>(-actPosArray[0]), static_cast<double>(-actPosArray[1]), static_cast<double>(-actPosArray[2]) );
 	//osg::Vec3d actPos( -actPosArray[0], -actPosArray[1] * mHalfRatioCoef, -actPosArray[2] );
 
 	osg::Quat  actQuat;
@@ -309,7 +309,7 @@ void ArucoThread::graphControlling( const osg::Vec3f actPosArray, const osg::Qua
 
 
 	// normalizin from [0,0] in top left corner to [1,1] in roght bottom corner
-	double absZ		= actPosArray[2]  < 0.0 ? - actPosArray[2]	:  actPosArray[2];		// distance of marker
+	double absZ		= static_cast<double>(actPosArray[2])  < 0.0 ? static_cast<double>(-actPosArray[2])	:  static_cast<double>(actPosArray[2]);		// distance of marker
 	double halfSize = absZ / mCamDistRatio;
 
 	double normX = actPos.x() / halfSize;							// horizontal
@@ -331,10 +331,10 @@ void ArucoThread::graphControlling( const osg::Vec3f actPosArray, const osg::Qua
 //void ArucoThread::mouseControlling( const double actPosArray[3], const double actQuatArray[4] )
 void ArucoThread::mouseControlling( const osg::Vec3f actPosArray, const osg::Quat actQuatArray )
 {
-	osg::Vec3d actPos( actPosArray[0], -actPosArray[1] * mHalfRatioCoef, -actPosArray[2] );
+	osg::Vec3d actPos( static_cast<double>(actPosArray[0]), static_cast<double>(-actPosArray[1]) * mHalfRatioCoef, static_cast<double>(-actPosArray[2]) );
 
 	// normalizin from [0,0] in top left corner to [1,1] in roght bottom corner
-	double absZ		= actPosArray[2]  < 0.0 ? - actPosArray[2]	:  actPosArray[2];		// distance of marker
+	double absZ		= static_cast<double>(actPosArray[2])  < 0.0 ? static_cast<double>(-actPosArray[2])	:  static_cast<double>(actPosArray[2]);		// distance of marker
 	double halfSize = absZ / mCamDistRatio;
 
 	double normX = ( halfSize + actPos.x() ) / ( halfSize*2 );							// horizontal
@@ -414,9 +414,9 @@ void ArucoThread::computeCorQuatAndPos( const osg::Vec3f position, const osg::Qu
 {
 	qDebug() << "ARUCO: comput cor par done>";
 	// set corection translation
-	mCorP.x() = -position[0];
-	mCorP.y() = -position[1];
-	mCorP.z() = -position[2];
+	mCorP.x() = static_cast<double>(-position[0]);
+	mCorP.y() = static_cast<double>(-position[1]);
+	mCorP.z() = static_cast<double>(-position[2]);
 	// set corection quaternion
 	osg::Quat tmp( rotation[1], rotation[2], rotation[3], rotation[0] );
 	mCorQ = tmp.conj();

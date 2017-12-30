@@ -213,7 +213,7 @@ void Leap::LeapActions::rotateAruco( Leap::DirectionDetector::Direction directio
 
 void Leap::LeapActions::scaleGraph( Vector* vec )
 {
-	double vectorValue =vec->x+vec->y+vec->z;
+	double vectorValue =static_cast<double>( vec->x+vec->y+vec->z );
 	if ( vectorValue<-150 || vectorValue >150 ) {
 		if ( ( vec->x+vec->y+vec->z )>0 ) {
 			LOG( INFO ) << "ScaleGraphUp";

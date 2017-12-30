@@ -837,7 +837,7 @@ float FRAlgorithm::getMinProjDistance( Data::Node* u, Data::Node* v, osg::Vec3f 
 {
 	float ideal = 0;
 	if ( !qFuzzyCompare( pv.length(), 0 ) ) {
-        ideal = u->getRadius() + v->getRadius() + M;
+		ideal = u->getRadius() + v->getRadius() + static_cast<float>( M );
 	}
 	return ideal;
 }

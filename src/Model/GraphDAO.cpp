@@ -221,10 +221,10 @@ Data::Graph* Model::GraphDAO::getGraph( QSqlDatabase* conn, bool* error2, qlongl
 
 			if ( edgeScales.contains( edgeID ) ) {
 				if ( newGraph->getEdges()->contains( edgeID ) ) {
-					newGraph->getEdges()->find( edgeID ).value()->setScale( edgeScales.value( edgeID ) );
+					newGraph->getEdges()->find( edgeID ).value()->setScale( static_cast<double>(edgeScales.value( edgeID )) );
 				}
 				else {
-					newGraph->getMetaEdges()->find( edgeID ).value()->setScale( edgeScales.value( edgeID ) );
+					newGraph->getMetaEdges()->find( edgeID ).value()->setScale( static_cast<double>(edgeScales.value( edgeID )) );
 				}
 			}
 		}

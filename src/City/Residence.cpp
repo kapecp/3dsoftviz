@@ -105,7 +105,7 @@ void Residence::refresh()
 		auto& b = gettersSettersBuildings[i];
 		getSetLayouts[i].position.z() += RESIDENCE_SECTOR_HEIGHT;
 		b->setPosition( getSetLayouts[i].position );
-		b->setAttitude( osg::Quat( getSetLayouts[i].yawRotation, osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
+		b->setAttitude( osg::Quat( static_cast<double>( getSetLayouts[i].yawRotation ), osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
 		b->refresh();
 		gettersSettersBuildingsNode->addChild( b );
 	}
@@ -119,7 +119,7 @@ void Residence::refresh()
 		auto& b = internalMethodsBuildings[i];
 		internalLayouts[i].position.z() += RESIDENCE_SECTOR_HEIGHT;
 		b->setPosition( internalLayouts[i].position );
-		b->setAttitude( osg::Quat( internalLayouts[i].yawRotation, osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
+		b->setAttitude( osg::Quat( static_cast<double>( internalLayouts[i].yawRotation), osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
 		b->refresh();
 		internalMethodsBuildingsNode->addChild( b );
 	}
@@ -133,7 +133,7 @@ void Residence::refresh()
 		auto& b = interfaceMethodsBuildings[i];
 		interfaceLayouts[i].position.z() += RESIDENCE_SECTOR_HEIGHT;
 		b->setPosition( interfaceLayouts[i].position );
-		b->setAttitude( osg::Quat( interfaceLayouts[i].yawRotation, osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
+		b->setAttitude( osg::Quat( static_cast<double>( interfaceLayouts[i].yawRotation), osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
 		b->refresh();
 		interfaceMethodsBuildingsNode->addChild( b );
 	}

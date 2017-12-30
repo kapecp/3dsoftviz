@@ -117,7 +117,7 @@ void City::Module::refresh()
 	for ( int i = 0; i < functionNodes.count(); ++i ) {
 		auto funcNodePAT = getNodeParentPAT( functionNodes[i] );
 		funcNodePAT->setPosition( funcLayouts[i].position + osg::Vec3( 0.0f, 0.0f, MODULE_SECTOR_HEIGHT ) );
-		funcNodePAT->setAttitude( osg::Quat( funcLayouts[i].yawRotation, osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
+		funcNodePAT->setAttitude( osg::Quat( static_cast<double>( funcLayouts[i].yawRotation ), osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
 		functionsPAT->addChild( funcNodePAT );
 	}
 
@@ -131,7 +131,7 @@ void City::Module::refresh()
 	for ( int i = 0; i < interfaceNodes.count(); ++i ) {
 		auto intrfcNodePAT = getNodeParentPAT( interfaceNodes[i] );
 		intrfcNodePAT->setPosition( intrfcLayouts[i].position + osg::Vec3( 0.0f, 0.0f, MODULE_SECTOR_HEIGHT ) );
-		intrfcNodePAT->setAttitude( osg::Quat( intrfcLayouts[i].yawRotation, osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
+		intrfcNodePAT->setAttitude( osg::Quat( static_cast<double>( intrfcLayouts[i].yawRotation ), osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
 		interfacesPAT->addChild( intrfcNodePAT );
 	}
 	osg::BoundingBox intrfcPlane( intrfcRegion.xMin(), intrfcRegion.yMin(), 0, intrfcRegion.xMax(), intrfcRegion.yMax(), MODULE_SECTOR_HEIGHT );
