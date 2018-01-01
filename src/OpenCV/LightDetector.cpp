@@ -11,7 +11,7 @@
 // constructor loads classifier file with learned faces and set start parameters
 OpenCV::LightDetector::LightDetector()
 {
-	mFrameMeanColor = osg::Vec4( 0.3, 0.3, 0.3, 1.0 );
+	mFrameMeanColor = osg::Vec4( 0.3f, 0.3f, 0.3f, 1.0f );
 	mFisheyeAngle = 170;
 
 	for ( int i = 0; i < 8; i++ ) {

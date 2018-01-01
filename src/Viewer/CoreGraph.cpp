@@ -871,7 +871,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 
 	// default while light from the top
 	int lid = getOrCreateLight( 0 );
-	setLightPosition( lid, osg::Vec3( 0, 0, 100 * baseSize ) );
+	setLightPosition( lid, osg::Vec3( 0, 0, 100 * static_cast<float> ( baseSize ) ) );
 	setLightDiffuseColor( lid, osg::Vec4( 1, 1, 1, 1 ) );
 	setLightActive( lid, true );
 
@@ -891,7 +891,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	root->getOrCreateStateSet()->addUniform( new osg::Uniform( "ghostObject", false ) );
 
 	lightModel = new osg::LightModel();
-	setAmbientLightColor( osg::Vec4( 0.3, 0.3, 0.3, 1 ) );
+	setAmbientLightColor( osg::Vec4( 0.3f, 0.3f, 0.3f, 1 ) );
 
 	//shadow scene
 	//http://trac.openscenegraph.org/projects/osg//wiki/Support/ProgrammingGuide/osgShadow
@@ -1951,7 +1951,7 @@ void CoreGraph::turnOnShadows()
 {
 	//osg::ref_ptr<osgShadow::SoftShadowMap> sm = new osgShadow::SoftShadowMap;
 	//sm->setBias(0.01);
-	ghostSoftShadowMap->setSoftnessWidth( 0.012 );
+	ghostSoftShadowMap->setSoftnessWidth( 0.012f );
 	shadowedScene->setShadowTechnique( ghostSoftShadowMap.get() );
 }
 
@@ -2546,11 +2546,11 @@ void CoreGraph::turnOffCustomLights()
 	}
 
 	int lid = getOrCreateLight( 0 );
-	setLightPosition( lid, osg::Vec3( 0, 0, 100 * baseSize ) );
+	setLightPosition( lid, osg::Vec3( 0, 0, 100 * static_cast<float>( baseSize ) ) );
 	setLightDiffuseColor( lid, osg::Vec4( 1, 1, 1, 1 ) );
 	setLightActive( lid, true );
 
-	setAmbientLightColor( osg::Vec4( 0.3, 0.3, 0.3, 1 ) );
+	setAmbientLightColor( osg::Vec4( 0.3f, 0.3f, 0.3f, 1 ) );
 }
 
 // LightDetectionThread updates lights with this
@@ -2560,7 +2560,7 @@ void CoreGraph::setLightCoords( OpenCV::TrackedLight tlight )
 
 	int lid = getOrCreateLight( tlight.id );
 	setLightActive( lid, tlight.active );
-	setLightPosition( lid, tlight.positionHemisphere()* baseSize * roomSize );
+	setLightPosition( lid, tlight.positionHemisphere()* static_cast<float>( baseSize ) * static_cast<float>( roomSize ) );
 	setLightDiffuseColor( lid, tlight.color() * tlight.colorIntensity() );
 	if ( lid == 0 ) {
 		ghostSoftShadowMap->setLight( lightSources[0] );
