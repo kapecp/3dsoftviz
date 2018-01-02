@@ -43,7 +43,7 @@ void OpenCV::LightDetector::DrawLightContours( cv::Mat src )
 
 void OpenCV::LightDetector::DrawLightCircles( cv::Mat src )
 {
-	for ( size_t i = 0; i< mLightCount; i++ ) {
+	for ( int i = 0; i< mLightCount; i++ ) {
 		cv::circle( src, mLights[i].positionFrame, static_cast<int>(mLights[i].radius), CV_RGB( 0, 255, 0 ) );
 	}
 }

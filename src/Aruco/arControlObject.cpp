@@ -125,7 +125,7 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
 
 			controlObjects.remove( object_id );
 
-			ArControlObject* newControlObject = new ArControlObject( object_id, targetPosition, _assignmentStrategy, _selectionLayoutStrategy );
+			ArControlObject* newControlObject = new ArControlObject( static_cast<int>( object_id ), targetPosition, _assignmentStrategy, _selectionLayoutStrategy );
 			if ( newControlObject->isFocused() ) {
 				//sucesfully assigned to graph node
 				controlObjects.insert( object_id,  newControlObject );
@@ -139,7 +139,7 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
 	}
 	else {
 		qDebug() << "new object";
-		ArControlObject* newControlObject = new ArControlObject( object_id, targetPosition, _assignmentStrategy, _selectionLayoutStrategy );
+		ArControlObject* newControlObject = new ArControlObject( static_cast<int>( object_id ), targetPosition, _assignmentStrategy, _selectionLayoutStrategy );
 		if ( newControlObject->isFocused() ) {
 			//sucesfully assigned to graph node
 			controlObjects.insert( object_id,  newControlObject );

@@ -143,7 +143,7 @@ void ArucoThread::run()
 			frame = mCapVideo->queryFrame();		// get image from camera
 
 			int         markerArraySize = 0;
-			markerArraySize = aCore.detect( frame.clone() );
+			markerArraySize = static_cast<int>( aCore.detect( frame.clone() ) );
 
 			//JMA
 			if ( mMultiMarkerEnabled ) {
