@@ -120,7 +120,7 @@ void OpenCV::LightDetector::ProcessFrame( cv::Mat& frame, cv::Mat frameGray )
 	cv::findContours( frameGray.clone(), mContours, cv::RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cv::Point( 0, 0 ) );
 
 	// enclosing circles for contours
-	for ( int i = 0; i < mContours.size(); ++i ) {
+	for ( int i = 0; i < static_cast<int>( mContours.size() ); ++i ) {
 		if ( mLights.size() <= i ) {
 			mLights.push_back( OpenCV::TrackedLight() );
 		}

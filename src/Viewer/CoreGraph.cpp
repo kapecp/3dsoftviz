@@ -678,7 +678,7 @@ void CoreGraph::setLightActive( int index, bool active )
 int CoreGraph::getOrCreateLight( int index )
 {
 	// already exists
-	if ( lightsGroup->getNumChildren() > index ) {
+	if ( static_cast<int>( lightsGroup->getNumChildren() ) > index ) {
 		return index;
 	}
 
@@ -2541,8 +2541,8 @@ void CoreGraph::turnOffCustomLights()
 
 	// will reset scene to default ligh
 
-	for ( int i = 1; 0 < 8 && i <= uniqueLightNumber; ++i ) {
-		setLightActive( i, false );
+	for ( uint i = 1; 0 < 8 && i <= uniqueLightNumber; ++i ) {
+		setLightActive( static_cast<int>( i ), false );
 	}
 
 	int lid = getOrCreateLight( 0 );
@@ -2573,12 +2573,12 @@ void CoreGraph::setShowLightMarkers( bool set )
 	qDebug() << "show light markers " << set;
 
 	if ( set ) {
-		for ( int i = 0; i < lightsGroup->getNumChildren(); ++i ) {
+		for ( uint i = 0; i < lightsGroup->getNumChildren(); ++i ) {
 			lightMarkerTransforms[i]->setNodeMask( 0x1 );
 		}
 	}
 	else {
-		for ( int i = 0; i < lightsGroup->getNumChildren(); ++i ) {
+		for ( uint i = 0; i < lightsGroup->getNumChildren(); ++i ) {
 			lightMarkerTransforms[i]->setNodeMask( 0x0 );
 		}
 	}
