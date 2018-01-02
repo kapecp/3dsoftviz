@@ -100,7 +100,7 @@ void OpenCV::LightDetector::ProcessFrame( cv::Mat& frame, cv::Mat frameGray )
 	//mFrameMean.a() = static_cast< float > ( mean[3] );
 
 	// mask grey frame
-	cv::circle( mask, this->mfisheyeCenter, this->mFisheyeRadius, cv::Scalar( 0 ), CV_FILLED );
+	cv::circle( mask, this->mfisheyeCenter, static_cast<int>( this->mFisheyeRadius ), cv::Scalar( 0 ), CV_FILLED );
 	frameGray.setTo( cv::Scalar( 0 ), mask );
 
 	mFrameMeanColorIntensity = 1;

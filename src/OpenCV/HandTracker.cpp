@@ -34,7 +34,7 @@ std::pair<cv::Point,double> OpenCV::HandTracker::circleFromPoints( cv::Point p1,
 	double centery = ( cd * ( p1.x - p2.x ) - bc * ( p2.x - p3.x ) ) * idet;
 	double radius = sqrt( pow( p2.x - centerx,2 ) + pow( p2.y-centery,2 ) );
 
-	return std::make_pair( cv::Point( centerx,centery ),radius );
+	return std::make_pair( cv::Point( static_cast<int>( centerx ),static_cast<int>( centery ) ),radius );
 }
 
 void OpenCV::HandTracker::getParameterValues( int* threshold, int* areaSize,
@@ -44,7 +44,7 @@ void OpenCV::HandTracker::getParameterValues( int* threshold, int* areaSize,
 		*threshold = 50;
 	}
 	else {
-		*threshold = 160 - ( depth/4 );
+		*threshold = 160 - ( static_cast<int>( depth )/4 );
 	}
 }
 
@@ -207,7 +207,7 @@ cv::vector<std::pair<cv::Point,double>> OpenCV::HandTracker::findHand( cv::Mat m
 //                                LOG(INFO) << "x: " + std::to_string(palm_center.x) + " y: " + std::to_string(palm_center.y);
 //                                LOG(INFO) << "radius: " + std::to_string(radius);
 						circle( mask,palm_center,5,cv::Scalar( 144,144,255 ),3 );
-						circle( mask,palm_center,radius,cv::Scalar( 144,144,255 ),2 );
+						circle( mask,palm_center,static_cast<int>( radius ),cv::Scalar( 144,144,255 ),2 );
 						std::pair<cv::Point,double> palmAndRadius = std::make_pair( cv::Point( palm_center.x,palm_center.y ),radius );
 						palmAndRadiusList.push_back( palmAndRadius );
 					}
