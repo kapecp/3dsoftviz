@@ -121,7 +121,7 @@ void Leap::LeapGestureHandler::handleGestures( Frame frame )
 				case Gesture::TYPE_CIRCLE: {
 //                LOG( INFO ) << "GESTO CIRCLE....zoomGraph().";
 //                leapActions->zoomGraph(gesture);
-//                break;
+					break;
 				}
 				case Gesture::TYPE_SWIPE: {
 					//if (!Leap::FingerPositionDetector::isHandExtended(gesture.hands()[0])){
@@ -138,6 +138,11 @@ void Leap::LeapGestureHandler::handleGestures( Frame frame )
 				}
 				case Gesture::TYPE_SCREEN_TAP: {
 					LOG( INFO ) << "GESTO SCREEN_TAP....onScreenTap().";
+//                leapActions->onScreenTap(gesture);
+					break;
+				}
+				case Gesture::TYPE_INVALID: {
+					LOG( INFO ) << "GESTO INVALID....onScreenTap().";
 //                leapActions->onScreenTap(gesture);
 					break;
 				}
