@@ -104,8 +104,8 @@ void Model::GraphDAO::getNestedGraph( qlonglong parentID, Data::Graph** graph, Q
 Data::Graph* Model::GraphDAO::getGraph( QSqlDatabase* conn, bool* error2, qlonglong graphID, qlonglong layoutID )
 {
 	Data::Graph* newGraph;
-	QSqlQuery* queryNodes;
-	QSqlQuery* queryEdges;
+	QSqlQuery* queryNodes = NULL;
+	QSqlQuery* queryEdges = NULL;
 	QString graphName, layoutName, nodeName, edgeName;
 	bool error = false;
 	//TODO repair of getting Graph

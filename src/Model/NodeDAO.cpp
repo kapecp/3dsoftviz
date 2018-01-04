@@ -78,7 +78,7 @@ bool Model::NodeDAO::addMetaNodesToDB( QSqlDatabase* conn, QMap<qlonglong, osg::
 
 	//ukladame vsetky meta-uzly do databazy
 	while ( iNodes != nodes->constEnd() ) {
-		qlonglong nodeID;
+		qlonglong nodeID = 0;
 		if ( newMetaNodeID.contains( iNodes.value()->getId() ) ) {
 			nodeIdIter = newMetaNodeID.find( iNodes.value()->getId() );
 			nodeID = nodeIdIter.value();
@@ -132,7 +132,7 @@ bool Model::NodeDAO::addNodesPositionsToDB( QSqlDatabase* conn, QMap<qlonglong, 
 	QMap< qlonglong,osg::ref_ptr<Data::Node> >::const_iterator iNodes = nodes->constBegin();
 
 	QSqlQuery* query = new QSqlQuery( *conn );
-	qlonglong nodeID;
+	qlonglong nodeID = 0;
 	QMap<qlonglong, qlonglong>::iterator nodeIdIter;
 
 	//ukladame pozicie uzlov pre vsetky uzly
@@ -172,7 +172,7 @@ bool Model::NodeDAO::addNodesPositionsToDB( QSqlDatabase* conn, QMap<qlonglong, 
 bool Model::NodeDAO::addNodesColorToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, bool meta )
 {
 	QMap< qlonglong,osg::ref_ptr<Data::Node> >::const_iterator iNodes = nodes->constBegin();
-	qlonglong nodeID;
+	qlonglong nodeID = 0;
 	QMap<qlonglong, qlonglong>::iterator nodeIdIter;
 
 	//ukladame vsetky farby uzlov do databazy
@@ -208,7 +208,7 @@ bool Model::NodeDAO::addNodesColorToDB( QSqlDatabase* conn, QMap<qlonglong, osg:
 bool Model::NodeDAO::addNodesScaleToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, bool meta, float defaultScale )
 {
 	QMap< qlonglong,osg::ref_ptr<Data::Node> >::const_iterator iNodes = nodes->constBegin();
-	qlonglong nodeID;
+	qlonglong nodeID = 0;
 	QMap<qlonglong, qlonglong>::iterator nodeIdIter;
 
 	//ukladame velkosti jednotlivym uzlom, ktore ju nemaju Default
@@ -242,7 +242,7 @@ bool Model::NodeDAO::addNodesScaleToDB( QSqlDatabase* conn, QMap<qlonglong, osg:
 bool Model::NodeDAO::addNodesMaskToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, bool meta )
 {
 	QMap< qlonglong,osg::ref_ptr<Data::Node> >::const_iterator iNodes = nodes->constBegin();
-	qlonglong nodeID;
+	qlonglong nodeID = 0;
 	QMap<qlonglong, qlonglong>::iterator nodeIdIter;
 	float scale = 0;
 
@@ -275,7 +275,7 @@ bool Model::NodeDAO::addNodesMaskToDB( QSqlDatabase* conn, QMap<qlonglong, osg::
 bool Model::NodeDAO::addNodesParentToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Node> >* nodes, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaNodeID, bool meta )
 {
 	QMap< qlonglong,osg::ref_ptr<Data::Node> >::const_iterator iNodes = nodes->constBegin();
-	qlonglong nodeID;
+	qlonglong nodeID = 0;
 	QMap<qlonglong, qlonglong>::iterator nodeIdIter;
 
 	//ukladame nadradene uzly k danym uzlom do databazy

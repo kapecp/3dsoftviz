@@ -1552,7 +1552,7 @@ void CoreGraph::updateClustersCoords()
 		osg::ref_ptr<Data::Cluster> cluster = i.value();
 
 		osg::Vec3f midPoint;
-		float radius;		// BUG: nie je inicializovany, nizsie sa moze nenastaveny pouzit
+		float radius = 0;		// BUG: nie je inicializovany, nizsie sa moze nenastaveny pouzit
 		osg::Vec3f scale;
 
 		osg::Vec3f lowerPoint;

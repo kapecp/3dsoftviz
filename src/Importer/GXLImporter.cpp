@@ -33,12 +33,8 @@ bool GXLImporter::import(
 	bool graphElementFound = false;
 	//parsovanie grafu
 	while ( ok && !xml_->atEnd() && !graphElementFound ) {
-		QXmlStreamReader::TokenType token;
 		if ( ok ) {
-			token = xml_->readNext();
-		}
-
-		if ( ok ) {
+			QXmlStreamReader::TokenType token = xml_->readNext();
 			if (
 				( token == QXmlStreamReader::StartElement )
 				&&
@@ -119,12 +115,8 @@ bool GXLImporter::parseGraph( void )
 	bool inHyperedge = false;
 
 	while ( ok && !xml_->atEnd() ) {
-		QXmlStreamReader::TokenType token;
 		if ( ok ) {
-			token = xml_->readNext();
-		}
-
-		if ( ok ) {
+			QXmlStreamReader::TokenType token = xml_->readNext();
 			// vnoreny graf
 			if (
 				( token == QXmlStreamReader::StartElement )
