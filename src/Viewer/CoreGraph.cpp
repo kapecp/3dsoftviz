@@ -1566,9 +1566,11 @@ void CoreGraph::updateClustersCoords()
 			float distanceY = ( shapeGetter->getSurfaceNodeY()->getCurrentPosition() - midPoint ).length();
 			float distanceZ = ( shapeGetter->getSurfaceNodeZ()->getCurrentPosition() - midPoint ).length();
 			scale = osg::Vec3f( distanceX, distanceY, distanceZ );
+			//radius of sphere with center 0,0,0
+			radius = static_cast<float>( sqrt( pow( distanceX, 2 ) + pow( distanceY, 2 ) + pow( distanceZ, 2 ) ) );
 
-			lowerPoint = osg::Vec3f( midPoint.x() - distanceX, midPoint.y() - distanceY, midPoint.z() - distanceZ );
-			upperPoint = osg::Vec3f( midPoint.x() + distanceX, midPoint.y() + distanceY, midPoint.z() + distanceZ );
+			lowerPoint = osg::Vec3f( midPoint.x() - radius, midPoint.y() - radius, midPoint.z() - radius );
+			upperPoint = osg::Vec3f( midPoint.x() + radius, midPoint.y() + radius, midPoint.z() + radius );
 		}
 		// inak vypocitaj tvar podla zlucenych uzlov
 		else {
