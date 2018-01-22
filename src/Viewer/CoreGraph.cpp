@@ -1567,7 +1567,7 @@ void CoreGraph::updateClustersCoords()
 			float distanceZ = ( shapeGetter->getSurfaceNodeZ()->getCurrentPosition() - midPoint ).length();
 			scale = osg::Vec3f( distanceX, distanceY, distanceZ );
 			//radius of sphere with center 0,0,0
-			radius = static_cast<float>( sqrt( pow( distanceX, 2 ) + pow( distanceY, 2 ) + pow( distanceZ, 2 ) ) );
+			radius = static_cast<float>( sqrt( pow( static_cast<double>( distanceX ), 2 ) + pow( static_cast<double>( distanceY ), 2 ) + pow( static_cast<double>(  distanceZ ), 2 ) ) );
 
 			lowerPoint = osg::Vec3f( midPoint.x() - radius, midPoint.y() - radius, midPoint.z() - radius );
 			upperPoint = osg::Vec3f( midPoint.x() + radius, midPoint.y() + radius, midPoint.z() + radius );
