@@ -40,6 +40,7 @@ FRAlgorithm::FRAlgorithm() :
 	flexibility( 0 ),
 	sizeFactor( 0 ),
 	K( 0 ),
+	M( 10 ),
 	center( osg::Vec3f( 0, 0, 0 ) ),
 	state( RUNNING ),
 	stateEdgeBundling( PAUSED ),
@@ -53,8 +54,7 @@ FRAlgorithm::FRAlgorithm() :
 	vp( osg::Vec3f() ),
 	dist( 0 ),
 	// No node is focused on the beginning
-    mLastFocusedNode( 0 ),
-    M( 10 )
+	mLastFocusedNode( 0 )
 {
 	// Duransky start - pociatocne nastavenie nasobica odpudivych sil na rovnakej rovine na hodnotu 1
 	setRepulsiveForceVertigo( 1 );
@@ -70,6 +70,7 @@ FRAlgorithm::FRAlgorithm( Data::Graph* graph ) :
 	MAX_DISTANCE( 400.0 ),
 	MIN_MOVEMENT_EDGEBUNDLING( 1.0f ),
 	ALPHA_EDGEBUNDLING( 100 ),
+	M( 7 ),
 	center( osg::Vec3f( 0, 0, 0 ) ),
 	state( RUNNING ),
 	stateEdgeBundling( PAUSED ),
@@ -80,8 +81,7 @@ FRAlgorithm::FRAlgorithm( Data::Graph* graph ) :
 	last( osg::Vec3f() ),
 	newLoc( osg::Vec3f() ),
 	up( osg::Vec3f() ),
-    vp( osg::Vec3f() ),
-    M( 7 )
+	vp( osg::Vec3f() )
 {
 	this->Randomize();
 }
