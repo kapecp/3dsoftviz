@@ -480,6 +480,7 @@ bool AdapterWidget::event( QEvent* event )
 					_time.restart();
 				}
 			}
+			break;
 		}
 		default:
 			return QWidget::event( event );
