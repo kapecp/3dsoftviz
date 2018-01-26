@@ -12,7 +12,7 @@
 const float RADIUS = 0.07f;
 
 Leap::Joint::Joint( int level, int position, osg::ref_ptr<osg::Group> fingerJointGroup, int colorSwitch )
-	:level( level ), position( position ), colorSwitch( colorSwitch ), nextJoint( nullptr ), fingerJointGroup( fingerJointGroup )
+	: colorSwitch( colorSwitch ), nextJoint( nullptr ), fingerJointGroup( fingerJointGroup ), level( level ), position( position )
 {
 	this->generateGeometry( RADIUS, colorSwitch );
 	this->fingerJointGroup->addChild( static_cast<osg::Node*>( this ) );

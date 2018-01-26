@@ -79,7 +79,7 @@ void OpenCV::LightDetector::setKernelClose( int size )
 	mKernelClose = cv::getStructuringElement( cv::MORPH_ELLIPSE, cv::Size( size, size ) );
 }
 
-bool Light2DRadiusCompare( OpenCV::TrackedLight i, OpenCV::TrackedLight j )
+inline bool Light2DRadiusCompare( OpenCV::TrackedLight i, OpenCV::TrackedLight j )
 {
 	return ( i.radius > j.radius );
 }
