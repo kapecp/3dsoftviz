@@ -3,10 +3,12 @@
  */
 
 #include "Network/Client.h"
+#include "Network/Helper.h"
+
+#include "Leap/HandModule/Model/HandNode.h"
 
 //#include "Data/Graph.h"
 
-#include "Network/Helper.h"
 #include "Network/ExecutorFactory.h"
 
 #include "QOSG/CoreWindow.h"
@@ -290,22 +292,22 @@ void Client::addClient( int id, QString nick )
 void Client::addAvatar( int id, QString nick )
 {
 
-	osg::PositionAttitudeTransform* PAtransform = Helper::generateAvatar( nick );
-	PAtransform->setScale( osg::Vec3d( avatarScale,avatarScale,avatarScale ) );
+	Network::UserAvatar* avatar = new Network::UserAvatar( nick );
+	avatar->setScale( osg::Vec3d( avatarScale,avatarScale,avatarScale ) );
 
 	QLinkedList<osg::ref_ptr<osg::Node> >* nodes = coreGraph->getCustomNodeList();
 
-	nodes->append( PAtransform );
+	nodes->append( avatar );
 
 	//PAtransform->setScale(osg::Vec3d(10,10,10));
-	avatarList.insert( id,PAtransform );
+	avatarList.insert( id,avatar );
 }
 
 void Client::removeAvatar( int id )
 {
-	osg::PositionAttitudeTransform* pat = avatarList.take( id );
-	if ( pat != NULL ) {
-		pat->removeChild( 0,2 );
+	Network::UserAvatar* avatar = avatarList.take( id );
+	if ( avatar != NULL ) {
+		avatar->removeChild( 0,2 );
 	}
 }
 
@@ -797,6 +799,21 @@ void Client::setAvatarScale( int scale )
 	avatarScale = scale;
 	foreach ( osg::PositionAttitudeTransform* avatar, avatarList ) {
 		avatar->setScale( osg::Vec3d( avatarScale,avatarScale,avatarScale ) );
+	}
+}
+
+void Client::updateHands( QTcpSocket* sender, QDataStream* stream )
+{
+	int id;
+	( *stream ) >> id;
+
+	if ( avatarList.contains( id ) ) {
+
+		Network::UserAvatar* avatar = avatarList[id];
+		avatar->UpdateHands( stream );
+	}
+	else {
+		LOG( INFO ) << "Unknown avatar ID '" << id << "'";
 	}
 }
 

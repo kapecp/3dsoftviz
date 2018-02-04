@@ -18,7 +18,7 @@ public:
 	 * @param fingerJointGroup - Group of joints representing a single finger.
 	 * @param colorSwitch - Value representing colour of joint (differs between hands)
 	*/
-	Joint( int level, int position, osg::ref_ptr<osg::Group> fingerJointGroup, int colorSwitch );
+	Joint( int level, int position, osg::ref_ptr<osg::Group> fingerJointGroup, HandColors colorSwitch );
 	/**
 	 * Method used in constructor to generate hierarchy of joints.
 	 * Creates another Joint and saves it as nextJoint
@@ -31,9 +31,9 @@ public:
 	 * @param radius - Radius of sphere drawable in geode.
 	 * @param colorSwitch - Value representing colour of joint.
 	*/
-	void generateGeometry( float radius, int colorSwitch );
+	void generateGeometry( float radius, HandColors colorSwitch = HandColors::NONE );
 
-	int colorSwitch;
+	HandColors colorSwitch;
 	Joint* nextJoint;
 	osg::ref_ptr<osg::Group> fingerJointGroup;
 private:

@@ -73,9 +73,9 @@ public:
 	void setHandMapper( HandMapper* mapper );
 
 private:
-	osg::Vec3d center;
-	osg::Vec3d up;
-	osg::Vec3d direction;
+	Vector center;
+	Vector up;
+	Vector direction;
 	HandMapper* mapper;
 	char upDirectionAxis;
 };

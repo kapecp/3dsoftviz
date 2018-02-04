@@ -5,25 +5,26 @@
 #include "Layout/LayoutThread.h"
 #include "Layout/FRAlgorithm.h"
 #include "HandModule/Model/HandPalm.h"
+#include "Network/Server.h"
 
 #include <easylogging++.h>
 #include <math.h>
+#include <qdatetime.h>
 
 Leap::CustomLeapManager::CustomLeapManager( Vwr::CameraManipulator* cameraManipulator, Layout::LayoutThread* layout,
 		Vwr::CoreGraph* coreGraph, osg::ref_ptr<osg::Group> handsGroup )
 	:cameraManipulator( cameraManipulator ), layout( layout ), coreGraph( coreGraph ), handsGroup( handsGroup )
 {
 	arMode = false;
-	this->handObjectManipulator = new Leap::HandObjectManipulator( new Leap::HandMapper( this->coreGraph ), 'y' );
+	this->handObjectManipulator = new Leap::HandObjectManipulator( new Leap::HandMapper( this->coreGraph ), 'z' );
 	//init handPalms here
 	if ( this->handsGroup != nullptr ) {
 		arMode = true;
-		HandPalm* rightPalm = new HandPalm( 0.1f, handsGroup, 1 );
-		HandPalm* leftPalm = new HandPalm( 0.1f, handsGroup, 2 );
+		HandPalm* rightPalm = new HandPalm( 0.1f, handsGroup, HandColors::RIGHT );
+		HandPalm* leftPalm = new HandPalm( 0.1f, handsGroup, HandColors::LEFT );
 
 		rightPalm->setMatrix( osg::Matrix::translate( -0.5,0,0 ) );
 		leftPalm->setMatrix( osg::Matrix::translate( 0.5,0,0 ) );
-
 	}
 }
 
@@ -122,17 +123,39 @@ int Leap::CustomLeapManager::updateCoreGraphBackground( const unsigned char* buf
 	return 1;
 }
 
+QDateTime lastSendTime;
 void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand rightHand )
 {
-	if ( this->handsGroup != NULL ) {
+	if ( this->handsGroup != nullptr ) {
 		//0 a 3 z dovodu ze v grupe je palmNode, fingerGroup, palmNode, fingerGroup
 		HandPalm* leftPalm = static_cast<HandPalm*>( handsGroup->getChild( 3 ) );
 		HandPalm* rightPalm = static_cast<HandPalm*>( handsGroup->getChild( 0 ) );
 
-		this->handObjectManipulator->updateHands( leftHand, rightHand, leftPalm,
-				rightPalm,this->coreGraph->getCamera() );
+		this->handObjectManipulator->updateHands( leftHand, rightHand, leftPalm, rightPalm, this->coreGraph->getCamera() );
+
+		if ( leftHand.isValid() || rightHand.isValid()) {
+			QDateTime dt = QDateTime::currentDateTime();
+			if ( lastSendTime.addMSecs( 100 ) <= dt ) {
+				lastSendTime = dt;
+				Network::Server::getInstance()->invokeSendHands( leftPalm, rightPalm );
+			}
+		}
 	}
 
+}
+
+void Leap::CustomLeapManager::updateHands( QDataStream* stream )
+{
+	if ( this->handsGroup != nullptr ) {
+		//0 a 3 z dovodu ze v grupe je palmNode, fingerGroup, palmNode, fingerGroup
+		HandPalm* leftPalm = static_cast<HandPalm*>( handsGroup->getChild( 3 ) );
+		HandPalm* rightPalm = static_cast<HandPalm*>( handsGroup->getChild( 0 ) );
+
+		leftPalm->setFromStream( stream );
+		rightPalm->setFromStream( stream );
+
+		//this->handObjectManipulator->updateHands( leftHand, rightHand, leftPalm, rightPalm, this->coreGraph->getCamera() );
+	}
 }
 
 void Leap::CustomLeapManager::scaleGraph( bool scaleUp )
