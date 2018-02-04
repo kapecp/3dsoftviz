@@ -14,7 +14,7 @@ const int TYPE_MIDDLE = 2; /*< The middle finger */
 const int TYPE_RING = 3; /*< The ring finger */
 const int BONE_COUNT = 4; /*< The ring finger */
 
-Leap::HandPalm::HandPalm( float radius = 0.1f, osg::ref_ptr<osg::Group> handsGroup = nullptr, HandColors colorSwitch = HandColors::NONE )
+Leap::HandPalm::HandPalm( float radius, osg::ref_ptr<osg::Group> handsGroup, HandColors colorSwitch )
 	: fingerGroup( new osg::Group() ), interFingerBoneGroup( new osg::Group() ), colorSwitch( colorSwitch )
 {
 	this->generateGeometry( radius, colorSwitch );

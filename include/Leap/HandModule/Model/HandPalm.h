@@ -25,7 +25,7 @@ public:
 	  * @param handsGroup - Group of hands containing both palms and it's fingers.
 	  * @param colorSwitch - Value representing colour of palm (differs between hands)
 	 */
-	HandPalm( float radius, osg::ref_ptr<osg::Group> handsGroup, HandColors colorSwitch );
+	HandPalm( float radius = 0.1f, osg::ref_ptr<osg::Group> handsGroup = nullptr, HandColors colorSwitch = HandColors::NONE );
 	/**
 	 * Starts creation of joint hierarchy for fingers and instatiates bones.
 	*/
