@@ -7,7 +7,8 @@
 #include <osg/MatrixTransform>
 #include <osg/ShapeDrawable>
 
-namespace SoftvizLeap {
+namespace Softviz {
+namespace Leap {
 
 class HandNode: public osg::MatrixTransform
 {
@@ -30,5 +31,8 @@ public:
 	 */
 	virtual void initStructure();
 };
-}
+
+} // namespace Leap
+} // namespace Softviz
+
 #endif // HANDNODE_H

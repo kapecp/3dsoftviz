@@ -10,7 +10,10 @@
 
 #include <osg/Group>
 
-namespace SoftvizLeap {
+namespace Softviz {
+namespace Leap {
+
+
 class HandPalm : public HandNode
 {
 public:
@@ -42,5 +45,8 @@ public:
 	int colorSwitch;
 	osg::ref_ptr<osg::Group> interFingerBoneGroup;
 };
-}
+
+} // namespace Leap
+} // namespace Softviz
+
 #endif // HANDPALM_H
