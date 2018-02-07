@@ -127,8 +127,6 @@ endif()
 
 # add diluculum code directly due to MSVC problems
 if( MSVC )
-        include_directories( SYSTEM ../dependencies/diluculum/include )
-
         file( GLOB_RECURSE SRC_DILUCULUM	"../dependencies/diluculum/Sources/*.cpp" )
 
         list( APPEND SRC_LIST ${SRC_DILUCULUM} )
