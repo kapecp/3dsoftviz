@@ -28,7 +28,7 @@ public:
 	 */
 
 	LeapGestureHandler* leapGestureHandler;
-    Softviz::Leap::CustomLeapManager* leapManager;
+	Softviz::Leap::CustomLeapManager* leapManager;
 	bool arMode;
 
 	LeapListener( LeapManager* leapManager );

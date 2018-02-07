@@ -28,7 +28,7 @@ public:
 	 * @param diff from z-coodinate 400
 	 * @return
 	 */
-    ::Leap::Vector recalculateDepthNode( ::Leap::Vector vector, float diff );
+	::Leap::Vector recalculateDepthNode( ::Leap::Vector vector, float diff );
 	/**
 	 * @brief setNodeScreenCoords - set coordinates of model hand palm
 	 * @param nodeScreenCoords

@@ -29,7 +29,7 @@ public:
 	 * @param leftHand - Leap representation of left hand (sensor output data).
 	 * @param rightHand - Leap representation of right hand (sensor output data).
 	 */
-    void updateHands( ::Leap::Hand leftHand, ::Leap::Hand rightHand, HandPalm* leftPalm, HandPalm* rightPalm, osg::ref_ptr<osg::Camera> camera );
+	void updateHands( ::Leap::Hand leftHand, ::Leap::Hand rightHand, HandPalm* leftPalm, HandPalm* rightPalm, osg::ref_ptr<osg::Camera> camera );
 
 	/**
 	 Method used in updateHands(). Iterates over fingers and for each call methods: updateJoints() and
@@ -37,7 +37,7 @@ public:
 	 * @param palm - sphere representation of palm containing groups of figer joints and bones
 	 * @param fingers - Leap representation of fingers (sensor output data).
 	 */
-    void updateFingers( HandPalm* palm, ::Leap::FingerList fingers, float diff );
+	void updateFingers( HandPalm* palm, ::Leap::FingerList fingers, float diff );
 
 	/**
 	Method used in updateFingers(). Render joints of single finger.
@@ -45,7 +45,7 @@ public:
 	 * @param finger - Leap representation of single finger (sensor output data).
 	 * @param fingerPosition - Value representing index of position of finger (from THUMB to PINKY)
 	 */
-    void updateJoints( osg::Group*  fingerGroup, ::Leap::Finger finger, int fingerPosition, float diff );
+	void updateJoints( osg::Group*  fingerGroup, ::Leap::Finger finger, int fingerPosition, float diff );
 
 	/**
 	Method used in updateFingers(). Render bones of single finger.
@@ -53,23 +53,23 @@ public:
 	 * @param finger - Leap representation of single finger (sensor output data).
 	 * @param fingerPosition - Value representing index of position of finger (from THUMB to PINKY)
 	 */
-    void updateFingerBones( osg::Group*  fingerGroup, ::Leap::Finger finger, float diff );
+	void updateFingerBones( osg::Group*  fingerGroup, ::Leap::Finger finger, float diff );
 
 	/**
 	Method used in updateHands(). Render bones between fingers. Call method updateInterFingerWristBone().
 	 * @param interFingerBoneGroup - Group cointaining cylinder representation of bones between fingers.
 	 * @param fingers - Leap representation all fingers (sensor output data).
 	 */
-    void updateInterFingerBones( osg::Group*  interFingerBoneGroup, ::Leap::FingerList fingers, float diff );
+	void updateInterFingerBones( osg::Group*  interFingerBoneGroup, ::Leap::FingerList fingers, float diff );
 
 	/**
 	Method used in updateFingerBones(). Render wrist bone.
 	 * @param interFingerBoneGroup - Group cointaining cylinder representation of bones between fingers.
 	 * @param fingers - Leap representation all fingers (sensor output data).
 	 */
-    void updateInterFingerWristBone( osg::Group*  interFingerBoneGroup, ::Leap::FingerList fingers, float diff );
+	void updateInterFingerWristBone( osg::Group*  interFingerBoneGroup, ::Leap::FingerList fingers, float diff );
 
-    ::Leap::Vector changeHandUpDirectionAxis( ::Leap::Vector vector );
+	::Leap::Vector changeHandUpDirectionAxis( ::Leap::Vector vector );
 
 	void setHandMapper( HandMapper* mapper );
 

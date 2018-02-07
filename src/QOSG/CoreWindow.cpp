@@ -4089,7 +4089,7 @@ void CoreWindow::startLeap()
 	}
 
 	this->mLeapThr = new LeapLib::LeapThread( this,
-            new Softviz::Leap::CustomLeapManager( getCameraManipulator(),
+			new Softviz::Leap::CustomLeapManager( getCameraManipulator(),
 					AppCore::Core::getInstance()->getLayoutThread(),
 					AppCore::Core::getInstance( NULL )->getCoreGraph() ) );
 	//CoUninitialize();
@@ -4106,7 +4106,7 @@ void CoreWindow::startLeapAR()
 		return;
 	}
 
-    this->mLeapThrAR = new LeapLib::LeapThread( this,new Softviz::Leap::CustomLeapManager( getCameraManipulator(), AppCore::Core::getInstance()->getLayoutThread(), AppCore::Core::getInstance( NULL )->getCoreGraph(), coreGraph->getHandsGroup() ) );
+	this->mLeapThrAR = new LeapLib::LeapThread( this,new Softviz::Leap::CustomLeapManager( getCameraManipulator(), AppCore::Core::getInstance()->getLayoutThread(), AppCore::Core::getInstance( NULL )->getCoreGraph(), coreGraph->getHandsGroup() ) );
 
 	this->mLeapThrAR->start();
 	b_start_leapAR->setText( "Stop LeapAR" );

@@ -42,7 +42,7 @@ public:
 	 * @param leftHand - Leap representation of left hand (sensor output data).
 	 * @param rightHand - Leap representation of right hand (sensor output data).
 	 */
-    void updateHands( ::Leap::Hand leftHand, ::Leap::Hand rightHand );
+	void updateHands( ::Leap::Hand leftHand, ::Leap::Hand rightHand );
 
 	//berger
 	/**
