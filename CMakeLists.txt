@@ -4,13 +4,23 @@
 # according to the terms of the MIT license.
 # For details see the COPYRIGHT file distributed with 3DSoftviz.
 
+option( USE_CCACHE "Use CCache compiler cache to speed-up build." OFF)
+if( USE_CCACHE )
+    find_program(CCACHE_PROGRAM ccache)
+    if( CCACHE_PROGRAM )
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+        message(STATUS "Using ${CCACHE_PROGRAM}")
+    else()
+        message(STATUS "ccache NOT FOUND")
+    endif()
+endif()
+
 project( 3DSoftviz C CXX )
 cmake_minimum_required( VERSION 2.8.11 )
 
-# --------------
-# 3DSoftviz Info
-# --------------
-
+# ------------------------------------------------------------
+# -------------------3DSoftviz Info
+# ------------------------------------------------------------
 set( 3DSOFTVIZ_NAME "3DSoftviz" )
 set( 3DSOFTVIZ_LONGNAME "3DSoftviz - Generic 3D graph visualization tool for software visualization" )
 set( 3DSOFTVIZ_VERSION_MAJOR "0" )
@@ -24,14 +34,14 @@ set( 3DSOFTVIZ_DOMAIN_FIRST "stuba" )
 set( 3DSOFTVIZ_DOMAIN_SECOND "sk" )
 set( 3DSOFTVIZ_DOMAIN "${3DSOFTVIZ_DOMAIN_FIRST}.${3DSOFTVIZ_DOMAIN_SECOND}" )
 
-# --------------
-# Build settings
-# --------------
+# ------------------------------------------------------------
+# ----------------------Build settings------------------------
+# ------------------------------------------------------------
 
 # Additional CMake scripts
 set( CMAKE_MODULE_PATH
-	"${CMAKE_CURRENT_SOURCE_DIR}/cmake"
-	${CMAKE_MODULE_PATH} )
+		"${CMAKE_CURRENT_SOURCE_DIR}/cmake"
+		${CMAKE_MODULE_PATH} )
 
 # Enable C++11 features
 set(CMAKE_CXX_STANDARD 11)
@@ -93,10 +103,17 @@ if (USE_LD_GOLD)
 	endif ()
 endif ()
 
-# --------------
-# Build settings - COTIRE module
-# --------------
-include( cotire )
+# ------------------------------------------------------------
+# -----------------Build settings - COTIRE module-------------
+# ------------------------------------------------------------
+option(SKIP_COTIRE "Skip Cotire module build speed-up." OFF)
+
+if (NOT SKIP_COTIRE)
+	include(cotire)
+else ()
+	message(STATUS "Skipped Cotire module build speed-up.")
+endif ()
+
 if(COMMAND cotire )
 	if( NOT COTIRE_MAXIMUM_NUMBER_OF_UNITY_INCLUDES )
 		include( ProcessorCount )
@@ -136,306 +153,34 @@ if(COMMAND cotire )
 endif()
 
 # ------------------------------------------------------------
-# Dependencies - Searching external dependencies
+# -----Dependencies - Searching external dependencies---------
 # ------------------------------------------------------------
-
 set( ALL_SYSTEM_HEADERS )
 set( ALL_COMPILE_DEFINITIONS )
-
-
-# ------------------------------ Qt -------------------------------
 set( CMAKE_AUTOMOC ON )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
 
-# Find Qt5
-find_package( Qt5
-		CONFIG
-		COMPONENTS
-			Core Widgets Gui OpenGL Sql
-			WebEngine WebEngineWidgets
-			Xml Network
-		QUIET )
+#add dependencies with search module
+include(cmake/SearchDependencies.cmake)
 
-# Find Qt4
-if ( NOT Qt5_FOUND )
-	find_package( Qt4 COMPONENTS QtCore QtGui QtOpenGL QtSql QtWebKit QtXml QtNetwork REQUIRED)
-	set( QT_USE_QTOPENGL 1 )
-	set( QT_USE_QTSQL 1 )
-	set( QT_USE_QTWEBKIT 1 )
-	set( QT_USE_QTXML 1 )
-	set( QT_USE_QTNETWORK 1 )
-	include( ${QT_USE_FILE} )
-endif()
+# ------------------------------------------------------------
+# ----------Support tools - Add custom build targets----------
+# ------------------------------------------------------------
 
-if ( Qt5Core_FOUND )
-	message(STATUS "Using Qt5 packages")
-elseif( Qt4_FOUND )
-	message(STATUS "Using Qt4 packages")
-else()
-	message(STATUS "No suitable Qt packages found")
-endif()
+#generate doxygen documentation
+include(cmake/doxygen.cmake)
 
-# add special flag to GCC compiler when using Qt 4.6.x with GCC >4.6
-if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND
-		"${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}" VERSION_LESS "4.7" AND
-		${CMAKE_C_COMPILER_VERSION} VERSION_GREATER "4.6" )
+#generate sphinx documentation
+include(cmake/sphinx.cmake)
 
-	set( CMAKE_CXX_FLAGS "-fpermissive" )
-endif()
+#format souce code
+include(cmake/astyle.cmake)
 
-# ------------------------------ OpenSceneGraph -------------------------------
+#check code style
+include(cmake/cpplint.cmake)
 
-# Find OpenGL
-find_package( OpenGL REQUIRED)
-
-# Find OpenSceneGraph
-find_package( OpenSceneGraph COMPONENTS
-	osgGA
-	osgUtil
-	OpenThreads
-	osg
-	osgAnimation
-	osgDB
-	osgFX
-	#osgIntrospection
-	osgManipulator
-	osgParticle
-	osgShadow
-	osgSim
-	osgTerrain
-	osgText
-	osgVolume
-	osgWidget
-)
-
-message( STATUS "Using OpenSceneGraph version: " ${OPENSCENEGRAPH_VERSION} )
-
-# OpenSceneGraph v3.5.5 removed osgQt (osgQt is now in it's own repository)
-if( ${OPENSCENEGRAPH_VERSION} VERSION_GREATER 3.5.4 )
-	message( "Building osgQt" )
-	set( BUILD_OSGQT TRUE )
-else()
-	message( "Searching for osgQt" )
-	find_package( osgQt )
-	list( APPEND ALL_SYSTEM_HEADERS ${OSGQT_INCLUDE_DIR} )
-endif( )
-
-find_package( osgViewer )
-
-list( APPEND ALL_SYSTEM_HEADERS
-	${OPENSCENEGRAPH_INCLUDE_DIRS}
-	${OSGVIEWER_INCLUDE_DIR}
-)
-
-if( MSVC )
-	list( APPEND ALL_COMPILE_DEFINITIONS -DOSG_LIBRARY_STATIC )
-endif()
-
-# ------------------------------ OpenCV -------------------------------
-# Find OpenCV
-if( APPLE )
-	find_package( OpenCV 2.4.13 PATHS "/usr/local/opt/opencv@2" )
-else()
-	find_package( OpenCV )
-endif()
-
-if( OpenCV_FOUND )
-	if( WIN32 )
-		list( APPEND ALL_COMPILE_DEFINITIONS -DNOMINMAX )
-	endif()
-
-	#list( APPEND ALL_SYSTEM_HEADERS	${OpenCV_INCLUDE_DIRS} )
-	list( APPEND ALL_COMPILE_DEFINITIONS -DOPENCV_FOUND )
-
-	message( STATUS "OpenCV Found: " ${OpenCV_VERSION} )
-	message( STATUS "OpenCV_LIB_DIR=${OpenCV_LIB_DIR}" )
-	message( STATUS "OpenCV_LIB_DIR=${OpenCV_LIBS}" )
-else()
-	message( STATUS "OpenCV NOT FOUND" )
-endif()
-
-# ------------------------------ OpenNI2 and Nite -------------------------------
-# Find OPENNI2
-find_package( OPENNI2 )
-if( OPENNI2_FOUND )
-
-	list( APPEND ALL_SYSTEM_HEADERS	${OPENNI2_INCLUDE_DIRS} )
-
-	list( APPEND ALL_COMPILE_DEFINITIONS  -DOPENNI2_FOUND )
-
-	message( STATUS "OpenNI2 Found:" )
-	message( STATUS "OPENNI2_INCLUDE_DIRS=${OPENNI2_INCLUDE_DIRS}" )
-	message( STATUS "OPENNI2_LIBRARIES=${OPENNI2_LIBRARIES}" )
-else( OPENNI2_FOUND )
-	message( STATUS "OpenNI2 NOT FOUND" )
-endif()
-
-# Find NITE2
-find_package( NITE2 )
-if( NITE2_FOUND )
-
-	list( APPEND ALL_SYSTEM_HEADERS	${NITE2_INCLUDE_DIRS} ${NITE2_OPENNI2_DRIVER_DIRS} )
-
-	list( APPEND ALL_COMPILE_DEFINITIONS -DNITE2_FOUND )
-	message( STATUS "NITE2 Found:" )
-	message( STATUS "NITE2_INCLUDE_DIRS=${NITE2_INCLUDE_DIRS}" )
-	message( STATUS "NITE2_LIBRARIES=${NITE2_LIBRARIES}" )
-else( NITE2_FOUND )
-	message ( STATUS "NITE2 NOT FOUND" )
-endif()
-# ------------------------------ FREENECT2 -------------------------------
-find_package( FREENECT2 )
-if( FREENECT2_FOUND )
-
-	list( APPEND ALL_SYSTEM_HEADERS	${FREENECT2_INCLUDE_DIRS} )
-
-	list( APPEND ALL_COMPILE_DEFINITIONS  -DFREENECT2_FOUND )
-
-	message( STATUS "FREENECT2 Found:" )
-	message( STATUS "FREENECT2_INCLUDE_DIRS=${FREENECT2_INCLUDE_DIRS}" )
-	message( STATUS "FREENECT2_LIBRARIES=${FREENECT2_LIBRARIES}" )
-else( FREENECT2_FOUND )
-	message( STATUS "FREENECT2 NOT FOUND" )
-endif()
-
-
-# ------------------------------- KINECT SDK ----------------------------------
-if( WIN32 AND MSVC )
-
-	find_package( KINECTSDK )
-	if( KINECTSDK_FOUND )
-
-		list( APPEND ALL_SYSTEM_HEADERS	${KINECTSDK_INCLUDE_DIRS} )
-
-		list( APPEND ALL_COMPILE_DEFINITIONS -DKINECTSDK_FOUND )
-
-		# find_package( SPEECHSDK )
-		# if( SPEECHSDK_FOUND )
-		# include_directories( SYSTEM ${SPEECHSDK_INCLUDE_DIRS} )
-		# add_definitions( -DSPEECHSDK_FOUND )
-		# message( STATUS "SPEECHSDK FOUND" )
-		# else( SPEECHSDK_FOUND )
-		# message ( STATUS "SPEECHSDK NOT FOUND" )
-		# endif()
-
-		message( STATUS "KINECTSDK Found:" )
-		message( STATUS "KINECTSDK_INCLUDE_DIRS=${KINECTSDK_INCLUDE_DIRS}" )
-		message( STATUS "KINECTSDK_LIBRARIES=${KINECTSDK_LIBRARIES}" )
-	else( KINECTSDK_FOUND )
-		message ( STATUS "KINECTSDK NOT FOUND" )
-	endif()
-endif()
-
-# ------------------------------ BOOST -------------------------------
-# Find Boost
-set( Boost_USE_STATIC_LIBS OFF )
-find_package( Boost 1.39 REQUIRED )
-#add_definitions( -DBOOST_ALL_DYN_LINK )
-
-# Include directories
-list( APPEND ALL_SYSTEM_HEADERS	${Boost_INCLUDE_DIRS}  )
-
-# ------------------------------ LEAP -------------------------------
-#enable leap orion on windows
-if( WIN32 )
-	set( USE_LEAP_ORION ON )
-endif()
-
-# Find leap
-find_package( LEAP )
-if( LEAP_FOUND )
-
-	list( APPEND ALL_COMPILE_DEFINITIONS -DLEAP_FOUND )
-
-	list( APPEND ALL_SYSTEM_HEADERS	${LEAP_INCLUDE_DIRS} )
-
-	message( STATUS "LEAP Found:" )
-	message( STATUS "LEAP_INCLUDE_DIRS=${LEAP_INCLUDE_DIRS}" )
-	message( STATUS "LEAP_LIB_DIR=${LEAP_LIBRARIES}" )
-else()
-	message( STATUS "LEAP Not Found" )
-endif()
-# ------------------------------ PCL ----------------------------------
-# find PCL
-find_package(PCL 1.8)
-if ( PCL_FOUND )
-
-	list( APPEND ALL_COMPILE_DEFINITIONS -DPCL_FOUND )
-
-	list( APPEND ALL_SYSTEM_HEADERS	${PCL_INCLUDE_DIRS} )
-
-	link_directories(${PCL_LIBRARY_DIRS})
-	add_definitions(${PCL_DEFINITIONS})
-	message( STATUS "PCL FOUND" )
-else()
-		message( STATUS "PCL NOT FOUND" )
-endif()
-
-# ------------------------------ FGLOVE -------------------------------
-# Find fglove
-# find_package( FGLOVE )
-# if( FGLOVE_FOUND )
-#	add_definitions( -DFGLOVE_FOUND )
-#	include_directories( SYSTEM
-#		${FGLOVE_INCLUDE_DIRS}
-#	)
-#	message( STATUS "FGLOVE_LIB_DIR=${FGLOVE_LIBRARIES}" )
-# else()
-#	message( STATUS "FGLOVE Not Found" )
-# endif()
-
-# ------------------------------ MOUSE3D -------------------------------
-# Find MOUSE3D
-find_package( MOUSE3D )
-if( WIN32 )
-	if( MOUSE3D_FOUND )
-		include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
-		add_definitions( -DMOUSE3D_FOUND )
-		message( STATUS "3DMouse FOUND" )
-	endif()
-elseif( APPLE )
-	if( MOUSE3D_FOUND )
-		include_directories( SYSTEM ${MOUSE3D_INCLUDE_DIRS} )
-		add_definitions( -DMOUSE3D_FOUND )
-		message( STATUS "3DMouse FOUND" )
-	endif()
-elseif( UNIX )
-	set (MOUSE3D_FOUND TRUE)
-	include_directories( SYSTEM include/Mouse3d/LibMouse3d/Unix )
-	find_package( X11 REQUIRED )
-	include_directories( SYSTEM ${X11_INCLUDE_DIR} )
-	add_definitions( -DMOUSE3D_FOUND )
-	message( STATUS "3DMouse FOUND" )
-elseif()
-	message( STATUS "3DMouse NOT FOUND" )
-endif()
-
-
-# ------------------------------ DOXYGEN -------------------------------
-# Find Doxygen
-find_package(Doxygen)
-option(BUILD_DOCUMENTATION "Create and install the HTML based API documentation (requires Doxygen)" ${DOXYGEN_FOUND})
-#message( STATUS "Doxygen found: " ${DOXYGEN_EXECUTABLE} )
-
-if(BUILD_DOCUMENTATION)
-	if(NOT DOXYGEN_FOUND)
-		message(FATAL_ERROR "Doxygen is needed to build the documentation.")
-	endif()
-
-	set(doxyfile_in ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
-	set(doxyfile ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
-
-	configure_file(${doxyfile_in} ${doxyfile} @ONLY)
-
-	add_custom_target(doxygen
-		COMMAND ${DOXYGEN_EXECUTABLE} ${doxyfile}
-		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-		COMMENT "Generating API documentation with Doxygen"
-		VERBATIM)
-
-	install(DIRECTORY DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/html)
-	install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html DESTINATION share/doc)
-endif()
+#analyze all code
+include(cmake/cppcheck.cmake)
 
 
 # ------------------------------------------------------------
@@ -460,6 +205,7 @@ if( USE_BUILTIN_DEPENDENCIES )
 	add_subdirectory(dependencies)
 
 else()
+	message(STATUS "Skipped using builtin external dependencies.")
 	# Find Lua implementation, assuming lpeg is installed by other means
 	#find_package( Lua51 REQUIRED )
 endif()
@@ -470,346 +216,26 @@ endif()
 # ---------------------------------------------------------------
 
 #-------------------------------- Source files -------------------------------
-set( SRC_MAIN "src/main.cpp" )
-file( GLOB_RECURSE SRC_APP		"src/Application/*.cpp" )
-file( GLOB_RECURSE SRC_CORE		"src/Core/*.cpp" )
-file( GLOB_RECURSE SRC_DATA		"src/Data/*.cpp" )
-file( GLOB_RECURSE SRC_IMPORTER	"src/Importer/*.cpp" )
-file( GLOB_RECURSE SRC_LAYOUT	"src/Layout/*.cpp" )
-file( GLOB_RECURSE SRC_LUAGRAPH  "src/LuaGraph/*.cpp")
-file( GLOB_RECURSE SRC_LUAINTERFACE  "src/LuaInterface/*.cpp")
-file( GLOB_RECURSE SRC_LUATYPES  "src/LuaTypes/*.cpp")
-file( GLOB_RECURSE SRC_MANAGER	"src/Manager/*.cpp" )
-file( GLOB_RECURSE SRC_MATH		"src/Math/*.cpp" )
-file( GLOB_RECURSE SRC_MODEL	"src/Model/*.cpp" )
-file( GLOB_RECURSE SRC_NETWORK	"src/Network/*.cpp" )
-file( GLOB_RECURSE SRC_OSGQTBROWSER	"src/OsgQtBrowser/*.cpp" )
-file( GLOB_RECURSE SRC_QOSG		"src/QOSG/*.cpp" )
-file( GLOB_RECURSE SRC_UTIL		"src/Util/*.cpp" )
-file( GLOB_RECURSE SRC_VIEWER	"src/Viewer/*.cpp" )
-file( GLOB_RECURSE SRC_CLUSTERING	"src/Clustering/*.cpp")
-file( GLOB SRC_REPOSITORY		"src/Repository/Git/*.cpp" )
+# process src directory - get all source files
+add_subdirectory(src)
+
+# TODO: task-7199 Move "Build modules as libraries" the low in the hierarchy
 file( GLOB_RECURSE SRC_GITLIB   "src/Repository/Git/GitLib/*.cpp" )
-file( GLOB_RECURSE SRC_SPECIALMATRIX   "src/SpecialMatrix/*.cpp" )
-file( GLOB_RECURSE SRC_CITY		"src/City/*.cpp" )
-file( GLOB_RECURSE SRC_SHAPES	"src/Shapes/*.cpp" )
-
-# OpenCV
-file( GLOB_RECURSE SRC_OPENCV	"src/OpenCV/*.cpp" )
-file( GLOB_RECURSE SRC_QOPENCV	"src/QOpenCV/*.cpp" )
-
-# Aruco
-file( GLOB_RECURSE SRC_ARUCO	"src/Aruco/*.cpp" )
-
-# Kinect
-file( GLOB_RECURSE SRC_KINECT	"src/Kinect/*.cpp" )
-
-# SpeechSDK
-file( GLOB_RECURSE SRC_SPEECH	"src/Speech/*.cpp" )
-
-# FGlove
-# file ( GLOB_RECURSE SRC_FGLOVE "src/FGlove/*.cpp" )
-
-# Leap
-file ( GLOB SRC_LEAP "src/Leap/*.cpp" )
 file ( GLOB_RECURSE SRC_LEAPLIB "src/Leap/LeapLib/*.cpp" )
-file ( GLOB_RECURSE SRC_HANDMODULE "src/Leap/HandModule/*.cpp" )
-
-# MOUSE3D
-set ( SRC_MOUSE3D
-	src/Mouse3d/Connector.cpp
-	src/Mouse3d/LibMouse3d/EventThread.cpp
-	src/Mouse3d/LibMouse3d/Mouse3dDevices.cpp
-)
-
-if( WIN32 )
-	list(APPEND SRC_MOUSE3D
-		src/Mouse3d/LibMouse3d/Windows/Mouse3DInput.cpp
-		src/Mouse3d/LibMouse3d/Windows/MouseParameters.cpp
-		)
-elseif( APPLE )
-	list(APPEND SRC_MOUSE3D
-		src/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.cpp
-		)
-elseif( UNIX )
-	list(APPEND SRC_MOUSE3D
-		src/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.cpp
-		src/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.cpp
-		)
-endif()
-
-
-
-# All source files
-set( SRC
-	${SRC_APP}
-	${SRC_CORE}
-	${SRC_MANAGER}
-	${SRC_DATA}
-	${SRC_CLUSTERING}
-	${SRC_IMPORTER}
-	${SRC_LAYOUT}
-	${SRC_LUAGRAPH}
-	${SRC_LUAINTERFACE}
-	${SRC_LUATYPES}
-	${SRC_MATH}
-	${SRC_NETWORK}
-	${SRC_MODEL}
-	${SRC_OSGQTBROWSER}
-	${SRC_QOSG}
-	${SRC_VIEWER}
-	${SRC_UTIL}
-	${SRC_REPOSITORY}
-	${SRC_SPECIALMATRIX}
-	${SRC_CITY}
-	${SRC_SHAPES}
-)
-
-if( OpenCV_FOUND )
-	list( APPEND SRC ${SRC_OPENCV} ${SRC_QOPENCV} ${SRC_ARUCO} )
-endif()
-
-# add Kinect if Nite, Openni and Opencv
-if( OPENNI2_FOUND AND OpenCV_FOUND )
-	list( APPEND SRC ${SRC_KINECT} )
-endif()
-
-if( KINECTSDK_FOUND AND SPEECHSDK_FOUND )
-	list( APPEND SRC ${SRC_SPEECH} )
-endif()
-
-# add Gloves if Fgloves
-# if( FGLOVE_FOUND )
-#	list( APPEND SRC ${SRC_FGLOVE} )
-# endif()
-
-# add Leap
-if( LEAP_FOUND )
-	# WORKAROUND GARAJ comment
-		list( APPEND SRC ${SRC_LEAP} )
-		list( APPEND SRC ${SRC_HANDMODULE} )
-
-endif()
-
-# add MOUSE3D if found
-if( MOUSE3D_FOUND )
-	list( APPEND SRC ${SRC_MOUSE3D} )
-endif()
-
-# add diluculum code directly due to MSVC problems
-if( MSVC )
-	include_directories( SYSTEM dependencies/diluculum/include )
-
-	file( GLOB_RECURSE SRC_DILUCULUM	"dependencies/diluculum/Sources/*.cpp" )
-
-	list( APPEND SRC ${SRC_DILUCULUM} )
-endif()
 
 #-------------------------------- Header files -------------------------------
-file( GLOB_RECURSE HEADER_APP		"include/Application/*.h" )
-file( GLOB_RECURSE HEADER_CORE		"include/Core/*.h" )
-file( GLOB_RECURSE HEADER_DATA		"include/Data/*.h" )
-file( GLOB_RECURSE HEADER_IMPORTER	"include/Importer/*.h" )
-file( GLOB_RECURSE HEADER_LAYOUT	"include/Layout/*.h" )
-file( GLOB_RECURSE HEADER_LUAGRAPH  "include/LuaGraph/*.h")
-file( GLOB_RECURSE HEADER_LUAINTERFACE  "include/LuaInterface/*.h")
-file( GLOB_RECURSE HEADER_LUATYPES  "include/LuaTypes/*.h")
-file( GLOB_RECURSE HEADER_MANAGER	"include/Manager/*.h" )
-file( GLOB_RECURSE HEADER_MATH		"include/Math/*.h" )
-file( GLOB_RECURSE HEADER_MODEL		"include/Model/*.h" )
-file( GLOB_RECURSE HEADER_NETWORK	"include/Network/*.h" )
-file( GLOB_RECURSE HEADER_OSGQTBROWSER	"include/OsgQtBrowser/*.h" )
-file( GLOB_RECURSE HEADER_QOSG		"include/QOSG/*.h" )
-file( GLOB_RECURSE HEADER_UTIL		"include/Util/*.h" )
-file( GLOB_RECURSE HEADER_VIEWER	"include/Viewer/*.h" )
-file( GLOB_RECURSE HEADER_CLUSTERING	"include/Clustering/*.h")
-file( GLOB HEADER_REPOSITORY		"include/Repository/Git/*.h" )
-file( GLOB_RECURSE HEADER_GITLIB		"include/Repository/Git/GitLib/*.h" )
-file( GLOB_RECURSE HEADER_SPECIALMATRIX		"include/SpecialMatrix/*.h" )
-file( GLOB_RECURSE HEADER_CITY		"include/City/*.h" )
-file( GLOB_RECURSE HEADER_SHAPES	"include/Shapes/*.h" )
+# process include directory - get all header files
+include(include/Headers.cmake)
 
-# OpenCV
-file( GLOB_RECURSE HEADER_OPENCV	"include/OpenCV/*.h" )
-file( GLOB_RECURSE HEADER_QOPENCV	"include/QOpenCV/*.h" )
-
-# Aruco
-file( GLOB_RECURSE HEADER_ARUCO		"include/Aruco/*.h" )
-
-# Kinect
-file( GLOB_RECURSE HEADER_KINECT	"include/Kinect/*.h" )
-
-# SpeechSDK
-file( GLOB_RECURSE HEADER_SPEECH	"include/Speech/*.h" )
-
-# FGLOVE
-# file( GLOB_RECURSE HEADER_FGLOVE	"include/FGlove/*.h" )
-
-# LEAP
-file( GLOB HEADER_LEAP	"include/Leap/*.h" )
-file( GLOB_RECURSE HEADER_LEAPLIB	"include/Leap/LeapLib/*.h" )
-file( GLOB_RECURSE HEADER_HANDMODULE	"include/Leap/HandModule/*.h" )
-
-# MOUSE3D
-set ( HEADER_MOUSE3D
-	include/Mouse3d/Connector.h
-	include/Mouse3d/LibMouse3d/EventThread.h
-	include/Mouse3d/LibMouse3d/Mouse3dDevices.h
-)
-
-if( WIN32 )
-	list(APPEND HEADER_MOUSE3D
-		include/Mouse3d/LibMouse3d/Windows/Mouse3DInput.h
-		include/Mouse3d/LibMouse3d/Windows/MouseParameters.h
-		include/Mouse3d/LibMouse3d/Windows/I3dMouseParams.h
-		)
-elseif( APPLE )
-	list(APPEND HEADER_MOUSE3D
-		include/Mouse3d/LibMouse3d/Mac/Mouse3dMacDevice.h
-		)
-elseif( UNIX )
-	list(APPEND HEADER_MOUSE3D
-		include/Mouse3d/LibMouse3d/Unix/ApplicationEmitter.h
-		include/Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h
-		)
-endif()
-
-
-
-# All header files
-set( INCL
-	${HEADER_APP}
-	${HEADER_CORE}
-	${HEADER_MANAGER}
-	${HEADER_DATA}
-	${HEADER_CLUSTERING}
-	${HEADER_IMPORTER}
-	${HEADER_LAYOUT}
-	${HEADER_LUAGRAPH}
-	${HEADER_LUAINTERFACE}
-	${HEADER_LUATYPES}
-	${HEADER_MATH}
-	${HEADER_NETWORK}
-	${HEADER_MODEL}
-	${HEADER_OSGQTBROWSER}
-	${HEADER_QOSG}
-	${HEADER_VIEWER}
-	${HEADER_UTIL}
-	${HEADER_REPOSITORY}
-	${HEADER_SPECIALMATRIX}
-	${HEADER_CITY}
-	${HEADER_SHAPES}
-)
-
-if( OpenCV_FOUND )
-	list( APPEND INCL ${HEADER_OPENCV} ${HEADER_QOPENCV} ${HEADER_ARUCO} )
-endif()
-
-# Kinect uses Nite, Openni and OpenCV
-if( OPENNI2_FOUND AND OpenCV_FOUND )
-	list( APPEND INCL ${HEADER_KINECT} )
-endif()
-
-if( KINECTSDK_FOUND AND SPEECHSDK_FOUND )
-	list( APPEND INCL ${HEADER_SPEECH} )
-endif()
-
-#FGLOVE
-# if( FGLOVE_FOUND )
-#	list( APPEND INCL ${HEADER_FGLOVE} )
-# endif()
-
-# LEAP
-if( LEAP_FOUND )
-		list( APPEND INCL ${HEADER_LEAP} )
-		list( APPEND INCL ${HEADER_HANDMODULE} )
-endif()
-
-# MOUSE3D
-if( MOUSE3D_FOUND )
-	list( APPEND INCL ${HEADER_MOUSE3D} )
-endif()
+# TODO: task-7199 Move "Build modules as libraries" the low in the hierarchy
+file( GLOB_RECURSE HEADER_GITLIB  "include/Repository/Git/GitLib/*.h" )
+file( GLOB_RECURSE HEADER_LEAPLIB "include/Leap/LeapLib/*.h" )
 
 #-------------------------------------- Group source files --------------------------------------
-source_group( \\src main.cpp )
-source_group( \\src\\Application "^.*Application/.*$" )
-source_group( \\src\\Network "^.*Network/.*$" )
-source_group( \\src\\Viewer "^.*Viewer/.*$" )
-source_group( \\src\\Core "^.*Core/.*$" )
-source_group( \\src\\Data "^.*Data/.*$" )
-source_group( \\src\\Manager "^.*Manager/.*$" )
-source_group( \\src\\Importer "^.*Importer/.*$" )
-source_group( \\src\\Model "^.*Model/.*$" )
-source_group( \\src\\Util "^.*Util/.*$" )
-source_group( \\src\\Layout "^.*Layout/.*$" )
-source_group( \\src\\QOSG "^.*QOSG/.*$" )
-source_group( \\src\\OsgQtBrowser "^.*OsgQtBrowser/.*$" )
-source_group( \\src\\LuaGraph "^.*LuaGraph/.*$")
-source_group( \\src\\LuaInterface "^.*LuaInterface/.*$")
-source_group( \\src\\LuaTypes "^.*LuaTypes/.*$")
-source_group( \\src\\Git "^.*Git/.*$" )
-source_group( \\src\\SpecialMatrix "^.*SpecialMatrix/.*$" )
-source_group( \\src\\City "^.*City/.*$" )
-source_group( \\src\\Shapes "^.*Shapes/.*$" )
-
-# Group header files
-source_group( \\headers\\Application "^.*Application/.*h$")
-source_group( \\headers\\Clustering "^.*Clustering/.*h$")
-source_group( \\headers\\Network "^.*Network/.*h$" )
-source_group( \\headers\\Viewer "^.*Viewer/.*h$" )
-source_group( \\headers\\Core "^.*Core/.*h$" )
-source_group( \\headers\\Data "^.*Data/.*h$" )
-source_group( \\headers\\Manager "^.*Manager/.*h$" )
-source_group( \\headers\\Importer "^.*Importer/.*h$" )
-source_group( \\headers\\Model "^.*Model/.*h$" )
-source_group( \\headers\\Util "^.*Util/.*h$" )
-source_group( \\headers\\Layout "^.*Layout/.*h$" )
-source_group( \\headers\\QOSG "^.*QOSG/.*h$" )
-source_group( \\headers\\OsgQtBrowser "^.*OsgQtBrowser/.*h$" )
-source_group( \\headers\\LuaGraph "^.*LuaGraph/.*h$")
-source_group( \\headers\\LuaInterface "^.*LuaInterface/.*h$")
-source_group( \\headers\\LuaTypes "^.*LuaTypes/.*h$")
-source_group( \\headers\\Git "^.*Git/.*h$" )
-source_group( \\headers\\SpecialMatrix "^.*SpecialMatrix/.*h$" )
-source_group( \\headers\\City "^.*City/.*h$" )
-source_group( \\headers\\Shapes "^.*Shapes/.*h$" )
-
-if( OpenCV_FOUND )
-	source_group( \\src\\QOpenCV "^.*QOpenCV/.*$" )
-	source_group( \\src\\OpenCV "^.*OpenCV/.*$" )
-	source_group( \\headers\\QOpenCV "^.*QOpenCV/.*h$" )
-	source_group( \\headers\\OpenCV "^.*OpenCV/.*h$" )
-	source_group( \\src\\Aruco "^.*Aruco/.*$" )
-	source_group( \\headers\\Aruco "^.*Aruco/.*h$" )
-endif()
-
-if( NITE2_FOUND AND OPENNI2_FOUND AND OpenCV_FOUND )
-	source_group( \\src\\Kinect "^.*Kinect/.*$" )
-	source_group( \\headers\\Kinect "^.*Kinect/.*h$" )
-endif()
-
-if( KINECTSDK_FOUND AND SPEECHSDK_FOUND )
-	source_group( \\src\\Speech "^.*Speech/.*$" )
-	source_group( \\headers\\Speech "^.*Speech/.*h$" )
-endif()
-
-#fglove
-# if( FGLOVE_FOUND )
-#	source_group( \\src\\Fglove "^.*Fglove/.*$" )
-#	source_group( \\headers\\Fglove "^.*Fglove/.*h$" )
-# endif()
-
-# Leap
-if( LEAP_FOUND )
-	source_group( \\src\\Leap "^.*Leap/.*$" )
-	source_group( \\headers\\Leap "^.*Leap/.*h$" )
-endif()
-
-# MOUSE3D
-if( MOUSE3D_FOUND )
-	source_group( \\src\\Mouse3d "^.*Mouse3d/.*$" )
-	source_group( \\headers\\Mouse3d "^.*Mouse3d/.*h$" )
-endif()
+# generate a group into which sources will be placed in VS project files
+if (MSVC)
+        include(cmake/SourceGroupFiles.cmake)
+endif ()
 
 # ---------------------------------------------------------------
 # 3rd party sources
@@ -849,10 +275,10 @@ target_include_directories( parserlib SYSTEM PUBLIC dependencies/parserlib/sourc
 add_library( gitlib STATIC ${SRC_GITLIB} ${HEADER_GITLIB})
 
 target_include_directories( gitlib
-	SYSTEM PUBLIC
-	include
-	include/Repository/Git
-)
+		SYSTEM PUBLIC
+		include
+		include/Repository/Git
+		)
 
 target_compile_definitions( gitlib PUBLIC -DGITLIB_LIBRARY_STATIC )
 
@@ -874,13 +300,13 @@ endif()
 
 #-------------------------------- leap module -------------------------------
 if( LEAP_FOUND )
-		add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
+	add_library( leaplib STATIC ${SRC_LEAPLIB} ${HEADER_LEAPLIB})
 
 	target_include_directories( leaplib
-		SYSTEM PUBLIC
-		include
-		include/Leap
-		)
+			SYSTEM PUBLIC
+			include
+			include/Leap
+			)
 
 	target_compile_definitions( leaplib PUBLIC -DLEAPLIB_LIBRARY_STATIC )
 
@@ -896,7 +322,7 @@ if( LEAP_FOUND )
 	if( COMMAND cotire )
 		# link leaplib_unity target to all libraries to which leaplib links
 		set_target_properties( leaplib PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
-			set_target_properties(leaplib PROPERTIES COTIRE_ENABLE_PRECOMPILED_HEADER FALSE)
+		set_target_properties(leaplib PROPERTIES COTIRE_ENABLE_PRECOMPILED_HEADER FALSE)
 		cotire( leaplib CONFIGURATIONS Debug Release )
 	endif()
 endif()
@@ -906,14 +332,14 @@ endif()
 # ---------------------------------------------------------------
 
 # 3Dsoftviz library
-add_library( ${3DSOFTVIZ_NAME} STATIC ${INCL}  ${SRC} )
+add_library( ${3DSOFTVIZ_NAME} STATIC ${INCL} ${SRC} )
 
 # set compile flags only for our code ( suppresses warnings on system headers )
 target_compile_options( ${3DSOFTVIZ_NAME} PUBLIC ${FLAGS_FOR_DEBUG} )
 
 target_compile_definitions( ${3DSOFTVIZ_NAME}
-	PUBLIC ${ALL_COMPILE_DEFINITIONS}
-)
+		PUBLIC ${ALL_COMPILE_DEFINITIONS}
+		)
 
 if( OpenCV_FOUND )
 	list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR}/aruco )
@@ -924,9 +350,12 @@ list( APPEND ALL_SYSTEM_HEADERS ${DEPENDENCIES_INCLUDE_DIR}/libnoise )
 list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/easyloggingpp/src )
 list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolorpicker/ )
 list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/leathers/Source )
-
-
 list( APPEND ALL_SYSTEM_HEADERS include/Leap )
+
+# Diluculum fix for MSVC
+if ( MSVC )
+    list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/diluculum/include )
+endif()
 
 if( UNIX AND NOT APPLE )
 	list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/mouse3d )
@@ -946,15 +375,15 @@ include_directories(SYSTEM ${ALL_SYSTEM_HEADERS})
 
 if ( Qt5Core_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME}
-		Qt5::Core Qt5::Gui Qt5::Widgets Qt5::OpenGL Qt5::Sql Qt5::WebEngine Qt5::WebEngineWidgets Qt5::Xml Qt5::Network
-		${OPENGL_LIBRARIES} )
+			Qt5::Core Qt5::Gui Qt5::Widgets Qt5::OpenGL Qt5::Sql Qt5::WebEngine Qt5::WebEngineWidgets Qt5::Xml Qt5::Network
+			${OPENGL_LIBRARIES} )
 endif()
 
 if ( Qt4_FOUND )
-#	target_link_libraries( ${3DSOFTVIZ_NAME} ${QT_LIBRARIES} )
+	#	target_link_libraries( ${3DSOFTVIZ_NAME} ${QT_LIBRARIES} )
 	target_link_libraries( ${3DSOFTVIZ_NAME}
-		Qt4::QtCore Qt4::QtGui Qt4::QtOpenGL Qt4::QtSql Qt4::QtWebKit Qt4::QtXml Qt4::QtNetwork
-		${OPENGL_LIBRARIES} )
+			Qt4::QtCore Qt4::QtGui Qt4::QtOpenGL Qt4::QtSql Qt4::QtWebKit Qt4::QtXml Qt4::QtNetwork
+			${OPENGL_LIBRARIES} )
 endif()
 
 if( BUILD_OSGQT )
@@ -963,18 +392,17 @@ else()
 	target_link_libraries( ${3DSOFTVIZ_NAME} ${OSGQT_LIBRARIES} )
 endif()
 
-
 target_link_libraries( ${3DSOFTVIZ_NAME}
-	gitlib
-	lua
-	noiseutils
-	libnoise
-	osgModeling
-	qtcolorpicker
-	parserlib
-	${OPENSCENEGRAPH_LIBRARIES}
-	${OSGVIEWER_LIBRARIES}
-)
+		gitlib
+		lua
+		noiseutils
+		libnoise
+		osgModeling
+		qtcolorpicker
+		parserlib
+		${OPENSCENEGRAPH_LIBRARIES}
+		${OSGVIEWER_LIBRARIES}
+		)
 
 if( UNIX AND NOT APPLE )
 	target_link_libraries( ${3DSOFTVIZ_NAME} mouse3d )
@@ -1007,12 +435,14 @@ if( KINECTSDK_FOUND )
 	endif()
 endif()
 
-# if( FGLOVE_FOUND )
-#	target_link_libraries( ${3DSOFTVIZ_NAME} ${FGLOVE_LIBRARIES} )
-# endif()
-if ( PCL_FOUND )
-		target_link_libraries( ${3DSOFTVIZ_NAME} ${PCL_LIBRARIES} )
-endif()
+if (FGLOVE_FOUND)
+	target_link_libraries(${3DSOFTVIZ_NAME} ${FGLOVE_LIBRARIES})
+endif ()
+
+if (PCL_FOUND)
+	target_link_libraries(${3DSOFTVIZ_NAME} ${PCL_LIBRARIES})
+endif ()
+
 if( LEAP_FOUND )
 	target_link_libraries( ${3DSOFTVIZ_NAME} leaplib ${LEAP_LIBRARIES} )
 endif()
@@ -1031,7 +461,7 @@ endif()
 if( COMMAND cotire )
 	# link ${3DSOFTVIZ_NAME}_unity target to all libraries to which ${3DSOFTVIZ_NAME} links
 	set_target_properties( ${3DSOFTVIZ_NAME} PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
-		set_target_properties(${3DSOFTVIZ_NAME} PROPERTIES COTIRE_ENABLE_PRECOMPILED_HEADER FALSE)
+	set_target_properties(${3DSOFTVIZ_NAME} PROPERTIES COTIRE_ENABLE_PRECOMPILED_HEADER FALSE)
 
 	cotire( ${3DSOFTVIZ_NAME} CONFIGURATIONS Debug Release )
 
@@ -1113,6 +543,62 @@ else()
 	target_link_libraries( ${3DSOFTVIZ_NAME}_app ${3DSOFTVIZ_NAME} )
 endif()
 
+# -------------------------------------------------------
+# include-what-you-use
+# -------------------------------------------------------
+option( USE_INCLUDE_WHAT_YOU_USE "Use include-what-you-use." OFF )
+if( USE_INCLUDE_WHAT_YOU_USE )
+
+	find_program( iwyu_path NAMES include-what-you-use iwyu )
+
+	if( NOT iwyu_path )
+		message( STATUS "Could not find the program include-what-you-use" )
+	else()
+		message( STATUS "Using include-what-you-use" )
+
+		set( iwyu_path_and_options
+			${iwyu_path}
+			-Xiwyu
+			--mapping_file=${CMAKE_CURRENT_SOURCE_DIR}/resources/iwyu/mappings/qt5_4.imp
+			# TODO: use multiple mapping files (according to doc multiple --mapping_file can be used, but results in error)
+			# --mapping_file=/Users/kapec/Downloads/include-what-you-use/mappings/libcxx.imp
+			)
+
+		set_property( TARGET gitlib					PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path_and_options} )
+		set_property( TARGET leaplib				PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path_and_options} )
+		set_property( TARGET ${3DSOFTVIZ_NAME}		PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path_and_options} )
+		set_property( TARGET ${3DSOFTVIZ_NAME}_app	PROPERTY CXX_INCLUDE_WHAT_YOU_USE ${iwyu_path_and_options} )
+	endif()
+endif()
+
+
+# -------------------------------------------------------
+# clang-tidy
+# -------------------------------------------------------
+option( USE_CLANG_TIDY "Use clang-tidy." OFF )
+if( USE_CLANG_TIDY )
+	find_program( clang_tidy NAMES clang-tidy PATHS /usr/local/opt/llvm/bin )
+
+	if( NOT clang_tidy )
+		message( STATUS "Could not find the program clang-tidy" )
+	else()
+		message( STATUS "Using clang-tidy" )
+
+		set( clang_tidy_and_options
+			${clang_tidy}
+			# do not use checks:
+			# to many warnings in easylogging++: -cppcoreguidelines-pro-type-vararg,-cppcoreguidelines-pro-bounds-array-to-pointer-decay
+			# include order used in LLVM, not our style: -llvm-include-order
+			-checks=*,-llvm-include-order,-cppcoreguidelines-pro-type-vararg,-cppcoreguidelines-pro-bounds-array-to-pointer-decay
+			)
+
+		set_property( TARGET gitlib					PROPERTY CXX_CLANG_TIDY ${clang_tidy_and_options} )
+		set_property( TARGET leaplib				PROPERTY CXX_CLANG_TIDY ${clang_tidy_and_options} )
+		set_property( TARGET ${3DSOFTVIZ_NAME}		PROPERTY CXX_CLANG_TIDY ${clang_tidy_and_options} )
+		set_property( TARGET ${3DSOFTVIZ_NAME}_app	PROPERTY CXX_CLANG_TIDY ${clang_tidy_and_options} )
+	endif()
+endif()
+
 
 # -------------------------------------------------------
 # Install
@@ -1141,17 +627,17 @@ endif()
 
 # 3DSoftviz and data
 install( TARGETS ${3DSOFTVIZ_NAME}_app
-	BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
-	RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
+		BUNDLE DESTINATION ${INSTALL_BUNDLE} COMPONENT Runtime
+		RUNTIME DESTINATION ${INSTALL_BIN} COMPONENT Runtime )
 
 install( TARGETS gitlib
-	ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
-	LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
+		ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+		LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
 
 if( LEAP_FOUND )
 	install( TARGETS leaplib
-		ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
-		LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
+			ARCHIVE DESTINATION ${INSTALL_BIN} COMPONENT Runtime
+			LIBRARY DESTINATION ${INSTALL_LIB} COMPONENT Runtime )
 endif()
 
 # add custom install_unity target
@@ -1159,9 +645,9 @@ if( COMMAND cotire )
 	install(TARGETS ${3DSOFTVIZ_NAME}_app_unity RUNTIME DESTINATION ${INSTALL_BIN} )
 
 	add_custom_target( install_unity
-		COMMAND ${CMAKE_COMMAND} -P "cmake_install.cmake"
-		COMMENT "Install the unity-built project..."
-		WORKING_DIRECTORY ${CMAKE_BINARY_DIR} )
+			COMMAND ${CMAKE_COMMAND} -P "cmake_install.cmake"
+			COMMENT "Install the unity-built project..."
+			WORKING_DIRECTORY ${CMAKE_BINARY_DIR} )
 	add_dependencies( install_unity ${3DSOFTVIZ_NAME}_app_unity )
 	add_dependencies( install_unity gitlib_unity )
 	if( LEAP_FOUND )
@@ -1191,14 +677,14 @@ if( SPEECHSDK_FOUND )
 endif()
 
 # Install needed .dll files for fglove
-# if( FGLOVE_FOUND )
-#
-#	install( DIRECTORY ${FGLOVE_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin )
-#
-#	install( FILES ${FGLOVE_LIBRARIES} DESTINATION ${INSTALL_BIN}
-#			RUNTIME DESTINATION ${INSTALL_BIN}
-#			LIBRARY DESTINATION ${INSTALL_LIB} )
-# endif()
+if (FGLOVE_FOUND)
+
+	install(DIRECTORY ${FGLOVE_DRIVER_DIRS}/ DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/_install/bin)
+
+	install(FILES ${FGLOVE_LIBRARIES} DESTINATION ${INSTALL_BIN}
+			RUNTIME DESTINATION ${INSTALL_BIN}
+			LIBRARY DESTINATION ${INSTALL_LIB})
+endif ()
 
 # Install needed .dll files for leap
 if( LEAP_FOUND )
@@ -1213,10 +699,10 @@ endif()
 if( USE_BUILTIN_DEPENDENCIES )
 	# Install all dependencies
 	install( DIRECTORY ${DEP_BIN}/
-		DESTINATION ${INSTALL_DEPS}
-		COMPONENT Dependencies
-		USE_SOURCE_PERMISSIONS
-		)
+			DESTINATION ${INSTALL_DEPS}
+			COMPONENT Dependencies
+			USE_SOURCE_PERMISSIONS
+			)
 endif()
 
 # Include QT libraries in Apple bundle and on Windows
@@ -1225,8 +711,8 @@ if( WIN32 OR APPLE AND OSX_BUNDLE )
 	if( APPLE AND OSX_BUNDLE )
 		# Install Qt Plugins
 		install( DIRECTORY "${QT_PLUGINS_DIR}/imageformats"
-			DESTINATION ${INSTALL_PLUGIN}/plugins
-			COMPONENT Runtime )
+				DESTINATION ${INSTALL_PLUGIN}/plugins
+				COMPONENT Runtime )
 
 		# Install Qt Config
 		install( CODE "
@@ -1331,160 +817,6 @@ include( CPack )
 
 
 # -------------------------------------------------------
-# BDD Igloo tests
+# BDD Igloo gitlib tests
 # -------------------------------------------------------
-
-set( TEST_RUNNER tests/all_tests.cpp )
-
-#-------------------------------- gitlib module tests -------------------------------
-file( GLOB_RECURSE SRC_GITLIB_TESTS	"tests/Repository/Git/GitLib/*.cpp" )
-
-add_executable( test_gitlib_module ${TEST_RUNNER} ${SRC_GITLIB_TESTS} )
-add_dependencies( test_gitlib_module igloo )
-
-target_include_directories( test_gitlib_module 	PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/include
-	include/Repository/Git 	)
-target_compile_options( test_gitlib_module PUBLIC ${FLAGS_FOR_DEBUG} )
-if ( Qt5Core_FOUND )
-#	qt5_use_modules( test_gitlib_module Core )
-	target_link_libraries( test_gitlib_module Qt5::Core gitlib )
-elseif( Qt4_FOUND )
-	target_link_libraries( test_gitlib_module ${QT_LIBRARIES} gitlib )
-endif()
-
-# 'cotire' the executable
-if( COMMAND cotire )
-	set_target_properties( test_gitlib_module PROPERTIES COTIRE_UNITY_LINK_LIBRARIES_INIT "COPY_UNITY" )
-	cotire( test_gitlib_module CONFIGURATIONS Debug Release )
-endif()
-
-
-#-------------------------------- run all tests -------------------------------
-enable_testing()
-add_test( testing_gitlib_module test_gitlib_module )
-
-
-# ------------------------------ SPHINX -------------------------------
-# Find Sphinx Executable
-
-find_package(Sphinx)
-if (Sphinx_FOUND)
-	if(NOT DEFINED SPHINX_THEME)
-		set(SPHINX_THEME sphinx_rtd_theme)
-	endif()
-
-	if(NOT DEFINED SPHINX_THEME_DIR)
-		set(SPHINX_THEME_DIR)
-	endif()
-
-	# configured documentation tools and intermediate build results
-	set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
-
-	# Sphinx cache with pickled ReST documents
-	set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/_doctrees")
-
-	# HTML output directory
-	set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/docs/html")
-
-	configure_file(
-		"${CMAKE_CURRENT_SOURCE_DIR}/docs/conf.py.in"
-		"${BINARY_BUILD_DIR}/conf.py"
-		@ONLY)
-
-	add_custom_target(Sphinx_html
-		${SPHINX_EXECUTABLE}
-		-q -b html
-		-c "${BINARY_BUILD_DIR}"
-		-d "${SPHINX_CACHE_DIR}"
-		"${CMAKE_CURRENT_SOURCE_DIR}/docs"
-		"${SPHINX_HTML_DIR}"
-		COMMENT "Building HTML documentation with Sphinx")
-endif()
-
-
-# ------------------------------ ASTYLE -------------------------------
-# use "make style" to format all C++ code
-
-# Find Astyle Executable
-find_package(Astyle)
-
-if (Astyle_FOUND)
-	# Add a custom target
-	add_custom_target( "style" COMMAND
-		"${ASTYLE_EXECUTABLE}"
-		--options=${CMAKE_CURRENT_SOURCE_DIR}/astyle.options
-		${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
-		${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
-		COMMENT "Formating source code with Astyle."
-		VERBATIM
-	)
-endif()
-
-
-# ------------------------------ CPPLINT -------------------------------
-# use "make cpplint" to check all C++ code with cpplint.py
-
-# Find cpplint
-find_package(cpplint)
-
-if( CPPLINT_FOUND )
-	FILE( GLOB_RECURSE ALL_INCLUDE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h )
-	FILE( GLOB_RECURSE ALL_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp )
-	if( WIN32 )
-		add_custom_target( "cpplint"
-			COMMAND
-				${CMAKE_CURRENT_SOURCE_DIR}/cpplint.bat	# NOTE: this will probably work only on Linux/OSX
-			WORKING_DIRECTORY
-				"${CMAKE_CURRENT_BINARY_DIR}"
-			COMMENT "Linting code via cpplint.py"
-			VERBATIM
-		)
-	else()
-		add_custom_target( "cpplint"
-		COMMAND
-			"${PYTHON_EXECUTABLE}"
-			"${CPPLINT_SCRIPT}"
-			${ALL_INCLUDE_FILES}
-			${ALL_SRC_FILES}
-			2>&1 | tee cpplint-report.txt	# NOTE: this will probably work only on Linux/OSX
-		WORKING_DIRECTORY
-			"${CMAKE_CURRENT_BINARY_DIR}"
-		COMMENT "Linting code via cpplint.py"
-		VERBATIM
-	)
-	endif()
-endif()
-
-# ------------------------------ CPPcheck -------------------------------
-# use "make cppcheck" to check all C++ code with CPPcheck
-
-# Find cppchceck
-find_package(cppcheck)
-
-if( cppcheck_FOUND )
-	file( GLOB_RECURSE ALL_SRC_FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp )
-	if( WIN32 )
-		add_custom_target( cppcheck
-			COMMAND
-				${CMAKE_CURRENT_SOURCE_DIR}/run_cppcheck.bat	# NOTE: this will probably work only on Linux/OSX
-			WORKING_DIRECTORY
-				"${CMAKE_CURRENT_BINARY_DIR}"
-			COMMENT "Linting code via cpplint.py"
-			VERBATIM
-		)
-	else()
-		add_custom_target(
-				cppcheck
-				COMMAND cppcheck
-				--enable=warning,style,performance,portability,information,missingInclude
-				--std=c++11
-				--library=qt.cfg
-				--verbose
-				--quiet
-				-j2
-				-I ${CMAKE_CURRENT_SOURCE_DIR}/include/
-				${ALL_SRC_FILES}
-		)
-	endif()
-endif()
+add_subdirectory(tests)

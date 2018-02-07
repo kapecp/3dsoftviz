@@ -316,6 +316,13 @@ public slots:
 				*/
 	void edgeLabelOnOff( bool checked );
 
+	/**
+	            *  \fn public  magicLensOnOff(bool checked)
+	            *  \brief Show / hide b_magic_lens
+	            *  \param  checked flag if button is checked
+	            */
+	void magicLensOnOff( bool checked );
+
 	void labelForResidenceCheckStateChanged( int state );
 
 	/**
@@ -1349,6 +1356,12 @@ private:
 	QPushButton* edgesLabel;
 
 	/**
+	    *  QPushButton * b_magic_lens
+	    *  \brief Pointer to magicLensOn/magicLensOff button
+	    */
+	QPushButton* b_magic_lens;
+
+	/**
 	*  QCheckBox * labelResidence
 	*  \brief Pointer to labelResidence on/off checkbox
 	*/
@@ -1829,6 +1842,14 @@ public:
 	 * @brief createEvolutionTab add elements to QWidget for evolution functionality
 	 * @param line pointer to add line
 	 * @return QWidget for evolution functionality
+	 */
+	QWidget* createMagicLensTab( QFrame* line );
+
+	/**
+	 * @author Milos Stefcak
+	 * @brief createMagicLensTab add elements to QWidget for Magic Lens functionality
+	 * @param line pointer to add line
+	 * @return QWidget for Magic Lens functionality
 	 */
 	QWidget* createEvolutionTab( QFrame* line );
 

@@ -17,6 +17,8 @@
 #include "osg/PositionAttitudeTransform"
 
 #include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
+#include "Leap/HandModule/Model/HandPalm.h"
+#include "Network/UserAvatar.h"
 
 namespace Layout {
 class LayoutThread;
@@ -26,6 +28,24 @@ namespace Vwr {
 class CoreGraph;
 }
 
+const QEvent::Type HANDS_UPDATED_EVENT = (QEvent::Type)10001;
+
+class HandsUpdatedEvent : public QEvent
+{
+public:
+	HandsUpdatedEvent( Leap::HandPalm* leftHand = nullptr, Leap::HandPalm* rightHand = nullptr );
+	const Type type() { return (QEvent::Type)registerEventType(HANDS_UPDATED_EVENT); }
+
+	bool isLeftHand() { return leftHand != nullptr; }
+	bool isRightHand() { return rightHand != nullptr; }
+
+	Leap::HandPalm* getLeftHand() { return this->leftHand; }
+	Leap::HandPalm* getRightHand() { return this->rightHand; }
+
+private:
+	Leap::HandPalm* leftHand = nullptr;
+	Leap::HandPalm* rightHand = nullptr;
+};
 
 namespace Network {
 
@@ -33,7 +53,6 @@ class ExecutorFactory;
 
 class Server : public QTcpServer
 {
-
 	Q_OBJECT
 
 public:
@@ -119,7 +138,7 @@ public:
 	{
 		return usersID[Client];
 	}
-	osg::PositionAttitudeTransform* getAvatarTransform( QTcpSocket* client )
+	Network::UserAvatar* getAvatarTransform( QTcpSocket* client )
 	{
 		return avatars[client];
 	}
@@ -160,6 +179,10 @@ public:
 		return cw;
 	}
 
+	void invokeSendHands( Leap::HandPalm* leftHand, Leap::HandPalm* rightHand );
+	void sendHands( Leap::HandPalm* leftPalm, Leap::HandPalm* rightPalm );
+	virtual void customEvent( QEvent* event );
+
 private slots:
 	void readyRead();
 	void disconnected();
@@ -177,7 +200,7 @@ private:
 	QSet<QTcpSocket*> clients;
 	QMap<QTcpSocket*,QString> users;
 	QMap<QTcpSocket*,int> usersID;
-	QMap<QTcpSocket*,osg::PositionAttitudeTransform*> avatars;
+	QMap<QTcpSocket*,Network::UserAvatar*> avatars;
 	Layout::LayoutThread* thread;
 	Vwr::CoreGraph* coreGraph;
 	ExecutorFactory* executorFactory;

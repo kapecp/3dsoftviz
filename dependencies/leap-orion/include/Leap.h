@@ -25,6 +25,7 @@ typedef unsigned __int64 uint64_t;
 #endif
 
 // Define Leap export macros
+#ifndef LEAP_EXPORT
 #if defined(_MSC_VER) // Visual C++
 #if LEAP_API_INTERNAL
 #define LEAP_EXPORT
@@ -36,10 +37,19 @@ typedef unsigned __int64 uint64_t;
 #define LEAP_EXPORT_CLASS
 #elif !defined(SWIG)
 #define LEAP_EXPORT __attribute__((visibility("default")))
-#define LEAP_EXPORT_CLASS __attribute__((visibility("default")))
 #else
 #define LEAP_EXPORT
-#define LEAP_EXPORT_CLASS
+#endif
+#endif
+
+#ifndef LEAP_EXPORT_CLASS
+#if defined(_MSC_VER) // Visual C++
+  #define LEAP_EXPORT_CLASS
+#elif !defined(SWIG)
+  #define LEAP_EXPORT_CLASS __attribute__((visibility("default")))
+#else
+  #define LEAP_EXPORT_CLASS
+#endif
 #endif
 
 namespace Leap {
@@ -2199,21 +2209,26 @@ namespace Leap {
    */
     enum Type
     {
-    /**
-     * A standalone USB peripheral. The original Leap Motion controller device.
-     * @since 1.2
-     */
-      TYPE_PERIPHERAL = 1,
-    /**
-     * A controller embedded in a keyboard.
-     * @since 1.2
-     */
-      TYPE_LAPTOP,
-    /**
-     * A controller embedded in a laptop computer.
-     * @since 1.2
-     */
-      TYPE_KEYBOARD
+      /**
+       * A standalone USB peripheral. The original Leap Motion controller device.
+       * @since 1.2
+       */
+      TYPE_PERIPHERAL = 0x0003,
+
+      /**
+       * @deprecated 3.0
+       */
+      TYPE_HP_LEGACY = 0x1001,
+
+      /**
+       * @deprecated 3.0
+       */
+      TYPE_KEYBOARD = 0x1002,
+
+      /**
+       * @deprecated 3.0
+       */
+      TYPE_LAPTOP = 0x1003
     };
 
     // For internal use only.
@@ -2308,12 +2323,8 @@ namespace Leap {
     LEAP_EXPORT float distanceToBoundary(const Vector& position) const;
 
     /**
-     * Reports whether this device is embedded in another computer or computer
-     * peripheral.
-     *
-     * @returns True, if this device is embedded in a laptop, keyboard, or other computer
-     * component; false, if this device is a standalone controller.
-     * @since 1.2
+     * @returns False.
+     * @deprecated 3.0
      */
     LEAP_EXPORT bool isEmbedded() const;
 

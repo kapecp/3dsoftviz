@@ -42,6 +42,7 @@ public:
 	 * @param rightHand - Leap representation of right hand (sensor output data).
 	 */
 	void updateHands( Leap::Hand leftHand, Leap::Hand rightHand );
+	void updateHands( QDataStream* stream );
 
 	//berger
 	/**
@@ -63,6 +64,7 @@ public:
 
 	void selectNode( bool right );
 	//*****
+
 
 	Vwr::CameraManipulator* cameraManipulator;
 	Layout::LayoutThread* layout;

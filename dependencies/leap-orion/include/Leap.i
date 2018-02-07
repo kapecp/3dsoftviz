@@ -485,7 +485,7 @@ SWIG_CSBODY_PROXY(public, public, SWIGTYPE)
   if _newclass:data = _swig_property(data)
   __swig_getmethods__["distortion"] = distortion
   if _newclass:distortion = _swig_property(distortion)
-%}}
+}}
 
 %extend Leap::Frame {
 %pythoncode {
@@ -498,7 +498,7 @@ SWIG_CSBODY_PROXY(public, public, SWIGTYPE)
       LeapPython.Frame_deserialize(self, tup[0], tup[1])
   __swig_getmethods__["serialize"] = serialize
   if _newclass:serialize = _swig_property(serialize)
-%}}
+}}
 
 %constattrib( Leap::Image, void*, dataPointer );
 %constattrib( Leap::Image, void*, distortionPointer );
@@ -904,7 +904,7 @@ extern "C" BOOL WINAPI DllMain(
 %pythoncode {
   def to_float_array(self): return [self.x, self.y, self.z]
   def to_tuple(self): return (self.x, self.y, self.z)
-%}}
+}}
 %extend Leap::Matrix {
 %pythoncode {
   def to_array_3x3(self, output = None):
@@ -922,7 +922,7 @@ extern "C" BOOL WINAPI DllMain(
       output[8],  output[9],  output[10], output[11] = self.z_basis.x, self.z_basis.y, self.z_basis.z, 0.0
       output[12], output[13], output[14], output[15] = self.origin.x,  self.origin.y,  self.origin.z,  1.0
       return output
-%}}
+}}
 
 #endif
 
@@ -1010,7 +1010,7 @@ extern "C" BOOL WINAPI DllMain(
     while _pos < len(self):
       yield self[_pos]
       _pos += 1
-%}}
+}}
 %enddef
 
 #else
@@ -1068,7 +1068,7 @@ extern "C" BOOL WINAPI DllMain(
     elif type == LeapPython.Config_TYPE_STRING:
       return LeapPython.Config_set_string(self, *args)
     return False
-%}}
+}}
 // Ignore methods that are unnecessary due to get and set functions defined above
 %feature("shadow") Leap::Config::type(const std::string& key) const %{%}
 %feature("shadow") Leap::Config::getBool(const std::string& key) const %{%}

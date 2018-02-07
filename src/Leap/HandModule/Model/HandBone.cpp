@@ -13,11 +13,11 @@ Leap::HandBone::HandBone( int type, osg::ref_ptr<osg::Group> boneGroup )
 {
 	this->type = type;
 	this->boneGroup = boneGroup;
-	this->generateGeometry( CYLINDER_RADIUS, 0 );
+	this->generateGeometry( CYLINDER_RADIUS );
 	this->boneGroup->addChild( static_cast<osg::Node*>( this ) );
 }
 
-void Leap::HandBone::generateGeometry( float radius, int colorSwitch )
+void Leap::HandBone::generateGeometry( float radius, HandColors colorSwitch )
 {
 	osg::ref_ptr<osg::Geode> handGeode( new osg::Geode );
 	osg::ref_ptr<osg::Cylinder> handSphere = new osg::Cylinder( osg::Vec3f( 0.0f,0.0f,0.0f ), radius, HEIGHT );

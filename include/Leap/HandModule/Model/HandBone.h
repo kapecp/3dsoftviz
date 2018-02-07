@@ -38,7 +38,7 @@ public:
 	  * @param radius - Radius of cylinder drawable in geode.
 	  * @param colorSwitch - Value representing colour of bone - not used in current implementation.
 	 */
-	void generateGeometry( float radius, int colorSwitch );
+	void generateGeometry( float radius, HandColors colorSwitch = HandColors::NONE );
 
 	osg::ref_ptr<osg::Group> boneGroup;
 

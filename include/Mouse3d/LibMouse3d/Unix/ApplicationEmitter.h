@@ -7,7 +7,7 @@ class Mouse3dUnixDevice;
 class ApplicationEmitter;
 class ApplicationEmitter : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
 	ApplicationEmitter( Mouse3dUnixDevice* device );

@@ -19,20 +19,20 @@ public:
 
 public slots:
 
-	#if QT_VERSION >= 0x050000
+#if QT_VERSION >= 0x050000
 	//todo
-	#elif QT_VERSION < 0x050000
+#elif QT_VERSION < 0x050000
 	void translateX11Event( XEvent* event );
-	#endif
+#endif
 
 	void translateDummy();
 
 private:
 	//QWidget *window;
 	QOSG::CoreWindow* window;
-	#if QT_VERSION >= 0x050000
+#if QT_VERSION >= 0x050000
 	//todo
-	#elif QT_VERSION < 0x050000
+#elif QT_VERSION < 0x050000
 	Display* display;
-	#endif
+#endif
 };

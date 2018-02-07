@@ -166,7 +166,7 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 	QObject::connect( chb_camera_rot, SIGNAL( clicked( bool ) ),
 					  viewerWidget->getCameraManipulator(), SLOT( setCameraCanRot( bool ) ) );
 
-	Lua::LuaInterface::getInstance()->executeFile( "main.lua" );
+//	Lua::LuaInterface::getInstance()->executeFile( "main.lua" );
 	viewerWidget->getPickHandler()->setSelectionObserver( this );
 
 	QObject::connect( viewerWidget->getCameraManipulator(), SIGNAL( sendTranslatePosition( osg::Vec3d ) ),
@@ -850,6 +850,14 @@ void CoreWindow::createActions()
 	cb_git_files->setFocusPolicy( Qt::NoFocus );
 	connect( cb_git_files, SIGNAL( currentIndexChanged( int ) ), this, SLOT( changeEvolutionFilterSpecificOption( int ) ) );
 	// garaj end
+
+	//stefcak
+	b_magic_lens = new QPushButton( tr( "Magic Lens" ) );
+	b_magic_lens->setToolTip( "&Turn on/off Magic Lens" );
+	b_magic_lens->setCheckable( true );
+	b_magic_lens->setFocusPolicy( Qt::NoFocus );
+	connect( b_magic_lens, SIGNAL( clicked( bool ) ), this, SLOT( magicLensOnOff( bool ) ) );
+
 }
 
 void CoreWindow::setVisibleClusterSection( bool visible )
@@ -1393,6 +1401,20 @@ QWidget* CoreWindow::createEvolutionTab( QFrame* line )
 	return wMore;
 }
 
+QWidget* CoreWindow::createMagicLensTab( QFrame* line )
+{
+	QWidget* wLens = new QWidget();
+	QFormLayout* lLens = new QFormLayout( wLens );
+	lLens->setContentsMargins( 1,1,1,1 );
+	lLens->setSpacing( 2 );
+
+	b_magic_lens->setMaximumWidth( 136 );
+	lLens->addRow( b_magic_lens );
+	wLens->setLayout( lLens );
+
+	return wLens;
+}
+
 void CoreWindow::createGraphSlider()
 {
 	slider = new QSlider( Qt::Horizontal,this );
@@ -1428,6 +1450,8 @@ void CoreWindow::createLeftToolBar()
 
 	QWidget* wMore = createMoreFeaturesTab( line );
 
+	QWidget* wLens = createMagicLensTab( line );
+
 	toolBox = new QToolBox();
 	toolBox->setSizePolicy( QSizePolicy( QSizePolicy::Maximum, QSizePolicy::Ignored ) );
 	toolBox->setMinimumWidth( 163 );
@@ -1437,6 +1461,7 @@ void CoreWindow::createLeftToolBar()
 	toolBox->addItem( wManage, tr( "Connections" ) );
 	toolBox->addItem( wEvolution, tr( "Evolution" ) );
 	toolBox->addItem( wMore, tr( "More features" ) );
+	toolBox->addItem( wLens, tr( "Magic Lens" ) );
 	toolBar = new QToolBar( "Tools",this );
 
 	QFrame* frame = createHorizontalFrame();
@@ -3917,6 +3942,23 @@ void CoreWindow::restartLayouting()
 	coreGraph->setNodesFreezed( false );
 }
 
+void CoreWindow::magicLensOnOff( bool )
+{
+	double aspectRatio = static_cast<double>( width() )/static_cast<double>( height() );
+	if ( viewerWidget->getNumSlaves()==0 ) {
+		osg::ref_ptr<osg::Camera> lensCamera = new osg::Camera;
+		lensCamera->setCullMask( 0x2 );
+		lensCamera->setGraphicsContext( viewerWidget->getGraphicsWindow() );
+		lensCamera->setViewport( new osg::Viewport( ( viewerWidget->width()/4 ),( viewerWidget->height()/4 ),viewerWidget->width()/2,viewerWidget->height()/2 ) );
+		lensCamera->setReferenceFrame( osg::Transform::RELATIVE_RF );
+		//viewerWidget->addSlave(lensCamera.get(), osg::Matrix::scale(aspectRatio,aspectRatio,1), osg::Matrix(), true);
+		viewerWidget->addSlave( lensCamera.get(), osg::Matrixd(), osg::Matrix::scale( 2,2,1 ), true );
+	}
+	else {
+		viewerWidget->removeSlave( 0 );
+	}
+}
+
 // TODO - toto by sa mohlo robit uz pri oznaceni zhluku a nie explicitne cez button
 void CoreWindow::setRestriction_Cube_Selected()
 {
@@ -4067,7 +4109,10 @@ void CoreWindow::startLeapAR()
 		return;
 	}
 
-	this->mLeapThrAR = new Leap::LeapThread( this,new Leap::CustomLeapManager( getCameraManipulator(), AppCore::Core::getInstance()->getLayoutThread(), AppCore::Core::getInstance( NULL )->getCoreGraph(), coreGraph->getHandsGroup() ) );
+	this->mLeapThrAR = new Leap::LeapThread( this,new Leap::CustomLeapManager( getCameraManipulator(),
+			AppCore::Core::getInstance()->getLayoutThread(),
+			AppCore::Core::getInstance( NULL )->getCoreGraph(),
+			coreGraph->getHandsGroup() ) );
 
 	this->mLeapThrAR->start();
 	b_start_leapAR->setText( "Stop LeapAR" );

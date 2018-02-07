@@ -13,6 +13,7 @@
 
 // TODO: typedef inside class
 #include "Layout/RestrictionRemovalHandler_RestrictionNodesRemover.h"
+#include "Network/UserAvatar.h"
 
 #include "osg/PositionAttitudeTransform"
 
@@ -116,6 +117,8 @@ public:
 	void setAttention( int user );
 	void unSetAttention( int user );
 
+	void updateHands( QTcpSocket* sender, QDataStream* stream );
+
 	void setMyId( int id )
 	{
 		my_id = id;
@@ -142,7 +145,7 @@ public:
 
 	//todo: encapsulate!
 	QMap<int,QString> userList;
-	QMap<int,osg::PositionAttitudeTransform*> avatarList;
+	QMap<int,Network::UserAvatar*> avatarList;
 	Vwr::CoreGraph* coreGraph;
 	Layout::LayoutThread* thread;
 	Data::Graph* currentGraph;

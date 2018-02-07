@@ -8,6 +8,8 @@
 #include <osg/ShapeDrawable>
 
 #include "typeinfo"
+#include "Data/Node.h"
+#include "Data/OsgNode.h"
 
 namespace Vwr {
 
@@ -137,7 +139,16 @@ osg::ref_ptr<osg::Transform> NodeGroup::wrapChild( osg::ref_ptr<Data::Node> node
 	//at->setPosition(node->getTargetPosition() * graphScale);
 	at->setPosition( node->restrictedTargetPosition() * graphScale );
 	at->addChild( node );
+	node->setNodeMask( 0x1 );
+	//node->setColor(osg::Vec4(1, 1, 1, 1));new Data::Node( id, name, type, this->getNodeScaleByType( type ), this, position );
+	osg::ref_ptr<Data::Node> queried = new Data::Node( node->getId()+10000,node->Data::AbsNode::getName(),node->getType(),node->getType()->getScale(),node->getGraph(),node->getTargetPosition() );
+	//queried->setColor(osg::Vec4(2,2,2,2));
+	//node->setColor(osg::Vec4(1, 1, 1, 1));
+	queried->setNodeMask( 0x2 );
 
+	at->addChild( queried );
+
+	nodeTransforms->insert( queried->getId(), at );
 	nodeTransforms->insert( node->getId(), at );
 
 	return at;
