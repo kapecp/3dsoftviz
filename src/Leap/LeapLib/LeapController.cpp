@@ -14,8 +14,8 @@ LeapLib::LeapController::~LeapController()
 
 void LeapLib::LeapController::startListening()
 {
-	enableGesture( Leap::Gesture::TYPE_SWIPE );
-	setPolicy( Leap::Controller::POLICY_IMAGES );
+    enableGesture( Leap::Gesture::TYPE_SWIPE );
+    setPolicy( Leap::Controller::POLICY_IMAGES );
 	addListener( *leapListener );
 }
 

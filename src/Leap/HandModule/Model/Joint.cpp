@@ -11,7 +11,7 @@
 
 const float RADIUS = 0.07f;
 
-SoftvizLeap::Joint::Joint( int level, int position, osg::ref_ptr<osg::Group> fingerJointGroup, int colorSwitch )
+Softviz::Leap::Joint::Joint( int level, int position, osg::ref_ptr<osg::Group> fingerJointGroup, int colorSwitch )
 	:level( level ), position( position ), colorSwitch( colorSwitch ), nextJoint( nullptr ), fingerJointGroup( fingerJointGroup )
 {
 	this->generateGeometry( RADIUS, colorSwitch );
@@ -19,7 +19,7 @@ SoftvizLeap::Joint::Joint( int level, int position, osg::ref_ptr<osg::Group> fin
 	initStructure();
 }
 
-void SoftvizLeap::Joint::initStructure()
+void Softviz::Leap::Joint::initStructure()
 {
 	if ( this->nextJoint == nullptr ) {
 		if ( this->level != 4 ) {
@@ -29,7 +29,7 @@ void SoftvizLeap::Joint::initStructure()
 	}
 }
 
-void SoftvizLeap::Joint::generateGeometry( float radius, int colorSwitch )
+void Softviz::Leap::Joint::generateGeometry( float radius, int colorSwitch )
 {
 	osg::ref_ptr<osg::Geode> handGeode( new osg::Geode );
 	osg::ref_ptr<osg::Sphere> handSphere = new osg::Sphere( osg::Vec3f( 0.0f,0.0f,0.0f ), radius );

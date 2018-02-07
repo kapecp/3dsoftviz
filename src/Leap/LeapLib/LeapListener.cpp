@@ -13,7 +13,7 @@
 LeapLib::LeapListener::LeapListener( LeapManager* leapManager )
 {
 	this->leapGestureHandler = new LeapLib::LeapGestureHandler( leapManager );
-	this->leapManager = dynamic_cast<SoftvizLeap::CustomLeapManager*>( leapManager );
+    this->leapManager = dynamic_cast<Softviz::Leap::CustomLeapManager*>( leapManager );
 	this->arMode = leapManager->arMode;
 	LOG( INFO ) << "Leap/LeapLib/LeapListener Constructor";
 }

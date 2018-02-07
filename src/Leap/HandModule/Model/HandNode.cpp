@@ -6,14 +6,14 @@
 
 #include <osg/ShapeDrawable>
 
-SoftvizLeap::HandNode::HandNode() {}
+Softviz::Leap::HandNode::HandNode() {}
 
-void SoftvizLeap::HandNode::initStructure() {}
+void Softviz::Leap::HandNode::initStructure() {}
 
-void SoftvizLeap::HandNode::generateGeometry( float radius, int colorSwitch ) {}
+void Softviz::Leap::HandNode::generateGeometry( float radius, int colorSwitch ) {}
 
 
-void SoftvizLeap::HandNode::setColor( int colorSwitch, osg::ref_ptr<osg::ShapeDrawable> handDrawable )
+void Softviz::Leap::HandNode::setColor( int colorSwitch, osg::ref_ptr<osg::ShapeDrawable> handDrawable )
 {
 	osg::Vec4f blue = osg::Vec4f( 21.0f/255.0f,
 								  51.0f/255.0f,
