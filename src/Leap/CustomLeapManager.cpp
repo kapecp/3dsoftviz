@@ -133,7 +133,7 @@ void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand right
 
 		this->handObjectManipulator->updateHands( leftHand, rightHand, leftPalm, rightPalm, this->coreGraph->getCamera() );
 
-		if ( leftHand.isValid() || rightHand.isValid()) {
+		if ( leftHand.isValid() || rightHand.isValid() ) {
 			QDateTime dt = QDateTime::currentDateTime();
 			if ( lastSendTime.addMSecs( 100 ) <= dt ) {
 				lastSendTime = dt;

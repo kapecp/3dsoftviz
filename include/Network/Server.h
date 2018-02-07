@@ -28,19 +28,34 @@ namespace Vwr {
 class CoreGraph;
 }
 
-const QEvent::Type HANDS_UPDATED_EVENT = (QEvent::Type)10001;
+const QEvent::Type HANDS_UPDATED_EVENT = ( QEvent::Type )10001;
 
 class HandsUpdatedEvent : public QEvent
 {
 public:
 	HandsUpdatedEvent( Leap::HandPalm* leftHand = nullptr, Leap::HandPalm* rightHand = nullptr );
-	const Type type() { return (QEvent::Type)registerEventType(HANDS_UPDATED_EVENT); }
+	const Type type()
+	{
+		return ( QEvent::Type )registerEventType( HANDS_UPDATED_EVENT );
+	}
 
-	bool isLeftHand() { return leftHand != nullptr; }
-	bool isRightHand() { return rightHand != nullptr; }
+	bool isLeftHand()
+	{
+		return leftHand != nullptr;
+	}
+	bool isRightHand()
+	{
+		return rightHand != nullptr;
+	}
 
-	Leap::HandPalm* getLeftHand() { return this->leftHand; }
-	Leap::HandPalm* getRightHand() { return this->rightHand; }
+	Leap::HandPalm* getLeftHand()
+	{
+		return this->leftHand;
+	}
+	Leap::HandPalm* getRightHand()
+	{
+		return this->rightHand;
+	}
 
 private:
 	Leap::HandPalm* leftHand = nullptr;

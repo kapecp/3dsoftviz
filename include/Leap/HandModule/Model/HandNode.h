@@ -38,8 +38,8 @@ public:
 	 */
 	virtual void initStructure();
 
-	virtual void addToStream( QDataStream *stream );
-	virtual void setFromStream( QDataStream *stream );
+	virtual void addToStream( QDataStream* stream );
+	virtual void setFromStream( QDataStream* stream );
 };
 }
 #endif // HANDNODE_H
