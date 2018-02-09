@@ -670,7 +670,7 @@ void CoreGraph::setLightDiffuseColor( int index, osg::Vec4 color )
 
 void CoreGraph::setLightActive( int index, bool active )
 {
-	getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0 + static_cast<uint>(index), active ? osg::StateAttribute::ON : osg::StateAttribute::OFF );
+	getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0 + static_cast<uint>( index ), active ? osg::StateAttribute::ON : osg::StateAttribute::OFF );
 }
 
 
@@ -684,7 +684,7 @@ int CoreGraph::getOrCreateLight( int index )
 
 	// light
 	osg::Light* pLight = new osg::Light;
-	pLight->setLightNum( static_cast<int>(uniqueLightNumber++) );
+	pLight->setLightNum( static_cast<int>( uniqueLightNumber++ ) );
 	pLight->setDiffuse( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
 	pLight->setPosition( osg::Vec4( 0, 0, 0, 1 ) );		// w = 0 directional light
 	// w = 1 point light (position)
@@ -871,7 +871,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 
 	// default while light from the top
 	int lid = getOrCreateLight( 0 );
-	setLightPosition( lid, osg::Vec3( 0, 0, 100 * static_cast<float> ( baseSize ) ) );
+	setLightPosition( lid, osg::Vec3( 0, 0, 100 * static_cast<float>( baseSize ) ) );
 	setLightDiffuseColor( lid, osg::Vec4( 1, 1, 1, 1 ) );
 	setLightActive( lid, true );
 
@@ -935,7 +935,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	manipulator_rotation->addTransformUpdating( graphRotTransf );
 
 	float scale = graphRotTransf->getBound().radius() * 2.0f;
-	osg::Matrix mat_rot = osg::Matrix::scale( static_cast<double>(scale), static_cast<double>(scale), static_cast<double>(scale) ) * osg::Matrix::translate( graphRotTransf->getBound().center() );
+	osg::Matrix mat_rot = osg::Matrix::scale( static_cast<double>( scale ), static_cast<double>( scale ), static_cast<double>( scale ) ) * osg::Matrix::translate( graphRotTransf->getBound().center() );
 
 	manipulator_scale->setMatrix( mat_rot );
 	manipulator_rotation->setMatrix( mat_rot );
@@ -1032,7 +1032,7 @@ void CoreGraph::toggleDragger( int dragger_no, bool set )
 			root->addChild( manipulator_rotation );
 			manipulator_rotation->addTransformUpdating( graphRotTransf );
 			float scale = graphRotTransf->getBound().radius() * 1.3f;
-			osg::Matrix mat_rot = osg::Matrix::scale( static_cast<double>(scale), static_cast<double>(scale), static_cast<double>(scale) ) * osg::Matrix::translate( graphRotTransf->getBound().center() );
+			osg::Matrix mat_rot = osg::Matrix::scale( static_cast<double>( scale ), static_cast<double>( scale ), static_cast<double>( scale ) ) * osg::Matrix::translate( graphRotTransf->getBound().center() );
 			manipulator_rotation->setMatrix( mat_rot );
 			manipulator_rotation->setHandleEvents( set );
 			manipulator_rotation->setNodeMask( set? 0xffffffff : 0x0 );
@@ -1154,7 +1154,7 @@ void CoreGraph::reload( Data::Graph* graph )
 	this->browsersGroup->getGroup()->getOrCreateStateSet()->setRenderBinDetails( 100,"RenderBin" );
 
 	float scale = graphRotTransf->getBound().radius() * 1.5f;
-	osg::Matrix mat = osg::Matrix::scale( static_cast<double>(scale), static_cast<double>(scale), static_cast<double>(scale) ) * osg::Matrix::translate( graphRotTransf->getBound().center() );
+	osg::Matrix mat = osg::Matrix::scale( static_cast<double>( scale ), static_cast<double>( scale ), static_cast<double>( scale ) ) * osg::Matrix::translate( graphRotTransf->getBound().center() );
 	manipulator_scale->setMatrix( mat );
 	manipulator_rotation->setMatrix( mat );
 }
@@ -1564,7 +1564,7 @@ void CoreGraph::updateClustersCoords()
 			float distanceZ = ( shapeGetter->getSurfaceNodeZ()->getCurrentPosition() - midPoint ).length();
 			scale = osg::Vec3f( distanceX, distanceY, distanceZ );
 			//radius of sphere with center 0,0,0
-			radius = static_cast<float>( sqrt( pow( static_cast<double>( distanceX ), 2 ) + pow( static_cast<double>( distanceY ), 2 ) + pow( static_cast<double>(  distanceZ ), 2 ) ) );
+			radius = static_cast<float>( sqrt( pow( static_cast<double>( distanceX ), 2 ) + pow( static_cast<double>( distanceY ), 2 ) + pow( static_cast<double>( distanceZ ), 2 ) ) );
 
 			lowerPoint = osg::Vec3f( midPoint.x() - radius, midPoint.y() - radius, midPoint.z() - radius );
 			upperPoint = osg::Vec3f( midPoint.x() + radius, midPoint.y() + radius, midPoint.z() + radius );
@@ -2025,10 +2025,10 @@ void CoreGraph::createBase()
 //set aruco modelView matrix
 void CoreGraph::recievedMVMatrix( QMatrix4x4 modelViewMatrix )
 {
-	osg::Matrixd arucoMVM( static_cast<double>(modelViewMatrix.operator()( 0,0 )),static_cast<double>(modelViewMatrix.operator()( 0,1 )),static_cast<double>(modelViewMatrix.operator()( 0,2 )),static_cast<double>(modelViewMatrix.operator()( 0,3 )),
-						   static_cast<double>(modelViewMatrix.operator()( 1,0 )),static_cast<double>(modelViewMatrix.operator()( 1,1 )),static_cast<double>(modelViewMatrix.operator()( 1,2 )),static_cast<double>(modelViewMatrix.operator()( 1,3 )),
-						   static_cast<double>(modelViewMatrix.operator()( 2,0 )),static_cast<double>(modelViewMatrix.operator()( 2,1 )),static_cast<double>(modelViewMatrix.operator()( 2,2 )),static_cast<double>(modelViewMatrix.operator()( 2,3 )),
-						   static_cast<double>(modelViewMatrix.operator()( 3,0 )),static_cast<double>(modelViewMatrix.operator()( 3,1 )),static_cast<double>(modelViewMatrix.operator()( 3,2 )),static_cast<double>(modelViewMatrix.operator()( 3,3 )) );
+	osg::Matrixd arucoMVM( static_cast<double>( modelViewMatrix.operator()( 0,0 ) ),static_cast<double>( modelViewMatrix.operator()( 0,1 ) ),static_cast<double>( modelViewMatrix.operator()( 0,2 ) ),static_cast<double>( modelViewMatrix.operator()( 0,3 ) ),
+						   static_cast<double>( modelViewMatrix.operator()( 1,0 ) ),static_cast<double>( modelViewMatrix.operator()( 1,1 ) ),static_cast<double>( modelViewMatrix.operator()( 1,2 ) ),static_cast<double>( modelViewMatrix.operator()( 1,3 ) ),
+						   static_cast<double>( modelViewMatrix.operator()( 2,0 ) ),static_cast<double>( modelViewMatrix.operator()( 2,1 ) ),static_cast<double>( modelViewMatrix.operator()( 2,2 ) ),static_cast<double>( modelViewMatrix.operator()( 2,3 ) ),
+						   static_cast<double>( modelViewMatrix.operator()( 3,0 ) ),static_cast<double>( modelViewMatrix.operator()( 3,1 ) ),static_cast<double>( modelViewMatrix.operator()( 3,2 ) ),static_cast<double>( modelViewMatrix.operator()( 3,3 ) ) );
 
 	camera->setViewMatrix( arucoMVM );
 	//update base size
@@ -2039,10 +2039,10 @@ void CoreGraph::recievedMVMatrix( QMatrix4x4 modelViewMatrix )
 //set aruco projection matrix
 void CoreGraph::recievedPMatrix( QMatrix4x4 projectionMatrix )
 {
-	osg::Matrixd arucoPM( static_cast<double>(projectionMatrix.operator()( 0,0 )),static_cast<double>(projectionMatrix.operator()( 0,1 )),static_cast<double>(projectionMatrix.operator()( 0,2 )),static_cast<double>(projectionMatrix.operator()( 0,3 )),
-						  static_cast<double>(projectionMatrix.operator()( 1,0 )),static_cast<double>(projectionMatrix.operator()( 1,1 )),static_cast<double>(projectionMatrix.operator()( 1,2 )),static_cast<double>(projectionMatrix.operator()( 1,3 )),
-						  static_cast<double>(projectionMatrix.operator()( 2,0 )),static_cast<double>(projectionMatrix.operator()( 2,1 )),static_cast<double>(projectionMatrix.operator()( 2,2 )),static_cast<double>(projectionMatrix.operator()( 2,3 )),
-						  static_cast<double>(projectionMatrix.operator()( 3,0 )),static_cast<double>(projectionMatrix.operator()( 3,1 )),static_cast<double>(projectionMatrix.operator()( 3,2 )),static_cast<double>(projectionMatrix.operator()( 3,3 )) );
+	osg::Matrixd arucoPM( static_cast<double>( projectionMatrix.operator()( 0,0 ) ),static_cast<double>( projectionMatrix.operator()( 0,1 ) ),static_cast<double>( projectionMatrix.operator()( 0,2 ) ),static_cast<double>( projectionMatrix.operator()( 0,3 ) ),
+						  static_cast<double>( projectionMatrix.operator()( 1,0 ) ),static_cast<double>( projectionMatrix.operator()( 1,1 ) ),static_cast<double>( projectionMatrix.operator()( 1,2 ) ),static_cast<double>( projectionMatrix.operator()( 1,3 ) ),
+						  static_cast<double>( projectionMatrix.operator()( 2,0 ) ),static_cast<double>( projectionMatrix.operator()( 2,1 ) ),static_cast<double>( projectionMatrix.operator()( 2,2 ) ),static_cast<double>( projectionMatrix.operator()( 2,3 ) ),
+						  static_cast<double>( projectionMatrix.operator()( 3,0 ) ),static_cast<double>( projectionMatrix.operator()( 3,1 ) ),static_cast<double>( projectionMatrix.operator()( 3,2 ) ),static_cast<double>( projectionMatrix.operator()( 3,3 ) ) );
 
 	camera->setProjectionMatrix( arucoPM );
 }

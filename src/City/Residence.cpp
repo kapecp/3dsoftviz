@@ -89,7 +89,7 @@ void Residence::refresh()
 
 	osg::BoundingBox attrRegion;
 	QList<osg::Vec3> attrLayouts;
-	Layout::LayoutAlgorithms::layoutInsideRegion( attributesBuildings.empty() ? zeroBoudingBox : attributesBuildings.first()->getBoundingBox(), static_cast<uint>(attributesBuildings.count()), RESIDENCE_SECTOR_HEIGHT, BUILDING_SPACING, &attrLayouts, &attrRegion );
+	Layout::LayoutAlgorithms::layoutInsideRegion( attributesBuildings.empty() ? zeroBoudingBox : attributesBuildings.first()->getBoundingBox(), static_cast<uint>( attributesBuildings.count() ), RESIDENCE_SECTOR_HEIGHT, BUILDING_SPACING, &attrLayouts, &attrRegion );
 	for ( int i = 0; i < attributesBuildings.count(); ++i ) {
 		auto& b = attributesBuildings[i];
 		b->setPosition( attrLayouts[i] );
@@ -100,7 +100,7 @@ void Residence::refresh()
 
 	osg::BoundingBox getSetRegion = attrRegion;
 	QList<Layout::ElementLayout> getSetLayouts;
-	Layout::LayoutAlgorithms::layoutAroundRegion( gettersSettersBuildings.empty() ? zeroBoudingBox : gettersSettersBuildings.first()->getBoundingBox(), static_cast<uint>(gettersSettersBuildings.count()), attrRegion, BUILDING_SPACING, &getSetLayouts, &getSetRegion );
+	Layout::LayoutAlgorithms::layoutAroundRegion( gettersSettersBuildings.empty() ? zeroBoudingBox : gettersSettersBuildings.first()->getBoundingBox(), static_cast<uint>( gettersSettersBuildings.count() ), attrRegion, BUILDING_SPACING, &getSetLayouts, &getSetRegion );
 	for ( int i = 0; i <gettersSettersBuildings.count(); ++i ) {
 		auto& b = gettersSettersBuildings[i];
 		getSetLayouts[i].position.z() += RESIDENCE_SECTOR_HEIGHT;
@@ -114,12 +114,12 @@ void Residence::refresh()
 
 	osg::BoundingBox internalRegion = getSetRegion;
 	QList<Layout::ElementLayout> internalLayouts;
-	Layout::LayoutAlgorithms::layoutAroundRegion( internalMethodsBuildings.empty() ? zeroBoudingBox : internalMethodsBuildings.first()->getBoundingBox(), static_cast<uint>(internalMethodsBuildings.count()), getSetRegion, BUILDING_SPACING, &internalLayouts, &internalRegion );
+	Layout::LayoutAlgorithms::layoutAroundRegion( internalMethodsBuildings.empty() ? zeroBoudingBox : internalMethodsBuildings.first()->getBoundingBox(), static_cast<uint>( internalMethodsBuildings.count() ), getSetRegion, BUILDING_SPACING, &internalLayouts, &internalRegion );
 	for ( int i = 0; i < internalMethodsBuildings.count(); ++i ) {
 		auto& b = internalMethodsBuildings[i];
 		internalLayouts[i].position.z() += RESIDENCE_SECTOR_HEIGHT;
 		b->setPosition( internalLayouts[i].position );
-		b->setAttitude( osg::Quat( static_cast<double>( internalLayouts[i].yawRotation), osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
+		b->setAttitude( osg::Quat( static_cast<double>( internalLayouts[i].yawRotation ), osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
 		b->refresh();
 		internalMethodsBuildingsNode->addChild( b );
 	}
@@ -128,12 +128,12 @@ void Residence::refresh()
 
 	osg::BoundingBox interfaceRegion = internalRegion;
 	QList<Layout::ElementLayout> interfaceLayouts;
-	Layout::LayoutAlgorithms::layoutAroundRegion( interfaceMethodsBuildings.empty() ? zeroBoudingBox : interfaceMethodsBuildings.first()->getBoundingBox(), static_cast<uint>(interfaceMethodsBuildings.count()), internalRegion, BUILDING_SPACING, &interfaceLayouts, &interfaceRegion );
+	Layout::LayoutAlgorithms::layoutAroundRegion( interfaceMethodsBuildings.empty() ? zeroBoudingBox : interfaceMethodsBuildings.first()->getBoundingBox(), static_cast<uint>( interfaceMethodsBuildings.count() ), internalRegion, BUILDING_SPACING, &interfaceLayouts, &interfaceRegion );
 	for ( int i = 0; i < interfaceMethodsBuildings.count(); ++i ) {
 		auto& b = interfaceMethodsBuildings[i];
 		interfaceLayouts[i].position.z() += RESIDENCE_SECTOR_HEIGHT;
 		b->setPosition( interfaceLayouts[i].position );
-		b->setAttitude( osg::Quat( static_cast<double>( interfaceLayouts[i].yawRotation), osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
+		b->setAttitude( osg::Quat( static_cast<double>( interfaceLayouts[i].yawRotation ), osg::Vec3( 0.0f, 0.0f, 1.0f ) ) );
 		b->refresh();
 		interfaceMethodsBuildingsNode->addChild( b );
 	}

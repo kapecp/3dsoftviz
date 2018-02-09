@@ -243,7 +243,7 @@ void Data::OsgNode::setResidence( osg::Node* residence )
 void Data::OsgNode::clearResidence( int fromIndex )
 {
 	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
-	at->removeChildren( static_cast<uint>(fromIndex), at->getNumChildren() );
+	at->removeChildren( static_cast<uint>( fromIndex ), at->getNumChildren() );
 }
 
 osg::Vec3f Data::OsgNode::getCurrentPosition( bool calculateNew, float interpolationSpeed )
