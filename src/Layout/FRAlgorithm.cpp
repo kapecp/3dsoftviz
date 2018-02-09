@@ -802,7 +802,7 @@ void FRAlgorithm::addProjectiveForce( Data::Node* u, Data::Node* v )
 {
 	if ( mayOverlap( u, v ) ) {
 		osg::Vec3f pvec = getProjVector( u, v );            // compute projective vector
-		if( !qFuzzyCompare ( pvec.length(), 0 ) ) {
+		if ( !qFuzzyCompare( pvec.length(), 0 ) ) {
 			float pdist = pvec.normalize();					// projective distance between nodes
 			float pideal = getMinProjDistance( u, v, pvec ); 	// minimal projective distance
 			float projF = proj( pdist, pideal );				// projective force
@@ -827,7 +827,7 @@ osg::Vec3f FRAlgorithm::getProjVector( Data::Node* u, Data::Node* v )
 	pv.normalize();
 	float dist = length * qAbs( pv * edgeDir );
 
-	if ( qFuzzyCompare ( dist, 0 ) ) {
+	if ( qFuzzyCompare( dist, 0 ) ) {
 		return osg::Vec3f( 0, 0, 0 );
 	}
 	return pv * dist;

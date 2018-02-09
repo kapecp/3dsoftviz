@@ -9,6 +9,7 @@
 
 #include <QDataStream>
 
+namespace Softviz {
 namespace Leap {
 
 enum HandColors {
@@ -41,5 +42,8 @@ public:
 	virtual void addToStream( QDataStream* stream );
 	virtual void setFromStream( QDataStream* stream );
 };
-}
+
+} // namespace Leap
+} // namespace Softviz
+
 #endif // HANDNODE_H

@@ -13,7 +13,10 @@
 
 #include <QMutex>
 
+namespace Softviz {
 namespace Leap {
+
+
 class HandPalm : public HandNode
 {
 public:
@@ -50,5 +53,8 @@ public:
 private:
 	QMutex updateLock;
 };
-}
+
+} // namespace Leap
+} // namespace Softviz
+
 #endif // HANDPALM_H

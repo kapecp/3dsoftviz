@@ -4,7 +4,7 @@
 #include <osg/Image>
 #include <osg/Geometry>
 
-namespace Leap {
+namespace LeapLib {
 
 class LeapCameraStream : public osg::Image
 {

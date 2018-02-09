@@ -10,15 +10,15 @@
 //#include "osgDB/WriteFile"
 #include <stdio.h>
 
-Leap::LeapListener::LeapListener( LeapManager* leapManager )
+LeapLib::LeapListener::LeapListener( LeapManager* leapManager )
 {
-	this->leapGestureHandler = new Leap::LeapGestureHandler( leapManager );
-	this->leapManager = dynamic_cast<Leap::CustomLeapManager*>( leapManager );
+	this->leapGestureHandler = new LeapLib::LeapGestureHandler( leapManager );
+	this->leapManager = dynamic_cast<Softviz::Leap::CustomLeapManager*>( leapManager );
 	this->arMode = leapManager->arMode;
 	LOG( INFO ) << "Leap/LeapLib/LeapListener Constructor";
 }
 
-Leap::LeapListener::~LeapListener( void )
+LeapLib::LeapListener::~LeapListener( void )
 {
 
 	if ( leapGestureHandler != NULL ) {
@@ -26,61 +26,61 @@ Leap::LeapListener::~LeapListener( void )
 	}
 }
 
-void Leap::LeapListener::onInit( const Controller& controller )
+void LeapLib::LeapListener::onInit( const Leap::Controller& controller )
 {
 
 }
 
-void Leap::LeapListener::onConnect( const Controller& controller )
+void LeapLib::LeapListener::onConnect( const Leap::Controller& controller )
 {
 	// we put our gestures here to initialize them
-	controller.enableGesture( Gesture::TYPE_CIRCLE );
-	controller.enableGesture( Gesture::TYPE_KEY_TAP );
-	controller.enableGesture( Gesture::TYPE_SCREEN_TAP );
-	controller.enableGesture( Gesture::TYPE_SWIPE );
+	controller.enableGesture( Leap::Gesture::TYPE_CIRCLE );
+	controller.enableGesture( Leap::Gesture::TYPE_KEY_TAP );
+	controller.enableGesture( Leap::Gesture::TYPE_SCREEN_TAP );
+	controller.enableGesture( Leap::Gesture::TYPE_SWIPE );
 
 	controller.config().setFloat( "Gesture.Swipe.MinLength",60.0f );
 	controller.config().setFloat( "Gesture.Circle.MinArc", 6.28f );
 	controller.config().save();
 }
 
-void Leap::LeapListener::onDisconnect( const Controller& controller )
+void LeapLib::LeapListener::onDisconnect( const Leap::Controller& controller )
 {
 
 }
 
-void Leap::LeapListener::onExit( const Controller& controller )
+void LeapLib::LeapListener::onExit( const Leap::Controller& controller )
 {
 
 }
-void Leap::LeapListener::onImages( const Controller& controller )
+void LeapLib::LeapListener::onImages( const Leap::Controller& controller )
 {
-	ImageList images = controller.images();
-	Image image = images[0];
+	Leap::ImageList images = controller.images();
+	Leap::Image image = images[0];
 
 	if ( image.data() == NULL ) {
 		return;
 	}
 
-	Frame frame = controller.frame();
-	HandList hands = frame.hands();
+	Leap::Frame frame = controller.frame();
+	Leap::HandList hands = frame.hands();
 
 	this->leapManager->updateCoreGraphBackground( image.data(), 0 );
 
 }
 
-void Leap::LeapListener::onFrame( const Controller& controller )
+void LeapLib::LeapListener::onFrame( const Leap::Controller& controller )
 {
-	Frame frame = controller.frame();
-	HandList hands = frame.hands();
+	Leap::Frame frame = controller.frame();
+	Leap::HandList hands = frame.hands();
 	bool leftHandExtended = false;
 	bool rightHandExtended = false;
-	Hand leftHand;
-	Hand rightHand;
+	Leap::Hand leftHand;
+	Leap::Hand rightHand;
 
 	//jurik
 	//takin just first gesture (gestures are defined for each finger)
-	Gesture gesture = frame.gestures()[0];
+	Leap::Gesture gesture = frame.gestures()[0];
 
 	if ( arMode ) {
 		for ( int i=0; i< hands.count(); ++i ) {
@@ -176,19 +176,19 @@ void Leap::LeapListener::onFrame( const Controller& controller )
 
 }
 
-void Leap::LeapListener::onFocusGained( const Controller& controller )
+void LeapLib::LeapListener::onFocusGained( const Leap::Controller& controller )
 {
 	LOG( INFO ) << "Focus gained.";
 }
 
-void Leap::LeapListener::onFocusLost( const Controller& controller )
+void LeapLib::LeapListener::onFocusLost( const Leap::Controller& controller )
 {
 	LOG( INFO ) << "Focus lost.";
 }
 
-void Leap::LeapListener::onDeviceChange( const Controller& controller )
+void LeapLib::LeapListener::onDeviceChange( const Leap::Controller& controller )
 {
-	const DeviceList devices = controller.devices();
+	const Leap::DeviceList devices = controller.devices();
 
 	for ( int i = 0; i < devices.count(); ++i ) {
 		std::cout << "id: " << devices[i].toString() << std::endl;
@@ -197,12 +197,12 @@ void Leap::LeapListener::onDeviceChange( const Controller& controller )
 
 }
 
-void Leap::LeapListener::onServiceConnect( const Controller& controller )
+void LeapLib::LeapListener::onServiceConnect( const Leap::Controller& controller )
 {
 	LOG( INFO ) << "Service connected.";
 }
 
-void Leap::LeapListener::onServiceDisconnect( const Controller& controller )
+void LeapLib::LeapListener::onServiceDisconnect( const Leap::Controller& controller )
 {
 	LOG( INFO ) << "Service disconnect.";
 }

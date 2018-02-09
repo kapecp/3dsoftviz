@@ -11,12 +11,12 @@
 #include <math.h>
 #include <qdatetime.h>
 
-Leap::CustomLeapManager::CustomLeapManager( Vwr::CameraManipulator* cameraManipulator, Layout::LayoutThread* layout,
+Softviz::Leap::CustomLeapManager::CustomLeapManager( Vwr::CameraManipulator* cameraManipulator, Layout::LayoutThread* layout,
 		Vwr::CoreGraph* coreGraph, osg::ref_ptr<osg::Group> handsGroup )
 	:cameraManipulator( cameraManipulator ), layout( layout ), coreGraph( coreGraph ), handsGroup( handsGroup )
 {
 	arMode = false;
-	this->handObjectManipulator = new Leap::HandObjectManipulator( new Leap::HandMapper( this->coreGraph ), 'z' );
+	this->handObjectManipulator = new Softviz::Leap::HandObjectManipulator( new Softviz::Leap::HandMapper( this->coreGraph ), 'z' );
 	//init handPalms here
 	if ( this->handsGroup != nullptr ) {
 		arMode = true;
@@ -28,7 +28,7 @@ Leap::CustomLeapManager::CustomLeapManager( Vwr::CameraManipulator* cameraManipu
 	}
 }
 
-Leap::CustomLeapManager::~CustomLeapManager( void )
+Softviz::Leap::CustomLeapManager::~CustomLeapManager( void )
 {
 	//remove hands nodes here
 	if ( handsGroup ) {
@@ -36,23 +36,23 @@ Leap::CustomLeapManager::~CustomLeapManager( void )
 	}
 }
 
-void Leap::CustomLeapManager::enableCameraMovement( Movement direction )
+void Softviz::Leap::CustomLeapManager::enableCameraMovement( Movement direction )
 {
 	this->cameraManipulator->enableCameraMovement( static_cast<Vwr::CameraManipulator::Movement>( direction ) );
 }
 
-void Leap::CustomLeapManager::disableCameraMovement()
+void Softviz::Leap::CustomLeapManager::disableCameraMovement()
 {
 	this->cameraManipulator->disableCameraMovement();
 }
 
-void Leap::CustomLeapManager::rotateCamera( float py0, float px0, double throwScale, float py1, float px1 )
+void Softviz::Leap::CustomLeapManager::rotateCamera( float py0, float px0, double throwScale, float py1, float px1 )
 {
 	this->cameraManipulator->rotateCamera( py0,px0,throwScale,py1, px1 );
 }
 
 //jurik
-void Leap::CustomLeapManager::graphRotateSwipe( int swipeDirection )
+void Softviz::Leap::CustomLeapManager::graphRotateSwipe( int swipeDirection )
 {
 	//direction -1 = LEFT, 1 = RIGHT
 	switch ( swipeDirection ) {
@@ -69,17 +69,17 @@ void Leap::CustomLeapManager::graphRotateSwipe( int swipeDirection )
 	}
 }
 
-void Leap::CustomLeapManager::rotateArucoLeft()
+void Softviz::Leap::CustomLeapManager::rotateArucoLeft()
 {
 	coreGraph->rotateGraph( 1 );
 }
 
-void Leap::CustomLeapManager::rotateArucoRight()
+void Softviz::Leap::CustomLeapManager::rotateArucoRight()
 {
 	coreGraph->rotateGraph( -1 );
 }
 
-void Leap::CustomLeapManager::scaleEdgesUp()
+void Softviz::Leap::CustomLeapManager::scaleEdgesUp()
 {
 
 	float distance = layout->getAlg()->getMaxDistance();
@@ -92,7 +92,7 @@ void Leap::CustomLeapManager::scaleEdgesUp()
 	layout->play();
 }
 
-void Leap::CustomLeapManager::scaleEdgesDown()
+void Softviz::Leap::CustomLeapManager::scaleEdgesDown()
 {
 
 	float distance = layout->getAlg()->getMaxDistance();
@@ -105,7 +105,7 @@ void Leap::CustomLeapManager::scaleEdgesDown()
 	layout->play();
 }
 
-void Leap::CustomLeapManager::scaleNodes( bool scaleUp )
+void Softviz::Leap::CustomLeapManager::scaleNodes( bool scaleUp )
 {
 	if ( scaleUp ) {
 		coreGraph->scaleNodes( true );
@@ -115,16 +115,16 @@ void Leap::CustomLeapManager::scaleNodes( bool scaleUp )
 	}
 }
 
-int Leap::CustomLeapManager::updateCoreGraphBackground( const unsigned char* buffer, float depth )
+int Softviz::Leap::CustomLeapManager::updateCoreGraphBackground( const unsigned char* buffer, float depth )
 {
 	if ( this->coreGraph->isLeapStreamActive() ) {
-		this->coreGraph->updateBackgroundStream( const_cast<unsigned char*>(buffer) );
+		this->coreGraph->updateBackgroundStream( const_cast<unsigned char*>( buffer ) );
 	}
 	return 1;
 }
 
 QDateTime lastSendTime;
-void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand rightHand )
+void Softviz::Leap::CustomLeapManager::updateHands( ::Leap::Hand leftHand, ::Leap::Hand rightHand )
 {
 	if ( this->handsGroup != nullptr ) {
 		//0 a 3 z dovodu ze v grupe je palmNode, fingerGroup, palmNode, fingerGroup
@@ -144,7 +144,7 @@ void Leap::CustomLeapManager::updateHands( Leap::Hand leftHand, Leap::Hand right
 
 }
 
-void Leap::CustomLeapManager::updateHands( QDataStream* stream )
+void Softviz::Leap::CustomLeapManager::updateHands( QDataStream* stream )
 {
 	if ( this->handsGroup != nullptr ) {
 		//0 a 3 z dovodu ze v grupe je palmNode, fingerGroup, palmNode, fingerGroup
@@ -158,7 +158,7 @@ void Leap::CustomLeapManager::updateHands( QDataStream* stream )
 	}
 }
 
-void Leap::CustomLeapManager::scaleGraph( bool scaleUp )
+void Softviz::Leap::CustomLeapManager::scaleGraph( bool scaleUp )
 {
 	if ( scaleUp ) {
 		this->coreGraph->scaleGraph( 2 );
@@ -168,7 +168,7 @@ void Leap::CustomLeapManager::scaleGraph( bool scaleUp )
 	}
 }
 
-void Leap::CustomLeapManager::selectNode( bool right )
+void Softviz::Leap::CustomLeapManager::selectNode( bool right )
 {
 
 //	Treba vyriesit scale ruky, pretoze vzhladom na graf je moc mala a teda je takmer nemozne pretnut ruku s grafom.

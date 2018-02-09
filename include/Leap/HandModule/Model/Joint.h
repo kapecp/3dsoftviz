@@ -5,7 +5,10 @@
 #define JOINT_H
 
 #include "Leap/HandModule/Model/HandNode.h"
+
+namespace Softviz {
 namespace Leap {
+
 class Joint : public HandNode
 {
 public:
@@ -42,5 +45,8 @@ private:
 	// 0-5 Value representing the finger of joint (eg. middle, ring).
 	int position;
 };
-}
+
+} // namespace Leap
+} // namespace Softviz
+
 #endif // JOINT_H

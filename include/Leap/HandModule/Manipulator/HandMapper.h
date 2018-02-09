@@ -10,6 +10,7 @@ namespace Vwr {
 class CoreGraph;
 }
 
+namespace Softviz {
 namespace Leap {
 
 class HandMapper
@@ -27,7 +28,7 @@ public:
 	 * @param diff from z-coodinate 400
 	 * @return
 	 */
-	Leap::Vector recalculateDepthNode( Leap::Vector vector, float diff );
+	::Leap::Vector recalculateDepthNode( ::Leap::Vector vector, float diff );
 	/**
 	 * @brief setNodeScreenCoords - set coordinates of model hand palm
 	 * @param nodeScreenCoords
@@ -62,6 +63,8 @@ private:
 	cv::Point calibrationLastPoint;
 
 };
-}
+
+} // namespace Leap
+} // namespace Softviz
 
 #endif // HANDMAPPER_H

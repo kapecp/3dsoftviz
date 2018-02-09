@@ -4,42 +4,42 @@
 // IWYU pragma: no_include <cmath>
 
 
-float Leap::DirectionDetector::getPitch( Hand hand )
+float LeapLib::DirectionDetector::getPitch( Leap::Hand hand )
 {
-	return hand.direction().pitch() * RAD_TO_DEG;
+	return hand.direction().pitch() * Leap::RAD_TO_DEG;
 }
 
-float Leap::DirectionDetector::getRoll( Hand hand )
+float LeapLib::DirectionDetector::getRoll( Leap::Hand hand )
 {
-	return hand.palmNormal().roll() * RAD_TO_DEG;
+	return hand.palmNormal().roll() * Leap::RAD_TO_DEG;
 }
 
-Leap::DirectionDetector::Direction Leap::DirectionDetector::getPalmDirection( Hand hand )
+LeapLib::DirectionDetector::Direction LeapLib::DirectionDetector::getPalmDirection( Leap::Hand hand )
 {
 	float pitch = getPitch( hand );
 	float roll = getRoll( hand );
 
 	float absRoll = std::abs( roll );
 
-	if ( absRoll < Leap::DirectionDetector::ANGLE_LIMIT ) {
-		if ( pitch > Leap::DirectionDetector::ANGLE_LIMIT ) {
-			return Leap::DirectionDetector::Direction::UP;
+	if ( absRoll < LeapLib::DirectionDetector::ANGLE_LIMIT ) {
+		if ( pitch > LeapLib::DirectionDetector::ANGLE_LIMIT ) {
+			return LeapLib::DirectionDetector::Direction::UP;
 		}
-		if ( -pitch > Leap::DirectionDetector::ANGLE_LIMIT ) {
-			return Leap::DirectionDetector::Direction::DOWN;
+		if ( -pitch > LeapLib::DirectionDetector::ANGLE_LIMIT ) {
+			return LeapLib::DirectionDetector::Direction::DOWN;
 		}
 	}
 
 	float absPitch = std::abs( pitch );
 
-	if ( absPitch < Leap::DirectionDetector::ANGLE_LIMIT ) {
-		if ( roll > Leap::DirectionDetector::ANGLE_LIMIT ) {
-			return Leap::DirectionDetector::Direction::RIGHT;
+	if ( absPitch < LeapLib::DirectionDetector::ANGLE_LIMIT ) {
+		if ( roll > LeapLib::DirectionDetector::ANGLE_LIMIT ) {
+			return LeapLib::DirectionDetector::Direction::RIGHT;
 		}
-		if ( -roll > Leap::DirectionDetector::ANGLE_LIMIT ) {
-			return Leap::DirectionDetector::Direction::LEFT;
+		if ( -roll > LeapLib::DirectionDetector::ANGLE_LIMIT ) {
+			return LeapLib::DirectionDetector::Direction::LEFT;
 		}
 	}
 
-	return Leap::DirectionDetector::Direction::STEADY;
+	return LeapLib::DirectionDetector::Direction::STEADY;
 }

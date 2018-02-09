@@ -14,8 +14,8 @@ const int TYPE_MIDDLE = 2; /*< The middle finger */
 const int TYPE_RING = 3; /*< The ring finger */
 const int BONE_COUNT = 4; /*< The ring finger */
 
-Leap::HandPalm::HandPalm( float radius, osg::ref_ptr<osg::Group> handsGroup, int colorSwitch )
-	: fingerGroup( new osg::Group() ), colorSwitch( colorSwitch ), interFingerBoneGroup( new osg::Group() )
+Softviz::Leap::HandPalm::HandPalm( float radius, osg::ref_ptr<osg::Group> handsGroup, HandColors colorSwitch )
+	: fingerGroup( new osg::Group() ), interFingerBoneGroup( new osg::Group() ), colorSwitch( colorSwitch )
 {
 	this->generateGeometry( radius, colorSwitch );
 	this->initStructure();
@@ -29,7 +29,7 @@ Leap::HandPalm::HandPalm( float radius, osg::ref_ptr<osg::Group> handsGroup, int
 	}
 }
 
-void Leap::HandPalm::initStructure()
+void Softviz::Leap::HandPalm::initStructure()
 {
 	QMutexLocker locker( &updateLock );
 
@@ -71,7 +71,7 @@ void Leap::HandPalm::initStructure()
 	}
 }
 
-void Leap::HandPalm::generateGeometry( float radius, HandColors colorSwitch )
+void Softviz::Leap::HandPalm::generateGeometry( float radius, HandColors colorSwitch )
 {
 	QMutexLocker locker( &updateLock );
 
@@ -86,7 +86,7 @@ void Leap::HandPalm::generateGeometry( float radius, HandColors colorSwitch )
 	this->addChild( handGeode.get() );
 }
 
-void Leap::HandPalm::addToStream( QDataStream* stream )
+void Softviz::Leap::HandPalm::addToStream( QDataStream* stream )
 {
 	QMutexLocker locker( &updateLock );
 
@@ -108,7 +108,7 @@ void Leap::HandPalm::addToStream( QDataStream* stream )
 	}
 }
 
-void Leap::HandPalm::setFromStream( QDataStream* stream )
+void Softviz::Leap::HandPalm::setFromStream( QDataStream* stream )
 {
 	QMutexLocker locker( &updateLock );
 
