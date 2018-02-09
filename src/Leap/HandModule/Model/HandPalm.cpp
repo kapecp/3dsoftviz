@@ -14,22 +14,26 @@ const int TYPE_MIDDLE = 2; /*< The middle finger */
 const int TYPE_RING = 3; /*< The ring finger */
 const int BONE_COUNT = 4; /*< The ring finger */
 
-Softviz::Leap::HandPalm::HandPalm( float radius, osg::ref_ptr<osg::Group> handsGroup, int colorSwitch )
+Softviz::Leap::HandPalm::HandPalm( float radius, osg::ref_ptr<osg::Group> handsGroup, HandColors colorSwitch )
 	: fingerGroup( new osg::Group() ), interFingerBoneGroup( new osg::Group() ), colorSwitch( colorSwitch )
 {
 	this->generateGeometry( radius, colorSwitch );
 	this->initStructure();
 
-	// pridanie nodu dlane a groupy prstov do sceny
-	handsGroup->addChild( static_cast<osg::Node*>( this ) );
-	handsGroup->addChild( this->fingerGroup );
-	handsGroup->addChild( this->interFingerBoneGroup );
-	\
+	if ( handsGroup != nullptr ) {
+		// pridanie nodu dlane a groupy prstov do sceny,
+		// ak je handsGroup null, je to trieda na posileanie hodnot.
+		handsGroup->addChild( static_cast<osg::Node*>( this ) );
+		handsGroup->addChild( this->fingerGroup );
+		handsGroup->addChild( this->interFingerBoneGroup );
+	}
 }
 
 void Softviz::Leap::HandPalm::initStructure()
 {
-	LOG( INFO ) << "Leap/HandleModule/HandPalm/initStrucure()";
+	QMutexLocker locker( &updateLock );
+
+//	LOG( INFO ) << "Leap/HandleModule/HandPalm/initStrucure()";
 	if ( this->fingerGroup.get()->getNumChildren() == 0 ) {
 		int i = 0;
 		int j = 0;
@@ -67,8 +71,10 @@ void Softviz::Leap::HandPalm::initStructure()
 	}
 }
 
-void Softviz::Leap::HandPalm::generateGeometry( float radius, int colorSwitch )
+void Softviz::Leap::HandPalm::generateGeometry( float radius, HandColors colorSwitch )
 {
+	QMutexLocker locker( &updateLock );
+
 	osg::ref_ptr<osg::Geode> handGeode( new osg::Geode );
 	osg::ref_ptr<osg::Sphere> handSphere = new osg::Sphere( osg::Vec3f( 0.0f,0.0f,0.0f ), radius );
 
@@ -78,4 +84,48 @@ void Softviz::Leap::HandPalm::generateGeometry( float radius, int colorSwitch )
 	handGeode->addDrawable( handDrawable.get() );
 
 	this->addChild( handGeode.get() );
+}
+
+void Leap::HandPalm::addToStream( QDataStream* stream )
+{
+	QMutexLocker locker( &updateLock );
+
+	Leap::HandNode::addToStream( stream );
+
+	// add all fingers joints and bones into stream
+	for ( unsigned int i = 0; i < 10; i++ ) {
+		osg::Group* nodes = static_cast<osg::Group*>( this->fingerGroup->getChild( i ) );
+		for ( unsigned int j = 0; j < nodes->getNumChildren(); j++ ) {
+			auto node = static_cast<HandNode*>( nodes->getChild( j ) );
+			node->addToStream( stream );
+		}
+	}
+
+	// add inter finger bones into steam
+	for ( unsigned int i = 0; i < this->interFingerBoneGroup->getNumChildren(); i++ ) {
+		auto node = static_cast<HandNode*>( this->interFingerBoneGroup->getChild( i ) );
+		node->addToStream( stream );
+	}
+}
+
+void Leap::HandPalm::setFromStream( QDataStream* stream )
+{
+	QMutexLocker locker( &updateLock );
+
+	Leap::HandNode::setFromStream( stream );
+
+	// add all fingers joints and bones into stream
+	for ( unsigned int i = 0; i < 10; i++ ) {
+		osg::Group* nodes = static_cast<osg::Group*>( this->fingerGroup->getChild( i ) );
+		for ( unsigned int j = 0; j < nodes->getNumChildren(); j++ ) {
+			auto node = static_cast<HandNode*>( nodes->getChild( j ) );
+			node->setFromStream( stream );
+		}
+	}
+
+	// add inter finger bones into steam
+	for ( unsigned int i = 0; i < this->interFingerBoneGroup->getNumChildren(); i++ ) {
+		auto node = static_cast<HandNode*>( this->interFingerBoneGroup->getChild( i ) );
+		node->setFromStream( stream );
+	}
 }

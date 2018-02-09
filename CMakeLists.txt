@@ -352,6 +352,11 @@ list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/qtcolor
 list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/leathers/Source )
 list( APPEND ALL_SYSTEM_HEADERS include/Leap )
 
+# Diluculum fix for MSVC
+if ( MSVC )
+    list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/diluculum/include )
+endif()
+
 if( UNIX AND NOT APPLE )
 	list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/mouse3d )
 endif()

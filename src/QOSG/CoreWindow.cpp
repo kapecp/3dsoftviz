@@ -163,7 +163,7 @@ CoreWindow::CoreWindow( QWidget* parent, Vwr::CoreGraph* coreGraph, QApplication
 	QObject::connect( chb_camera_rot, SIGNAL( clicked( bool ) ),
 					  viewerWidget->getCameraManipulator(), SLOT( setCameraCanRot( bool ) ) );
 
-	Lua::LuaInterface::getInstance()->executeFile( "main.lua" );
+//	Lua::LuaInterface::getInstance()->executeFile( "main.lua" );
 	viewerWidget->getPickHandler()->setSelectionObserver( this );
 
 	QObject::connect( viewerWidget->getCameraManipulator(), SIGNAL( sendTranslatePosition( osg::Vec3d ) ),
@@ -4106,7 +4106,10 @@ void CoreWindow::startLeapAR()
 		return;
 	}
 
-	this->mLeapThrAR = new LeapLib::LeapThread( this,new Softviz::Leap::CustomLeapManager( getCameraManipulator(), AppCore::Core::getInstance()->getLayoutThread(), AppCore::Core::getInstance( NULL )->getCoreGraph(), coreGraph->getHandsGroup() ) );
+	this->mLeapThrAR = new LeapLib::LeapThread( this,new Softviz::Leap::CustomLeapManager( getCameraManipulator(),
+			AppCore::Core::getInstance()->getLayoutThread(),
+			AppCore::Core::getInstance( NULL )->getCoreGraph(),
+			coreGraph->getHandsGroup() ) );
 
 	this->mLeapThrAR->start();
 	b_start_leapAR->setText( "Stop LeapAR" );
