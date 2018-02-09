@@ -6,13 +6,13 @@
 
 #include <osg/ShapeDrawable>
 
-Leap::HandNode::HandNode() {}
+Softviz::Leap::HandNode::HandNode() {}
 
-void Leap::HandNode::initStructure() {}
+void Softviz::Leap::HandNode::initStructure() {}
 
-void Leap::HandNode::generateGeometry( float radius, HandColors colorSwitch = HandColors::NONE ) {}
+void Softviz::Leap::HandNode::generateGeometry( float radius, HandColors colorSwitch = HandColors::NONE ) {}
 
-void Leap::HandNode::addToStream( QDataStream* stream )
+void Softviz::Leap::HandNode::addToStream( QDataStream* stream )
 {
 	auto mat = getMatrix();
 	( * stream ) << ( float )mat( 0,0 ) << ( float )mat( 0,1 ) << ( float )mat( 0,2 ) << ( float )mat( 0,3 )
@@ -21,7 +21,7 @@ void Leap::HandNode::addToStream( QDataStream* stream )
 				 << ( float )mat( 3,0 ) << ( float )mat( 3,1 ) << ( float )mat( 3,2 ) << ( float )mat( 3,3 );
 }
 
-void Leap::HandNode::setFromStream( QDataStream* stream )
+void Softviz::Leap::HandNode::setFromStream( QDataStream* stream )
 {
 	if ( stream != nullptr && !stream->atEnd() ) {
 
@@ -46,8 +46,7 @@ void Leap::HandNode::setFromStream( QDataStream* stream )
 	}
 }
 
-
-void Leap::HandNode::setColor( HandColors colorSwitch, osg::ref_ptr<osg::ShapeDrawable> handDrawable )
+void Softviz::Leap::HandNode::setColor( HandColors colorSwitch, osg::ref_ptr<osg::ShapeDrawable> handDrawable )
 {
 	osg::Vec4f blue = osg::Vec4f( 21.0f/255.0f,
 								  51.0f/255.0f,

@@ -1,25 +1,25 @@
 #include "LeapLib/LeapController.h"
 
-Leap::LeapController::LeapController( LeapManager* leapManager )
+LeapLib::LeapController::LeapController( LeapManager* leapManager )
 {
-	leapListener = new Leap::LeapListener( leapManager );
+	leapListener = new LeapLib::LeapListener( leapManager );
 }
 
-Leap::LeapController::~LeapController()
+LeapLib::LeapController::~LeapController()
 {
 	if ( leapListener != NULL ) {
 		delete ( leapListener );
 	}
 }
 
-void Leap::LeapController::startListening()
+void LeapLib::LeapController::startListening()
 {
 	enableGesture( Leap::Gesture::TYPE_SWIPE );
 	setPolicy( Leap::Controller::POLICY_IMAGES );
 	addListener( *leapListener );
 }
 
-void Leap::LeapController::stopListening()
+void LeapLib::LeapController::stopListening()
 {
 	removeListener( *leapListener );
 }

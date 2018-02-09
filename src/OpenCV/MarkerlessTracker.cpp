@@ -439,7 +439,7 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame )  //trackuje
 
 			// prevent cases where no fircle could be extracted (because three points collinear or sth.)
 			// filter NaN values
-			if (  qFuzzyCompare( center.x, center.x ) && qFuzzyCompare( center.y, center.y ) && qFuzzyCompare( radius, radius ) ) {
+			if ( qFuzzyCompare( center.x, center.x ) && qFuzzyCompare( center.y, center.y ) && qFuzzyCompare( radius, radius ) ) {
 				cv::circle( tmp, center,static_cast<int>( radius ), cv::Scalar( 255 ) );
 				//            cv::namedWindow("RANSAC"); cv::imshow("RANSAC", tmp);
 			}

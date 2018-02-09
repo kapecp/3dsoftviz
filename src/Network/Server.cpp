@@ -936,7 +936,7 @@ void Server::setAvatarScale( int scale )
 	}
 }
 
-void Server::sendHands( Leap::HandPalm* leftPalm, Leap::HandPalm* rightPalm )
+void Server::sendHands( Softviz::Leap::HandPalm* leftPalm, Softviz::Leap::HandPalm* rightPalm )
 {
 	QByteArray block;
 	QDataStream out( &block,QIODevice::WriteOnly );
@@ -957,7 +957,7 @@ void Server::sendHands( Leap::HandPalm* leftPalm, Leap::HandPalm* rightPalm )
 	}
 }
 
-void Server::invokeSendHands( Leap::HandPalm* leftHand, Leap::HandPalm* rightHand )
+void Server::invokeSendHands( Softviz::Leap::HandPalm* leftHand, Softviz::Leap::HandPalm* rightHand )
 {
 	QApplication::postEvent( this, new HandsUpdatedEvent( leftHand, rightHand ) );
 }
@@ -977,7 +977,7 @@ void Server::customEvent( QEvent* event )
 
 } // namespace Network
 
-HandsUpdatedEvent::HandsUpdatedEvent( Leap::HandPalm* leftHand, Leap::HandPalm* rightHand )
+HandsUpdatedEvent::HandsUpdatedEvent( Softviz::Leap::HandPalm* leftHand, Softviz::Leap::HandPalm* rightHand )
 	: QEvent( HANDS_UPDATED_EVENT )
 {
 	this->leftHand = leftHand;

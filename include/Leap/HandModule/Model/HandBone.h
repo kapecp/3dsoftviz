@@ -7,7 +7,9 @@
 #include "Leap/HandModule/Model/HandNode.h"
 #include "Leap/HandModule/Model/Joint.h"
 
+namespace Softviz {
 namespace Leap {
+
 class HandBone : public HandNode
 {
 public:
@@ -45,6 +47,8 @@ public:
 private:
 	int type;
 };
-}
+
+} // namespace Leap
+} // namespace Softviz
 
 #endif // BONE_H

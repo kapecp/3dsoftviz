@@ -6,7 +6,8 @@
 
 #include "easylogging++.h"
 #include "Leap.h"
-namespace Leap {
+
+namespace LeapLib {
 
 class LeapGestureHandler
 {
@@ -14,16 +15,16 @@ public:
 
 	LeapGestureHandler( LeapManager* leapManager );
 	~LeapGestureHandler();
-	void handleGestures( Frame frame );
+	void handleGestures( Leap::Frame frame );
 
 	LeapManager* leapManager;
 	LeapActions* leapActions;
 private:
-	Frame* startFrame;
+	Leap::Frame* startFrame;
 	bool isStartFrameSet;
 	int frameCounter;
 
-	void setStartFrame( Frame frame );
+	void setStartFrame( Leap::Frame frame );
 };
 }
 

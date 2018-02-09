@@ -1,8 +1,8 @@
 #include "LeapLib/FingerPositionDetector.h"
 
-bool Leap::FingerPositionDetector::isHandExtended( Hand hand )
+bool LeapLib::FingerPositionDetector::isHandExtended( Leap::Hand hand )
 {
-	FingerList fingers = hand.fingers();
+	Leap::FingerList fingers = hand.fingers();
 
 	for ( int i=0; i < fingers.count(); ++i ) {
 		if ( !fingers[i].isExtended() ) {
@@ -13,9 +13,9 @@ bool Leap::FingerPositionDetector::isHandExtended( Hand hand )
 	return true;
 }
 
-bool Leap::FingerPositionDetector::isIndexFingerExtended( Hand hand )
+bool LeapLib::FingerPositionDetector::isIndexFingerExtended( Leap::Hand hand )
 {
-	FingerList fingers = hand.fingers();
+	Leap::FingerList fingers = hand.fingers();
 
 	if ( fingers[0].isExtended() ) {
 		return false;

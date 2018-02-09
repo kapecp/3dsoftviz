@@ -91,7 +91,7 @@ void City::Module::refresh()
 	// calculate positions for variable nodes
 	osg::BoundingBox varRegion;
 	QList<osg::Vec3> varLayouts;
-	Layout::LayoutAlgorithms::layoutInsideRegion( variableNodes.empty() ? zeroBoudingBox : variableNodes.first()->getBuilding()->getBoundingBox(), static_cast<uint>(variableNodes.count()), MODULE_SECTOR_HEIGHT, BUILDING_SPACING, &varLayouts, &varRegion );
+	Layout::LayoutAlgorithms::layoutInsideRegion( variableNodes.empty() ? zeroBoudingBox : variableNodes.first()->getBuilding()->getBoundingBox(), static_cast<uint>( variableNodes.count() ), MODULE_SECTOR_HEIGHT, BUILDING_SPACING, &varLayouts, &varRegion );
 	for ( int i = 0; i < variableNodes.count(); ++i ) {
 		auto varNodePAT = getNodeParentPAT( variableNodes[i] );
 		auto varNodeBuilding = variableNodes[i]->getBuilding();
@@ -113,7 +113,7 @@ void City::Module::refresh()
 	// calculate positions for function nodes
 	osg::BoundingBox funcRegion = varRegion;
 	QList<Layout::ElementLayout> funcLayouts;
-	Layout::LayoutAlgorithms::layoutAroundRegion( functionNodes.empty() ? zeroBoudingBox : functionNodes.first()->getBuilding()->getBoundingBox(), static_cast<uint>(functionNodes.count()), varRegion, BUILDING_SPACING, &funcLayouts, &funcRegion );
+	Layout::LayoutAlgorithms::layoutAroundRegion( functionNodes.empty() ? zeroBoudingBox : functionNodes.first()->getBuilding()->getBoundingBox(), static_cast<uint>( functionNodes.count() ), varRegion, BUILDING_SPACING, &funcLayouts, &funcRegion );
 	for ( int i = 0; i < functionNodes.count(); ++i ) {
 		auto funcNodePAT = getNodeParentPAT( functionNodes[i] );
 		funcNodePAT->setPosition( funcLayouts[i].position + osg::Vec3( 0.0f, 0.0f, MODULE_SECTOR_HEIGHT ) );
@@ -127,7 +127,7 @@ void City::Module::refresh()
 	// calculate positions for interface nodes
 	osg::BoundingBox intrfcRegion = funcPlane;
 	QList<Layout::ElementLayout> intrfcLayouts;
-	Layout::LayoutAlgorithms::layoutAroundRegion( interfaceNodes.empty() ? zeroBoudingBox : interfaceNodes.first()->getBuilding()->getBoundingBox(), static_cast<uint>(interfaceNodes.count()), funcRegion, BUILDING_SPACING, &intrfcLayouts, &intrfcRegion );
+	Layout::LayoutAlgorithms::layoutAroundRegion( interfaceNodes.empty() ? zeroBoudingBox : interfaceNodes.first()->getBuilding()->getBoundingBox(), static_cast<uint>( interfaceNodes.count() ), funcRegion, BUILDING_SPACING, &intrfcLayouts, &intrfcRegion );
 	for ( int i = 0; i < interfaceNodes.count(); ++i ) {
 		auto intrfcNodePAT = getNodeParentPAT( interfaceNodes[i] );
 		intrfcNodePAT->setPosition( intrfcLayouts[i].position + osg::Vec3( 0.0f, 0.0f, MODULE_SECTOR_HEIGHT ) );

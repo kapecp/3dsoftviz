@@ -4091,10 +4091,10 @@ void CoreWindow::startLeap()
 		return;
 	}
 
-	this->mLeapThr = new Leap::LeapThread( this,
-										   new Leap::CustomLeapManager( getCameraManipulator(),
-												   AppCore::Core::getInstance()->getLayoutThread(),
-												   AppCore::Core::getInstance( NULL )->getCoreGraph() ) );
+	this->mLeapThr = new LeapLib::LeapThread( this,
+			new Softviz::Leap::CustomLeapManager( getCameraManipulator(),
+					AppCore::Core::getInstance()->getLayoutThread(),
+					AppCore::Core::getInstance( NULL )->getCoreGraph() ) );
 	//CoUninitialize();
 
 	this->mLeapThr->start();
@@ -4109,7 +4109,7 @@ void CoreWindow::startLeapAR()
 		return;
 	}
 
-	this->mLeapThrAR = new Leap::LeapThread( this,new Leap::CustomLeapManager( getCameraManipulator(),
+	this->mLeapThrAR = new LeapLib::LeapThread( this,new Softviz::Leap::CustomLeapManager( getCameraManipulator(),
 			AppCore::Core::getInstance()->getLayoutThread(),
 			AppCore::Core::getInstance( NULL )->getCoreGraph(),
 			coreGraph->getHandsGroup() ) );

@@ -281,7 +281,7 @@ public:
 #ifdef OPENCV_FOUND
 	OpenCV::CameraStream* getCameraStream() const;
 #endif
-	Leap::LeapCameraStream* getLeapCameraStream() const;
+	LeapLib::LeapCameraStream* getLeapCameraStream() const;
 
 	//jurik
 	/**
@@ -707,7 +707,7 @@ private:
 #ifdef OPENCV_FOUND
 	osg::ref_ptr<OpenCV::CameraStream> mCameraStream;
 #endif
-	osg::ref_ptr<Leap::LeapCameraStream> leapCameraStream;
+	osg::ref_ptr<LeapLib::LeapCameraStream> leapCameraStream;
 	bool clustersOpacityAutomatic;
 	bool clustersOpacitySelected;
 	double clustersOpacity;

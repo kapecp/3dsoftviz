@@ -19,12 +19,13 @@ namespace Layout {
 class LayoutThread;
 }
 
+namespace Softviz {
 namespace Leap {
 
 class HandPalm;
 class HandObjectManipulator;
 
-class CustomLeapManager : public LeapManager
+class CustomLeapManager : public LeapLib::LeapManager
 {
 public:
 	CustomLeapManager( Vwr::CameraManipulator* cameraManipulator,Layout::LayoutThread* layout,
@@ -41,7 +42,7 @@ public:
 	 * @param leftHand - Leap representation of left hand (sensor output data).
 	 * @param rightHand - Leap representation of right hand (sensor output data).
 	 */
-	void updateHands( Leap::Hand leftHand, Leap::Hand rightHand );
+	void updateHands( ::Leap::Hand leftHand, ::Leap::Hand rightHand );
 	void updateHands( QDataStream* stream );
 
 	//berger
@@ -78,6 +79,9 @@ public:
 	 */
 	osg::ref_ptr<osg::Group> handsGroup;
 };
-}
-#endif
+
+} // namespace Leap
+} // namespace Softviz
+
+#endif // CUSTOMLEAPMANAGER_H
 

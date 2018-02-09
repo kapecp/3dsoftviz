@@ -95,8 +95,8 @@ private:
 #endif
 
 #ifdef LEAP_FOUND
-	Leap::LeapThread* mLeapThr;
-	Leap::LeapThread* mLeapThrAR;
+	LeapLib::LeapThread* mLeapThr;
+	LeapLib::LeapThread* mLeapThrAR;
 #endif
 
 public slots:
