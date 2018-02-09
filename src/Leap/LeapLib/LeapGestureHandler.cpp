@@ -87,7 +87,7 @@ void LeapLib::LeapGestureHandler::handleGestures( Leap::Frame frame )
 //            printf("%g  %g  %g\n", leftHandMovement.x, leftHandMovement.y, leftHandMovement.z);
 	//Concurrency::wait(250);
 //    }
-	if ( !qFuzzyCompare( leftHandVelocity->x, 0) && !qFuzzyCompare( rightHandVelocity->x, 0 ) ) {
+	if ( !qFuzzyCompare( leftHandVelocity->x, 0 ) && !qFuzzyCompare( rightHandVelocity->x, 0 ) ) {
 		if ( !leftHandExtended && !rightHandExtended ) {
 			ignoreGestures = true;
 			deltaVelocity = new Leap::Vector( rightHandVelocity->x - leftHandVelocity->x,rightHandVelocity->y - leftHandVelocity->y,rightHandVelocity->z - leftHandVelocity->z );
@@ -141,7 +141,7 @@ void LeapLib::LeapGestureHandler::handleGestures( Leap::Frame frame )
 //                leapActions->onScreenTap(gesture);
 					break;
 				}
-				case Gesture::TYPE_INVALID: {
+				case Leap::Gesture::TYPE_INVALID: {
 					LOG( INFO ) << "GESTO INVALID....onScreenTap().";
 //                leapActions->onScreenTap(gesture);
 					break;

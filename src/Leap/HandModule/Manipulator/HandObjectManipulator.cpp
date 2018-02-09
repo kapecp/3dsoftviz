@@ -14,7 +14,7 @@ Softviz::Leap::HandObjectManipulator::~HandObjectManipulator()
 
 }
 
-Leap::Vector Softviz::Leap::HandObjectManipulator::changeHandUpDirectionAxis( ::Leap::Vector vector )
+::Leap::Vector Softviz::Leap::HandObjectManipulator::changeHandUpDirectionAxis( ::Leap::Vector vector )
 {
 	float temp;
 	if ( this->upDirectionAxis == 'y' ) {
@@ -37,8 +37,8 @@ void Softviz::Leap::HandObjectManipulator::updateHands( ::Leap::Hand leftHand, :
 	float diffLeftHand;
 	float diffRightHand;
 
-	this->center = Leap::Vector( 0.0f, -2.0f, 0.0f );
-	this->direction = Leap::Vector( 0.0f, 5.0f, 0.0f );
+	this->center = ::Leap::Vector( 0.0f, -2.0f, 0.0f );
+	this->direction = ::Leap::Vector( 0.0f, 5.0f, 0.0f );
 
 	this->center = changeHandUpDirectionAxis( this->center );
 
@@ -262,7 +262,7 @@ void Softviz::Leap::HandObjectManipulator::updateInterFingerBones( osg::Group*  
 								 this->center[2] +this->direction[2] + static_cast<double>( arrayInterFingerBonesPositions[i].z )/100.0 ) );
 
 		// rotation of bone
-		if ( !qFuzzyCompare( arrayOfInterFingerBonesRotations[i].x, 0 ) || !qFuzzyCompare( arrayOfInterFingerBonesRotations[i].y, 0 ) || !qFuzzyCompare(arrayOfInterFingerBonesRotations[i].z, 0 ) ) {
+		if ( !qFuzzyCompare( arrayOfInterFingerBonesRotations[i].x, 0 ) || !qFuzzyCompare( arrayOfInterFingerBonesRotations[i].y, 0 ) || !qFuzzyCompare( arrayOfInterFingerBonesRotations[i].z, 0 ) ) {
 
 			boneMatrix->preMult( osg::Matrix::rotate( osg::Vec3f( 0.0f,0.0f,1.0f ),
 								 osg::Vec3f( arrayOfInterFingerBonesRotations[i].x/100.0f,

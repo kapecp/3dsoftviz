@@ -86,7 +86,7 @@ void Softviz::Leap::HandPalm::generateGeometry( float radius, HandColors colorSw
 	this->addChild( handGeode.get() );
 }
 
-void Leap::HandPalm::addToStream( QDataStream* stream )
+void Softviz::Leap::HandPalm::addToStream( QDataStream* stream )
 {
 	QMutexLocker locker( &updateLock );
 
@@ -108,7 +108,7 @@ void Leap::HandPalm::addToStream( QDataStream* stream )
 	}
 }
 
-void Leap::HandPalm::setFromStream( QDataStream* stream )
+void Softviz::Leap::HandPalm::setFromStream( QDataStream* stream )
 {
 	QMutexLocker locker( &updateLock );
 

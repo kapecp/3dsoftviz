@@ -29,8 +29,8 @@ void UserAvatar::initStructure()
 	this->addChild( coneGeode );
 
 	this->handsGroup = new osg::MatrixTransform();
-	this->leftHand = new Leap::HandPalm( 0.1f, this->handsGroup, Leap::HandColors::LEFT );
-	this->rightHand = new Leap::HandPalm( 0.1f, this->handsGroup, Leap::HandColors::RIGHT );
+	this->leftHand = new Softviz::Leap::HandPalm( 0.1f, this->handsGroup, Softviz::Leap::HandColors::LEFT );
+	this->rightHand = new Softviz::Leap::HandPalm( 0.1f, this->handsGroup, Softviz::Leap::HandColors::RIGHT );
 
 	auto mat = this->handsGroup->getMatrix();
 	mat.preMultTranslate( osg::Vec3f( 0,0,-1 ) );
