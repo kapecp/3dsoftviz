@@ -148,7 +148,7 @@ osg::Geometry* ShapeVisitor_VisualizerCreator::createGridGeometry( unsigned int 
 	osg::Vec3Array* positionsOfLines = new osg::Vec3Array;
 
 	geom->setVertexArray( positionsOfLines );
-	int sizeNegative = -1 * size;
+	int sizeNegative = -1 * static_cast<int>(size);
 
 	// position of borders
 	osg::Vec3f dif1( static_cast<osg::Vec3f::value_type>( sizeNegative/2 ), static_cast<osg::Vec3f::value_type>( size/2 ), -10 ); // top left
@@ -157,7 +157,7 @@ osg::Geometry* ShapeVisitor_VisualizerCreator::createGridGeometry( unsigned int 
 
 	// increment for creating points of mesh at border
 	osg::Vec3f incrementX( static_cast<osg::Vec3f::value_type>( size/noOfLines ), 0, 0 );
-	osg::Vec3f incrementY( 0, static_cast<osg::Vec3f::value_type>( sizeNegative/noOfLines ), 0 );
+	osg::Vec3f incrementY( 0, static_cast<osg::Vec3f::value_type>( static_cast<uint>(sizeNegative)/noOfLines ), 0 );
 
 	// computing and saving positions of points at border of mesh
 	for ( int i=0; i<2; i++ ) {

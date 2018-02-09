@@ -35,8 +35,8 @@ void OpenCV::TrackedLight::extractColor( cv::Mat& frame )
 void OpenCV::TrackedLight::findIntensity( float frame_area, osg::Vec4 frame_color )
 {
 
-	_surface = M_PI * radius * radius;
-	_colorIntensity = ( _surface / frame_area ) * 0.8 + 0.2 * std::abs( _color.length() - frame_color.length() );
+	_surface = static_cast<float>( M_PI * static_cast<double>( radius ) * static_cast<double>( radius ) );
+	_colorIntensity = ( _surface / frame_area ) * 0.8f + 0.2f * std::abs( _color.length() - frame_color.length() );
 	//qDebug() << "intensity "  << _colorIntensity << " radius " << radius;
 }
 
@@ -47,7 +47,7 @@ void OpenCV::TrackedLight::mapFrameToHemishere( const cv::Point2f fisheye_center
 	offset = positionFrame - fisheye_center;
 	offset.x /= fisheye_radius;
 	offset.y /= fisheye_radius;
-	offset *= ( float )( fisheye_angle / 180 ) ;
+	offset *= static_cast<float>( fisheye_angle / 180 ) ;
 
 	_positionHemisphere.x() = offset.x;
 	_positionHemisphere.y() = offset.y;

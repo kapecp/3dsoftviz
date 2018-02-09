@@ -5,6 +5,8 @@
 #include "LeapLib/DirectionDetector.h"
 #include "LeapLib/FingerPositionDetector.h"
 
+#include <QtGlobal>
+
 
 LeapLib::LeapGestureHandler::LeapGestureHandler( LeapManager* leapManager )
 {
@@ -85,7 +87,7 @@ void LeapLib::LeapGestureHandler::handleGestures( Leap::Frame frame )
 //            printf("%g  %g  %g\n", leftHandMovement.x, leftHandMovement.y, leftHandMovement.z);
 	//Concurrency::wait(250);
 //    }
-	if ( leftHandVelocity->x !=0 && rightHandVelocity->x != 0 ) {
+	if ( !qFuzzyCompare( leftHandVelocity->x, 0) && !qFuzzyCompare( rightHandVelocity->x, 0 ) ) {
 		if ( !leftHandExtended && !rightHandExtended ) {
 			ignoreGestures = true;
 			deltaVelocity = new Leap::Vector( rightHandVelocity->x - leftHandVelocity->x,rightHandVelocity->y - leftHandVelocity->y,rightHandVelocity->z - leftHandVelocity->z );
@@ -119,7 +121,7 @@ void LeapLib::LeapGestureHandler::handleGestures( Leap::Frame frame )
 				case Leap::Gesture::TYPE_CIRCLE: {
 //                LOG( INFO ) << "GESTO CIRCLE....zoomGraph().";
 //                leapActions->zoomGraph(gesture);
-//                break;
+					break;
 				}
 				case Leap::Gesture::TYPE_SWIPE: {
 					//if (!Leap::FingerPositionDetector::isHandExtended(gesture.hands()[0])){
@@ -136,6 +138,11 @@ void LeapLib::LeapGestureHandler::handleGestures( Leap::Frame frame )
 				}
 				case Leap::Gesture::TYPE_SCREEN_TAP: {
 					LOG( INFO ) << "GESTO SCREEN_TAP....onScreenTap().";
+//                leapActions->onScreenTap(gesture);
+					break;
+				}
+				case Gesture::TYPE_INVALID: {
+					LOG( INFO ) << "GESTO INVALID....onScreenTap().";
 //                leapActions->onScreenTap(gesture);
 					break;
 				}

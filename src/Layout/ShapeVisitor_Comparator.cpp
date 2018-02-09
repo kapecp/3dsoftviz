@@ -1,4 +1,6 @@
 #include "Layout/ShapeVisitor_Comparator.h"
+#include <leathers/push>
+#include <leathers/used-but-marked-unused>
 //-----------------------------------------------------------------------------
 
 namespace Layout {
@@ -157,3 +159,5 @@ void ShapeVisitor_Comparator::compareCubes( Shape_AbstractCube& shape, Shape_Abs
 }
 
 } // namespace
+
+#include <leathers/pop>

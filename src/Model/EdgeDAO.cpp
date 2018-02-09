@@ -12,6 +12,7 @@
 #include <leathers/push>
 #include <leathers/float-equal>
 #include <leathers/old-style-cast>
+#include <leathers/used-but-marked-unused>
 
 Model::EdgeDAO::EdgeDAO( void )
 {
@@ -74,7 +75,7 @@ bool Model::EdgeDAO::addMetaEdgesToDB( QSqlDatabase* conn, QMap<qlonglong, osg::
 	QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iEdges =	edges->constBegin();
 
 	QSqlQuery* query = new QSqlQuery( *conn );
-	qlonglong nodeID1, nodeID2, edgeID;
+	qlonglong nodeID1, nodeID2, edgeID = 0;
 	QMap<qlonglong, qlonglong>::iterator nodeIdIter;
 	QMap<qlonglong, qlonglong>::iterator edgeIdIter;
 
@@ -136,7 +137,7 @@ bool Model::EdgeDAO::addMetaEdgesToDB( QSqlDatabase* conn, QMap<qlonglong, osg::
 bool Model::EdgeDAO::addEdgesColorToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta )
 {
 	QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iEdges = edges->constBegin();
-	qlonglong edgeID;
+	qlonglong edgeID = 0;
 	QMap<qlonglong, qlonglong>::iterator edgeIdIter;
 
 	while ( iEdges != edges->constEnd() ) {
@@ -170,7 +171,7 @@ bool Model::EdgeDAO::addEdgesColorToDB( QSqlDatabase* conn, QMap<qlonglong, osg:
 bool Model::EdgeDAO::addEdgesScaleToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout,  QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta, double defaultScale )
 {
 	QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iEdges = edges->constBegin();
-	qlonglong edgeID;
+	qlonglong edgeID = 0;
 	QMap<qlonglong, qlonglong>::iterator edgeIdIter;
 
 	while ( iEdges != edges->constEnd() ) {

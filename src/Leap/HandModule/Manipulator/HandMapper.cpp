@@ -98,8 +98,8 @@ Leap::Vector Softviz::Leap::HandMapper::recalculateDepthNode( ::Leap::Vector vec
 			else {
 				this->calibrationCounter = 0;
 			}
-			this->calibrationLastPoint.x = this->nodeScreenCoords.x();
-			this->calibrationLastPoint.y = this->nodeScreenCoords.y();
+			this->calibrationLastPoint.x = static_cast<int>( this->nodeScreenCoords.x() );
+			this->calibrationLastPoint.y = static_cast<int>( this->nodeScreenCoords.y() );
 		}
 
 		// keep calibrationCounter from overflow

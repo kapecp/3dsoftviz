@@ -44,7 +44,7 @@ void Softviz::Leap::HandObjectManipulator::updateHands( ::Leap::Hand leftHand, :
 
 	// update lavej ruky
 	if ( leftHand.isValid() ) {
-		::Leap::Vector lVector = ::Leap::Vector( this->center[0]+0.5f,this->center[1],this->center[2] );
+		::Leap::Vector lVector = ::Leap::Vector( static_cast<float>( this->center[0] )+0.5f,static_cast<float>( this->center[1] ),static_cast<float>( this->center[2] ) );
 		//ziskanie pozicie dlane
 		lVector = leftHand.palmPosition();
 
@@ -66,11 +66,11 @@ void Softviz::Leap::HandObjectManipulator::updateHands( ::Leap::Hand leftHand, :
 		osg::Matrix view = camera->getViewMatrix();
 		osg::Matrix proj = camera->getProjectionMatrix();
 		osg::Matrix model = leftPalm->getWorldMatrices()[0];
-		osg::Vec3 world_coords = osg::Vec3( static_cast<double>( this->center[0] ) + this->direction[0] + static_cast<double>( lVector.x )/100.0,
-											static_cast<double>( this->center[1] ) + this->direction[1] + static_cast<double>( lVector.y )/100.0,
-											static_cast<double>( this->center[2] ) + this->direction[2] + static_cast<double>( lVector.z )/100.0 );
+		osg::Vec3 world_coords = osg::Vec3( static_cast<float>( this->center[0] ) + static_cast<float>( this->direction[0] ) + lVector.x/100.0f,
+											static_cast<float>( this->center[1] ) + static_cast<float>( this->direction[1] ) + lVector.y/100.0f,
+											static_cast<float>( this->center[2] ) + static_cast<float>( this->direction[2] ) + lVector.z/100.0f );
 		osg::Vec3 screenCoords = world_coords * view * proj * win;
-		screenCoords.set( ( ( screenCoords.x() / viewport->width() ) * 640 ), ( screenCoords.y() / viewport->height() ) * 480, screenCoords.z() );
+		screenCoords.set( ( static_cast<float>( screenCoords.x() ) / static_cast<float>( viewport->width() ) ) * 640, ( static_cast<float>( screenCoords.y() ) / static_cast<float>( viewport->height() ) ) * 480, screenCoords.z() );
 		this->mapper->setNodeScreenCoords( screenCoords );
 
 		// update prstov lavej ruky
@@ -81,7 +81,7 @@ void Softviz::Leap::HandObjectManipulator::updateHands( ::Leap::Hand leftHand, :
 
 	// update pravej ruky
 	if ( rightHand.isValid() ) {
-		::Leap::Vector rVector = ::Leap::Vector( this->center[0]-0.5,this->center[1],this->center[2] );
+		::Leap::Vector rVector = ::Leap::Vector( static_cast<float>( this->center[0] )-0.5f,static_cast<float>( this->center[1] ),static_cast<float>( this->center[2] ) );
 		//ziskanie pozicie dlane
 		rVector = rightHand.palmPosition();
 
@@ -201,7 +201,7 @@ void Softviz::Leap::HandObjectManipulator::updateFingerBones( osg::Group*  finge
 									 this->center[2] +this->direction[2] + static_cast<double>( posVector.z )/100.0 ) );
 
 			// rotation of bone
-			if ( dirVector.x != 0 || dirVector.y !=0 || dirVector.z !=0 ) {
+			if ( !qFuzzyCompare( dirVector.x, 0 ) || !qFuzzyCompare( dirVector.y, 0 ) || !qFuzzyCompare( dirVector.z, 0 ) ) {
 				boneMatrix->preMult( osg::Matrix::rotate( osg::Vec3f( 0.0f,0.0f,1.0f ),
 									 osg::Vec3f( dirVector.x/100.0f,dirVector.y/100.0f,dirVector.z/100.0f ) ) );
 			}
@@ -262,7 +262,7 @@ void Softviz::Leap::HandObjectManipulator::updateInterFingerBones( osg::Group*  
 								 this->center[2] +this->direction[2] + static_cast<double>( arrayInterFingerBonesPositions[i].z )/100.0 ) );
 
 		// rotation of bone
-		if ( arrayOfInterFingerBonesRotations[i].x != 0 || arrayOfInterFingerBonesRotations[i].y !=0 || arrayOfInterFingerBonesRotations[i].z !=0 ) {
+		if ( !qFuzzyCompare( arrayOfInterFingerBonesRotations[i].x, 0 ) || !qFuzzyCompare( arrayOfInterFingerBonesRotations[i].y, 0 ) || !qFuzzyCompare(arrayOfInterFingerBonesRotations[i].z, 0 ) ) {
 
 			boneMatrix->preMult( osg::Matrix::rotate( osg::Vec3f( 0.0f,0.0f,1.0f ),
 								 osg::Vec3f( arrayOfInterFingerBonesRotations[i].x/100.0f,

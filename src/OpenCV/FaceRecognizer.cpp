@@ -58,10 +58,10 @@ void OpenCV::FaceRecognizer::annotateFaces( cv::Mat frame )
 		}
 		if ( detected ) {
 			// if the movement was under the threshold
-			if (	( fabs( 1.0f-static_cast<float>( this->drawrect.x )/static_cast<float>( this->rect.x+face_i.x ) )<0.10f )&&
-					( fabs( 1.0f-static_cast<float>( this->drawrect.y )/static_cast<float>( this->rect.y+face_i.y ) )<0.10f ) &&
-					( fabs( 1.0f-static_cast<float>( this->drawrect.width )/static_cast<float>( face_i.width ) )<0.10f ) &&
-					( fabs( 1.0f-static_cast<float>( this->drawrect.height )/static_cast<float>( face_i.height ) )<0.10f ) ) {
+			if (	( fabs( static_cast<double>( 1.0f-static_cast<float>( this->drawrect.x )/static_cast<float>( this->rect.x+face_i.x ) ) )<0.10 )&&
+					( fabs( static_cast<double>( 1.0f-static_cast<float>( this->drawrect.y )/static_cast<float>( this->rect.y+face_i.y ) ) )<0.10 ) &&
+					( fabs( static_cast<double>( 1.0f-static_cast<float>( this->drawrect.width )/static_cast<float>( face_i.width ) ) )<0.10 ) &&
+					( fabs( static_cast<double>( 1.0f-static_cast<float>( this->drawrect.height )/static_cast<float>( face_i.height ) ) )<0.10 ) ) {
 				//TODO conversion to INT,
 				// rectangle around the head
 				face_i.x=static_cast<int>( face_i.x-face_i.width*0.4+this->rect.x );

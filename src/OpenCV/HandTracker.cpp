@@ -34,7 +34,7 @@ std::pair<cv::Point,double> OpenCV::HandTracker::circleFromPoints( cv::Point p1,
 	double centery = ( cd * ( p1.x - p2.x ) - bc * ( p2.x - p3.x ) ) * idet;
 	double radius = sqrt( pow( p2.x - centerx,2 ) + pow( p2.y-centery,2 ) );
 
-	return std::make_pair( cv::Point( centerx,centery ),radius );
+	return std::make_pair( cv::Point( static_cast<int>( centerx ),static_cast<int>( centery ) ),radius );
 }
 
 void OpenCV::HandTracker::getParameterValues( int* threshold, int* areaSize,
@@ -44,7 +44,7 @@ void OpenCV::HandTracker::getParameterValues( int* threshold, int* areaSize,
 		*threshold = 50;
 	}
 	else {
-		*threshold = 160 - ( depth/4 );
+		*threshold = 160 - ( static_cast<int>( depth )/4 );
 	}
 }
 
@@ -148,11 +148,11 @@ cv::vector<std::pair<cv::Point,double>> OpenCV::HandTracker::findHand( cv::Mat m
 				if ( defects.size()>=3 ) {
 					cv::vector<cv::Point> palm_points;
 					for ( unsigned long j=0; j<defects.size(); j++ ) {
-						int startidx=defects[j][0];
+						unsigned long startidx=static_cast<unsigned int>(defects[j][0]);
 						cv::Point ptStart( tcontours[0][startidx] );
-						int endidx=defects[j][1];
+						unsigned long endidx=static_cast<unsigned int>(defects[j][1]);
 						cv::Point ptEnd( tcontours[0][endidx] );
-						int faridx=defects[j][2];
+						unsigned long faridx=static_cast<unsigned int>(defects[j][2]);
 						cv::Point ptFar( tcontours[0][faridx] );
 						//Sum up all the hull and defect points to compute average
 						rough_palm_center+=ptFar+ptStart+ptEnd;
@@ -176,11 +176,11 @@ cv::vector<std::pair<cv::Point,double>> OpenCV::HandTracker::findHand( cv::Mat m
 					//As there is a high chance that the closes points might be in a linear line or too close that it forms a very large circle
 					std::pair<cv::Point,double> soln_circle;
 					for ( unsigned long i=0; i+2<distvec.size(); i++ ) {
-						cv::Point p1=palm_points[distvec[i+0].second];
-						cv::Point p2=palm_points[distvec[i+1].second];
-						cv::Point p3=palm_points[distvec[i+2].second];
+						cv::Point p1=palm_points[static_cast<unsigned long>(distvec[i+0].second)];
+						cv::Point p2=palm_points[static_cast<unsigned long>(distvec[i+1].second)];
+						cv::Point p3=palm_points[static_cast<unsigned long>(distvec[i+2].second)];
 						soln_circle=circleFromPoints( p1,p2,p3 ); //Final palm center,radius
-						if ( soln_circle.second!=0 && soln_circle.second< 75 && soln_circle.second> 10 ) {
+						if ( !qFuzzyCompare(soln_circle.second, 0) && (soln_circle.second < 75) && (soln_circle.second > 10) ) {
 							break;
 						}
 					}
@@ -207,7 +207,7 @@ cv::vector<std::pair<cv::Point,double>> OpenCV::HandTracker::findHand( cv::Mat m
 //                                LOG(INFO) << "x: " + std::to_string(palm_center.x) + " y: " + std::to_string(palm_center.y);
 //                                LOG(INFO) << "radius: " + std::to_string(radius);
 						circle( mask,palm_center,5,cv::Scalar( 144,144,255 ),3 );
-						circle( mask,palm_center,radius,cv::Scalar( 144,144,255 ),2 );
+						circle( mask,palm_center,static_cast<int>( radius ),cv::Scalar( 144,144,255 ),2 );
 						std::pair<cv::Point,double> palmAndRadius = std::make_pair( cv::Point( palm_center.x,palm_center.y ),radius );
 						palmAndRadiusList.push_back( palmAndRadius );
 					}
@@ -215,11 +215,11 @@ cv::vector<std::pair<cv::Point,double>> OpenCV::HandTracker::findHand( cv::Mat m
 					//Detect fingers by finding points that form an almost isosceles triangle with certain thesholds
 					int no_of_fingers=0;
 					for ( unsigned long j=0; j<defects.size(); j++ ) {
-						int startidx=defects[j][0];
+						unsigned long startidx=static_cast<unsigned int>(defects[j][0]);
 						cv::Point ptStart( tcontours[0][startidx] );
-						int endidx=defects[j][1];
+						unsigned long endidx=static_cast<unsigned int>(defects[j][1]);
 						cv::Point ptEnd( tcontours[0][endidx] );
-						int faridx=defects[j][2];
+						unsigned long faridx=static_cast<unsigned int>(defects[j][2]);
 						cv::Point ptFar( tcontours[0][faridx] );
 						//X o--------------------------o Y
 						double Xdist=sqrt( dist( palm_center,ptFar ) );

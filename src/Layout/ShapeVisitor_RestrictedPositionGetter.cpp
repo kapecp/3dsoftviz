@@ -4,6 +4,8 @@
 #include <cmath>
 #include <osgUtil/IntersectVisitor>
 #include <osg/ShapeDrawable>
+#include <leathers/push>
+#include <leathers/used-but-marked-unused>
 //-----------------------------------------------------------------------------
 
 namespace Layout {
@@ -269,3 +271,5 @@ osg::Vec3f ShapeVisitor_RestrictedPositionGetter::toCube( const osg::Vec3f& cent
 }
 
 } // namespace
+
+#include <leathers/pop>
