@@ -20,8 +20,8 @@ protected:
 
 private:
 	osg::ref_ptr<osg::MatrixTransform> handsGroup;
-	osg::ref_ptr<Leap::HandPalm> leftHand;
-	osg::ref_ptr<Leap::HandPalm> rightHand;
+	osg::ref_ptr<Softviz::Leap::HandPalm> leftHand;
+	osg::ref_ptr<Softviz::Leap::HandPalm> rightHand;
 
 	QString label;
 };

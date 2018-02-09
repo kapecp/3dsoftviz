@@ -74,9 +74,9 @@ public:
 	void setHandMapper( HandMapper* mapper );
 
 private:
-	Vector center;
-	Vector up;
-	Vector direction;
+	::Leap::Vector center;
+	::Leap::Vector up;
+	::Leap::Vector direction;
 	HandMapper* mapper;
 	char upDirectionAxis;
 };
