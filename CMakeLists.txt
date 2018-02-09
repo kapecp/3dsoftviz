@@ -4,15 +4,15 @@
 # according to the terms of the MIT license.
 # For details see the COPYRIGHT file distributed with 3DSoftviz.
 
-option( USE_CCACHE "Use CCache compiler cache to speed-up build." OFF)
+option( USE_CCACHE "Use CCache compiler cache to speed-up build." ON)
 if( USE_CCACHE )
-    find_program(CCACHE_PROGRAM ccache)
-    if( CCACHE_PROGRAM )
-        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
-        message(STATUS "Using ${CCACHE_PROGRAM}")
-    else()
-        message(STATUS "ccache NOT FOUND")
-    endif()
+	find_program(CCACHE_PROGRAM ccache PATHS /usr/local/bin/)
+	if( CCACHE_PROGRAM )
+		set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+		message(STATUS "Using ${CCACHE_PROGRAM}")
+	else()
+		message(STATUS "ccache NOT FOUND")
+	endif()
 endif()
 
 project( 3DSoftviz C CXX )
@@ -45,6 +45,9 @@ set( CMAKE_MODULE_PATH
 
 # Enable C++11 features
 set(CMAKE_CXX_STANDARD 11)
+
+# Export compile commands, e.g. for SourceTrail
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Warnings for Debug mode
 option( USE_STRICT_COMPILE_WARNINGS "Use strict compilation warnings in debug mode." ON )
@@ -234,7 +237,7 @@ file( GLOB_RECURSE HEADER_LEAPLIB "include/Leap/LeapLib/*.h" )
 #-------------------------------------- Group source files --------------------------------------
 # generate a group into which sources will be placed in VS project files
 if (MSVC)
-        include(cmake/SourceGroupFiles.cmake)
+		include(cmake/SourceGroupFiles.cmake)
 endif ()
 
 # ---------------------------------------------------------------
@@ -354,7 +357,7 @@ list( APPEND ALL_SYSTEM_HEADERS include/Leap )
 
 # Diluculum fix for MSVC
 if ( MSVC )
-    list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/diluculum/include )
+	list( APPEND ALL_SYSTEM_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/diluculum/include )
 endif()
 
 if( UNIX AND NOT APPLE )
