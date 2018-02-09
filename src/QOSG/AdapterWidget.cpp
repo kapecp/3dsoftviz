@@ -47,10 +47,10 @@ void AdapterWidget::initializeGL()
 	qDebug() << "Really used OpenGl: " << context->format().majorVersion() << "." << context->format().minorVersion();
 	qDebug() << "Profile: " << context->format().profile();
 
-	qDebug() << "OpenGl information: VENDOR:       " << ( const char* )glGetString( GL_VENDOR );
-	qDebug() << "                    RENDERDER:    " << ( const char* )glGetString( GL_RENDERER );
-	qDebug() << "                    VERSION:      " << ( const char* )glGetString( GL_VERSION );
-	qDebug() << "                    GLSL VERSION: " << ( const char* )glGetString( GL_SHADING_LANGUAGE_VERSION );
+	qDebug() << "OpenGl information: VENDOR:       " << reinterpret_cast<const char*>(glGetString( GL_VENDOR ));
+	qDebug() << "                    RENDERDER:    " << reinterpret_cast<const char*>(glGetString( GL_RENDERER ));
+	qDebug() << "                    VERSION:      " << reinterpret_cast<const char*>(glGetString( GL_VERSION ));
+	qDebug() << "                    GLSL VERSION: " << reinterpret_cast<const char*>(glGetString( GL_SHADING_LANGUAGE_VERSION ));
 	qDebug() << "endstuff\n";
 
 }
@@ -480,6 +480,7 @@ bool AdapterWidget::event( QEvent* event )
 					_time.restart();
 				}
 			}
+			break;
 		}
 		default:
 			return QWidget::event( event );

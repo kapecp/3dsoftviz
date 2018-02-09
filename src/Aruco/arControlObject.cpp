@@ -94,10 +94,10 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
 {
 	qDebug() << "updateObjectPositionAruco";
 
-	osg::Matrixd markerMVM( modelViewMatrix.operator()( 0,0 ),modelViewMatrix.operator()( 0,1 ),modelViewMatrix.operator()( 0,2 ),modelViewMatrix.operator()( 0,3 ),
-							modelViewMatrix.operator()( 1,0 ),modelViewMatrix.operator()( 1,1 ),modelViewMatrix.operator()( 1,2 ),modelViewMatrix.operator()( 1,3 ),
-							modelViewMatrix.operator()( 2,0 ),modelViewMatrix.operator()( 2,1 ),modelViewMatrix.operator()( 2,2 ),modelViewMatrix.operator()( 2,3 ),
-							modelViewMatrix.operator()( 3,0 ),modelViewMatrix.operator()( 3,1 ),modelViewMatrix.operator()( 3,2 ),modelViewMatrix.operator()( 3,3 ) );
+	osg::Matrixd markerMVM( static_cast<double>( modelViewMatrix.operator()( 0,0 ) ),static_cast<double>( modelViewMatrix.operator()( 0,1 ) ),static_cast<double>( modelViewMatrix.operator()( 0,2 ) ),static_cast<double>( modelViewMatrix.operator()( 0,3 ) ),
+							static_cast<double>( modelViewMatrix.operator()( 1,0 ) ),static_cast<double>( modelViewMatrix.operator()( 1,1 ) ),static_cast<double>( modelViewMatrix.operator()( 1,2 ) ),static_cast<double>( modelViewMatrix.operator()( 1,3 ) ),
+							static_cast<double>( modelViewMatrix.operator()( 2,0 ) ),static_cast<double>( modelViewMatrix.operator()( 2,1 ) ),static_cast<double>( modelViewMatrix.operator()( 2,2 ) ),static_cast<double>( modelViewMatrix.operator()( 2,3 ) ),
+							static_cast<double>( modelViewMatrix.operator()( 3,0 ) ),static_cast<double>( modelViewMatrix.operator()( 3,1 ) ),static_cast<double>( modelViewMatrix.operator()( 3,2 ) ),static_cast<double>( modelViewMatrix.operator()( 3,3 ) ) );
 
 	// transformation vector user to move graph over aruco shadow base (jurik)
 	osg::Vec3f arucoBaseDist = coreGraph->getGrafRotTransVec();
@@ -125,7 +125,7 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
 
 			controlObjects.remove( object_id );
 
-			ArControlObject* newControlObject = new ArControlObject( object_id, targetPosition, _assignmentStrategy, _selectionLayoutStrategy );
+			ArControlObject* newControlObject = new ArControlObject( static_cast<int>( object_id ), targetPosition, _assignmentStrategy, _selectionLayoutStrategy );
 			if ( newControlObject->isFocused() ) {
 				//sucesfully assigned to graph node
 				controlObjects.insert( object_id,  newControlObject );
@@ -139,7 +139,7 @@ void ArControlClass::updateObjectPositionAruco( qlonglong object_id, QMatrix4x4 
 	}
 	else {
 		qDebug() << "new object";
-		ArControlObject* newControlObject = new ArControlObject( object_id, targetPosition, _assignmentStrategy, _selectionLayoutStrategy );
+		ArControlObject* newControlObject = new ArControlObject( static_cast<int>( object_id ), targetPosition, _assignmentStrategy, _selectionLayoutStrategy );
 		if ( newControlObject->isFocused() ) {
 			//sucesfully assigned to graph node
 			controlObjects.insert( object_id,  newControlObject );

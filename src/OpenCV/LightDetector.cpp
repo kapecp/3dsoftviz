@@ -11,7 +11,7 @@
 // constructor loads classifier file with learned faces and set start parameters
 OpenCV::LightDetector::LightDetector()
 {
-	mFrameMeanColor = osg::Vec4( 0.3, 0.3, 0.3, 1.0 );
+	mFrameMeanColor = osg::Vec4( 0.3f, 0.3f, 0.3f, 1.0f );
 	mFisheyeAngle = 170;
 
 	for ( int i = 0; i < 8; i++ ) {
@@ -27,7 +27,7 @@ void OpenCV::LightDetector::DrawBoundary( cv::Mat src )
 {
 	int circles = 8;
 	for ( int i = 1; i <= circles; ++i ) {
-		cv::circle( src, this->mfisheyeCenter, ( int ) MathModule::EaseOutQuadratic( i, 0, this->mFisheyeRadius, circles ), CV_RGB( 255,255,255 ) );
+		cv::circle( src, this->mfisheyeCenter, static_cast<int>(MathModule::EaseOutQuadratic( i, 0, this->mFisheyeRadius, circles )), CV_RGB( 255,255,255 ) );
 	}
 }
 
@@ -43,8 +43,8 @@ void OpenCV::LightDetector::DrawLightContours( cv::Mat src )
 
 void OpenCV::LightDetector::DrawLightCircles( cv::Mat src )
 {
-	for ( size_t i = 0; i< mLightCount; i++ ) {
-		cv::circle( src, mLights[i].positionFrame, ( int ) mLights[i].radius, CV_RGB( 0, 255, 0 ) );
+	for ( int i = 0; i< mLightCount; i++ ) {
+		cv::circle( src, mLights[i].positionFrame, static_cast<int>(mLights[i].radius), CV_RGB( 0, 255, 0 ) );
 	}
 }
 
@@ -66,7 +66,7 @@ void OpenCV::LightDetector::setFisheyeRadius( int radius )
 
 void OpenCV::LightDetector::calculateSurface()
 {
-	mFrameSurface = M_PI * this->mFisheyeRadius * this->mFisheyeRadius;
+	mFrameSurface = static_cast<float>( M_PI * static_cast<double>( this->mFisheyeRadius ) * static_cast<double>( this->mFisheyeRadius ) );
 }
 
 void OpenCV::LightDetector::setKernelOpen( int size )
@@ -79,7 +79,7 @@ void OpenCV::LightDetector::setKernelClose( int size )
 	mKernelClose = cv::getStructuringElement( cv::MORPH_ELLIPSE, cv::Size( size, size ) );
 }
 
-bool Light2DRadiusCompare( OpenCV::TrackedLight i, OpenCV::TrackedLight j )
+inline bool Light2DRadiusCompare( OpenCV::TrackedLight i, OpenCV::TrackedLight j )
 {
 	return ( i.radius > j.radius );
 }
@@ -88,7 +88,7 @@ void OpenCV::LightDetector::ProcessFrame( cv::Mat& frame, cv::Mat frameGray )
 {
 	// circle mask
 	cv::Mat mask( frameGray.size(), CV_8U, cv::Scalar( 255 ) );
-	cv::circle( mask, this->mfisheyeCenter, ( int )( ( float ) this->mFisheyeRadius * 0.8f ), cv::Scalar( 0 ), CV_FILLED );
+	cv::circle( mask, this->mfisheyeCenter, static_cast<int>(( static_cast<float>(this->mFisheyeRadius) * 0.8f )), cv::Scalar( 0 ), CV_FILLED );
 
 	// average frame color
 	cv::Scalar mean = cv::mean( frame, mask );
@@ -100,7 +100,7 @@ void OpenCV::LightDetector::ProcessFrame( cv::Mat& frame, cv::Mat frameGray )
 	//mFrameMean.a() = static_cast< float > ( mean[3] );
 
 	// mask grey frame
-	cv::circle( mask, this->mfisheyeCenter, this->mFisheyeRadius, cv::Scalar( 0 ), CV_FILLED );
+	cv::circle( mask, this->mfisheyeCenter, static_cast<int>( this->mFisheyeRadius ), cv::Scalar( 0 ), CV_FILLED );
 	frameGray.setTo( cv::Scalar( 0 ), mask );
 
 	mFrameMeanColorIntensity = 1;
@@ -120,13 +120,13 @@ void OpenCV::LightDetector::ProcessFrame( cv::Mat& frame, cv::Mat frameGray )
 	cv::findContours( frameGray.clone(), mContours, cv::RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cv::Point( 0, 0 ) );
 
 	// enclosing circles for contours
-	for ( int i = 0; i < mContours.size(); ++i ) {
+	for ( int i = 0; i < static_cast<int>( mContours.size() ); ++i ) {
 		if ( mLights.size() <= i ) {
 			mLights.push_back( OpenCV::TrackedLight() );
 		}
 
-		mLights[i].bbox = cv::boundingRect( mContours[i] );
-		cv::minEnclosingCircle( mContours[i], mLights[i].positionFrame, mLights[i].radius );
+		mLights[i].bbox = cv::boundingRect( mContours[static_cast<unsigned long>(i)] );
+		cv::minEnclosingCircle( mContours[static_cast<unsigned long>(i)], mLights[i].positionFrame, mLights[i].radius );
 		mLightCount++;
 	}
 

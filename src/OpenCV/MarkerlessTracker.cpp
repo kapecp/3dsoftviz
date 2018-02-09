@@ -105,7 +105,7 @@ void OpenCV::MarkerlessTracker::track( cv::Mat& frame )
 	// TODO assign ids to circles, backtrack them
 	for ( size_t i = 0; i < tBalls.size(); i++ ) {
 		//(x,y,radius)
-		cv::Point3f circle( static_cast<float>( cvRound( tBalls.at( i ).cent.x ) ), static_cast<float>( cvRound( tBalls.at( i ).cent.y ) ), static_cast<float>( cvRound( tBalls.at( i ).radius ) ) );
+		cv::Point3f circle( cvRound( static_cast<double>( tBalls.at( i ).cent.x ) ), cvRound( static_cast<double>( tBalls.at( i ).cent.y ) ), cvRound( static_cast<double>( tBalls.at( i ).radius ) ) );
 
 		cv::Mat rvec( 3, 1, CV_32FC1 );
 		cv::Mat tvec( 3, 1, CV_32FC1 );
@@ -439,7 +439,7 @@ void OpenCV::MarkerlessTracker::findCirclesInFrame( cv::Mat& frame )  //trackuje
 
 			// prevent cases where no fircle could be extracted (because three points collinear or sth.)
 			// filter NaN values
-			if ( ( center.x == center.x ) && ( center.y == center.y ) && ( radius == radius ) ) {
+			if (  qFuzzyCompare( center.x, center.x ) && qFuzzyCompare( center.y, center.y ) && qFuzzyCompare( radius, radius ) ) {
 				cv::circle( tmp, center,static_cast<int>( radius ), cv::Scalar( 255 ) );
 				//            cv::namedWindow("RANSAC"); cv::imshow("RANSAC", tmp);
 			}

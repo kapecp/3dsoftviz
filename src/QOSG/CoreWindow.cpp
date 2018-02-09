@@ -76,6 +76,9 @@
 #include <string>
 #include <list>
 
+#include <leathers/push>
+#include <leathers/used-but-marked-unused>
+
 #include <Importer/Parsing/InvocationGraph.h>
 #include <City/Residence.h>
 #include <Layout/LayoutAlgorithms.h>
@@ -1542,7 +1545,7 @@ struct BuildingInfo {
 	}
 };
 
-QString getAttributeInfo( const Importer::Parsing::Attribute& attribute )
+inline QString getAttributeInfo( const Importer::Parsing::Attribute& attribute )
 {
 	QString info;
 
@@ -1552,7 +1555,7 @@ QString getAttributeInfo( const Importer::Parsing::Attribute& attribute )
 	return info;
 }
 
-QString getMethodInfo( const Importer::Parsing::Method& method )
+inline QString getMethodInfo( const Importer::Parsing::Method& method )
 {
 	QString info;
 
@@ -1601,7 +1604,7 @@ QString getMethodInfo( const Importer::Parsing::Method& method )
 	return info;
 }
 
-int GetCountOfClasses( const Importer::Parsing::SoftTree& softTree )
+inline int GetCountOfClasses( const Importer::Parsing::SoftTree& softTree )
 {
 	int classCount = 0;
 	foreach ( auto n, softTree.namespaces ) {
@@ -5660,3 +5663,5 @@ void CoreWindow::forceOnChange()
 	this->onChange();
 }
 } // namespace QOSG
+
+#include <leathers/pop>

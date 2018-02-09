@@ -104,8 +104,8 @@ void Model::GraphDAO::getNestedGraph( qlonglong parentID, Data::Graph** graph, Q
 Data::Graph* Model::GraphDAO::getGraph( QSqlDatabase* conn, bool* error2, qlonglong graphID, qlonglong layoutID )
 {
 	Data::Graph* newGraph;
-	QSqlQuery* queryNodes;
-	QSqlQuery* queryEdges;
+	QSqlQuery* queryNodes = NULL;
+	QSqlQuery* queryEdges = NULL;
 	QString graphName, layoutName, nodeName, edgeName;
 	bool error = false;
 	//TODO repair of getting Graph
@@ -221,10 +221,10 @@ Data::Graph* Model::GraphDAO::getGraph( QSqlDatabase* conn, bool* error2, qlongl
 
 			if ( edgeScales.contains( edgeID ) ) {
 				if ( newGraph->getEdges()->contains( edgeID ) ) {
-					newGraph->getEdges()->find( edgeID ).value()->setScale( edgeScales.value( edgeID ) );
+					newGraph->getEdges()->find( edgeID ).value()->setScale( static_cast<double>(edgeScales.value( edgeID )) );
 				}
 				else {
-					newGraph->getMetaEdges()->find( edgeID ).value()->setScale( edgeScales.value( edgeID ) );
+					newGraph->getMetaEdges()->find( edgeID ).value()->setScale( static_cast<double>(edgeScales.value( edgeID )) );
 				}
 			}
 		}
@@ -311,7 +311,7 @@ bool Model::GraphDAO::addGraph( Data::Graph* graph, QSqlDatabase* conn )
 	query->bindValue( ":graph_name",graph->getName() );
 	if ( !query->exec() ) {
 		qDebug() << "[Model::GraphDAO::addGraph] Could not perform query on DB: " << query->lastError().databaseText();
-		return ( bool* )NULL;
+		return reinterpret_cast<bool*>(NULL);
 	}
 
 	//ulozime graf do databazy podla ID
