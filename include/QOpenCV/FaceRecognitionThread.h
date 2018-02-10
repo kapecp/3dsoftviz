@@ -42,7 +42,8 @@ signals:
 			 * @param Image cv::Mat
 			 */
 	void pushImage( cv::Mat Image );
-	void pushBackgrImage( cv::Mat image );
+
+	void pushBackgrImage( cv::Mat image, bool trackHands );
 
 	/**
 			 * @author Autor: Marek Jakab

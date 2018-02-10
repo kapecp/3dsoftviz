@@ -1,6 +1,6 @@
 @startuml
 package QOSG{
-class AdapterWidget <|-right- ViewerQT
+AdapterWidget <|-right- ViewerQT
 ViewerQT -left-o CoreWindow
 CoreWindow -down- ProjectiveARCore
 ProjectiveARCore o-- ProjectiveARWindow

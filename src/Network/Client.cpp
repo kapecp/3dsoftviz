@@ -3,10 +3,12 @@
  */
 
 #include "Network/Client.h"
+#include "Network/Helper.h"
+
+#include "Leap/HandModule/Model/HandNode.h"
 
 //#include "Data/Graph.h"
 
-#include "Network/Helper.h"
 #include "Network/ExecutorFactory.h"
 
 #include "QOSG/CoreWindow.h"
@@ -16,12 +18,10 @@
 #include "Viewer/CameraManipulator.h"
 #include "Viewer/CoreGraph.h"
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic ignored "-Wuseless-cast"
-#endif
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+#include <leathers/push>
+#include <leathers/old-style-cast>
+#include <leathers/useless-cast>
+#include <leathers/sign-conversion>
 
 namespace Network {
 
@@ -251,7 +251,11 @@ void Client::sendMyView( osg::Vec3d center, osg::Quat rotation, float distance )
 void Client::sendMyView()
 {
 	Vwr::CameraManipulator* cameraManipulator = ( ( QOSG::CoreWindow* ) cw )->getCameraManipulator();
-	this->sendMyView( cameraManipulator->getCenter(), cameraManipulator->getRotation(), cameraManipulator->getDistance() );
+
+//	this->sendMyView( cameraManipulator->getCenter(), cameraManipulator->getRotation(),  ( float ) cameraManipulator->getDistance() );
+
+	this->sendMyView( cameraManipulator->getCenter(), cameraManipulator->getRotation(), static_cast<float>( cameraManipulator->getDistance() ) );
+//>>>>>>> Stashed changes
 }
 
 void Client::updateUserList()
@@ -288,22 +292,22 @@ void Client::addClient( int id, QString nick )
 void Client::addAvatar( int id, QString nick )
 {
 
-	osg::PositionAttitudeTransform* PAtransform = Helper::generateAvatar( nick );
-	PAtransform->setScale( osg::Vec3d( avatarScale,avatarScale,avatarScale ) );
+	Network::UserAvatar* avatar = new Network::UserAvatar( nick );
+	avatar->setScale( osg::Vec3d( avatarScale,avatarScale,avatarScale ) );
 
 	QLinkedList<osg::ref_ptr<osg::Node> >* nodes = coreGraph->getCustomNodeList();
 
-	nodes->append( PAtransform );
+	nodes->append( avatar );
 
 	//PAtransform->setScale(osg::Vec3d(10,10,10));
-	avatarList.insert( id,PAtransform );
+	avatarList.insert( id,avatar );
 }
 
 void Client::removeAvatar( int id )
 {
-	osg::PositionAttitudeTransform* pat = avatarList.take( id );
-	if ( pat != NULL ) {
-		pat->removeChild( 0,2 );
+	Network::UserAvatar* avatar = avatarList.take( id );
+	if ( avatar != NULL ) {
+		avatar->removeChild( 0,2 );
 	}
 }
 
@@ -749,7 +753,7 @@ void Client::setAttention( int user )
 {
 	QListWidgetItem* item = this->getItemById( user );
 	if ( item != NULL ) {
-		item->setIcon( QIcon( "img/gui/attention.png" ) );
+		item->setIcon( QIcon( "../share/3dsoftviz/img/gui/attention.png" ) );
 	}
 }
 
@@ -782,8 +786,8 @@ void Client::sendAttractAttention( bool attention )
 	}
 	QByteArray block;
 	QDataStream out( &block,QIODevice::WriteOnly );
-	out << ( quint16 )0 << ( quint8 ) AttractAttentionExecutor::INSTRUCTION_NUMBER << ( bool ) attention;
 
+	out << ( quint16 )0 << ( quint8 ) AttractAttentionExecutor::INSTRUCTION_NUMBER << ( bool ) attention;
 	out.device()->seek( 0 );
 	out << ( quint16 )( block.size() - sizeof( quint16 ) );
 
@@ -798,6 +802,21 @@ void Client::setAvatarScale( int scale )
 	}
 }
 
+void Client::updateHands( QTcpSocket* sender, QDataStream* stream )
+{
+	int id;
+	( *stream ) >> id;
+
+	if ( avatarList.contains( id ) ) {
+
+		Network::UserAvatar* avatar = avatarList[id];
+		avatar->UpdateHands( stream );
+	}
+	else {
+		LOG( INFO ) << "Unknown avatar ID '" << id << "'";
+	}
+}
+
 } // namespace Network
 
-#pragma GCC diagnostic pop
+#include <leathers/pop>

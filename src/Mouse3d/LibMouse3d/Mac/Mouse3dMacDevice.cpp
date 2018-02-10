@@ -38,7 +38,7 @@ void Mouse3dMacDevice::MouseHandler( unsigned int connection, unsigned int messa
 		s = static_cast<ConnexionDeviceState*>( messageArgument );
 
 		if ( s->command == kConnexionCmdHandleAxis ) {
-			std::vector<float> motionData;
+			std::vector<double> motionData;
 			motionData.push_back( s->axis[0] ); // X
 			motionData.push_back( -s->axis[1] ); // Y
 			motionData.push_back( -s->axis[2] ); // Z

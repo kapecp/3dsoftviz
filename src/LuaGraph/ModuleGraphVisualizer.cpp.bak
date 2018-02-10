@@ -1,0 +1,442 @@
+#include "LuaGraph/ModuleGraphVisualizer.h"
+#include "LuaGraph/HyperGraphVisualizer.h"
+#include "LuaGraph/LuaGraphVisualizer.h"
+#include "LuaGraph/LuaGraph.h"
+#include "Importer/GraphOperations.h"
+#include <Manager/ResourceManager.h>
+
+#include "ModuleGraph/Module.h"
+
+#include "Data/Graph.h"
+#include "Data/GraphLayout.h"
+#include "Data/AbsNode.h"
+#include "City/Module.h"
+
+#include <QMap>
+#include <QDebug>
+
+#include "limits"
+#include <iostream>
+
+Lua::ModuleGraphVisualizer::ModuleGraphVisualizer( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera )
+	: Lua::LuaGraphVisualizer( graph, camera ) {}
+
+void Lua::ModuleGraphVisualizer::visualize()
+{
+	Lua::LuaGraph* luaGraph = Lua::LuaGraph::loadGraph();
+	luaGraph->printGraph();
+
+	auto resMgr = Manager::ResourceManager::getInstance();
+
+	auto white = resMgr->getMaterial( osg::Vec3( 1.0f, 1.0f, 1.0f ) );
+	auto black = resMgr->getMaterial( osg::Vec3( 0.0f, 0.0f, 0.0f ) );
+	auto yellow = resMgr->getMaterial( osg::Vec3( 1.0f, 1.0f, 0.0f ) );
+	auto red = resMgr->getMaterial( osg::Vec3( 0.941f, 0.502f, 0.502f ) );
+	auto green = resMgr->getMaterial( osg::Vec3( 0.565f, 0.933f, 0.565f ) );
+	auto orange = resMgr->getMaterial( osg::Vec3( 1.000f, 0.647f, 0.000f ) );
+
+	auto nodeType = currentGraph->addType( Data::GraphLayout::NESTED_NODE_TYPE );
+	auto edgeType = currentGraph->addType( Data::GraphLayout::NESTED_EDGE_TYPE );
+
+	//adding nodes
+	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = luaGraph->getNodes()->begin(); i != luaGraph->getNodes()->end(); ++i ) {
+		osg::ref_ptr<Data::Node> n = currentGraph->addNode( i.key(), i.value()->getLabel(), nodeType );
+		n->setLuaIdentifier( i.value()->getIdentifier() );
+		setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
+	}
+
+	//adding edges
+	for ( QMap<qlonglong, Lua::LuaEdge*>::iterator i = luaGraph->getEdges()->begin(); i != luaGraph->getEdges()->end(); ++i ) {
+		if ( i.value()->getIncidences().size() != 2 ) {
+			throw new std::runtime_error( "Not a simple graph" );
+		}
+		LuaIncidence* const incid1 = luaGraph->getIncidences()->value( i.value()->getIncidences()[0] );
+		LuaIncidence* const incid2 = luaGraph->getIncidences()->value( i.value()->getIncidences()[1] );
+
+		osg::ref_ptr<Data::Node> srcNode = currentGraph->getNodes()->value( incid2->getEdgeNodePair().second );
+		osg::ref_ptr<Data::Node> dstNode = currentGraph->getNodes()->value( incid1->getEdgeNodePair().second );
+		osg::ref_ptr<Data::Edge> newEdge;
+		if ( incid1->getOriented() ) {
+			if ( incid1->getOutGoing() ) {
+				newEdge = currentGraph->addEdge( i.key(), i.value()->getLabel(), dstNode, srcNode, edgeType, true );
+			}
+			else {
+				newEdge = currentGraph->addEdge( i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, true );
+			}
+		}
+		else {
+			newEdge = currentGraph->addEdge( i.key(), i.value()->getLabel(), srcNode, dstNode, edgeType, false );
+		}
+		newEdge->setLuaIdentifier( i.value()->getIdentifier() );
+		newEdge->setCamera( camera );
+		setEdgeParams( newEdge, i.value(), osg::Vec4f( 1,1,1,1 ) );
+	}
+
+	luaGraph->setObserver( this );
+
+	//adding invisible anchor nodes
+	QString metaNodeName = "metaNode";
+	QString metaEdgeName = "metaEdge";
+	auto filesAnchor = currentGraph->addNode( std::numeric_limits<qlonglong>::max(), metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3( 0, 0, 500 ) );
+	auto functionsAnchor = currentGraph->addNode( std::numeric_limits<qlonglong>::max() - 1, metaNodeName, currentGraph->getNodeMetaType(), osg::Vec3( 0, 0, -500 ) );
+	filesAnchor->setColor( osg::Vec4( 0,0,0,0 ) );
+	functionsAnchor->setColor( osg::Vec4( 0,0,0,0 ) );
+
+	deleteReturnsNode();
+
+	//iterate through all nodes
+	QMap<qlonglong, Lua::LuaNode*>::iterator i;
+	for ( i = luaGraph->getNodes()->begin();
+			i != luaGraph->getNodes()->end();
+			++i ) {
+		auto graphNode = currentGraph->getNodes()->value( i.key() );
+		if ( graphNode == nullptr ) {
+			continue;
+		}
+		if ( i.value()->getParams().getValue()["type"] == "module" ) {
+			auto module = new City::Module();
+			graphNode->setResidence( module );
+			QMap<qlonglong, osg::ref_ptr<Data::Edge>>* edges = graphNode->getEdges();
+			std::cout << "Module Node = " << graphNode->Data::AbsNode::getName().toStdString() << "\n";
+			std::cout << "Only provides edges \n";
+			for ( auto edge : edges->values() ) {
+				if ( edge->getSrcNode() == graphNode && edge->Data::AbsEdge::getName().toStdString() == "provides" ) {
+					//handle interface nodes
+					std::cout << edge->Data::AbsEdge::getName().toStdString() << '\n';
+					std::cout << edge->getDstNode()->Data::AbsNode::getName().toStdString() << '\n';
+
+					/*auto interfaceNode = edge->getDstNode();
+					osg::ref_ptr<Data::Node> interfaceNodeClone = new Data::Node(
+								i.key(),
+								i.value()->getLabel(),
+								nodeType,
+								currentGraph->getNodeScaleByType(nodeType),
+								currentGraph,
+								osg::Vec3f(20.0f,20.0f,100.0f));
+					interfaceNodeClone->setLuaIdentifier(i.value()->getIdentifier());
+					setNodeParams( interfaceNodeClone, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
+
+					edge->setDstNode(interfaceNodeClone);
+					QMap<qlonglong, osg::ref_ptr<Data::Edge>> *interfaceNodeEdges = interfaceNode->getEdges();
+					for(auto edge : interfaceNodeEdges->values()) {
+						if(edge->getSrcNode() == interfaceNode) {
+							edge->setSrcNode(interfaceNodeClone);
+						}
+						if(edge->getDstNode() == interfaceNode) {
+							edge->setDstNode(interfaceNodeClone);
+						}
+					}
+					*/
+
+//					osg::ref_ptr<Data::Node> n = currentGraph->addNode( i.key() , i.value()->getLabel(), nodeType );
+//					n->setLuaIdentifier(i.value()->getIdentifier());
+//					setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
+//					//new Data::Node( this->incEleIdCounter(), name, type, this->getNodeScaleByType( type ), this, position );
+//					module->addInterfaceBuilding(interfaceNodeClone);
+//					nodeIdsToDelete << interfaceNode->getId();
+//					//currentGraph->removeNode(interfaceNode, true);
+
+
+				}
+				/*else if(edge->getSrcNode() == graphNode && edge->Data::AbsEdge::getName().toStdString() == "declares") {
+					//handle function nodes
+					std::cout << edge->Data::AbsEdge::getName().toStdString() << '\n';
+					std::cout << edge->getDstNode()->Data::AbsNode::getName().toStdString() << '\n';
+
+					auto functionNode = edge->getDstNode();
+					module->addFunctionBuilding(functionNode);
+					nodeIdsToDelete << functionNode->getId();
+					//currentGraph->removeNode(functionNode, true);
+					if(functionNode != nullptr && edge != nullptr) {
+						std::cout << "node and edge still exist";
+					}
+				}
+				else if(edge->getSrcNode() == graphNode && edge->Data::AbsEdge::getName().toStdString() == "initializes") {
+					//handle variable nodes
+					std::cout << edge->Data::AbsEdge::getName().toStdString() << '\n';
+					std::cout << edge->getDstNode()->Data::AbsNode::getName().toStdString() << '\n';
+
+					auto variableNode = edge->getDstNode();
+					module->addVariableBuilding(variableNode);
+
+
+					QMap<qlonglong, osg::ref_ptr<Data::Edge>> *edges = variableNode->getEdges();
+					std::cout << "Variable Node = " << variableNode->Data::AbsNode::getName().toStdString() << "\n";
+					for(auto edge : edges->values()) {
+						if(edge->getSrcNode() == variableNode && edge->Data::AbsEdge::getName().toStdString() == "assigns") {
+							//handle other nodes
+							std::cout << edge->Data::AbsEdge::getName().toStdString() << '\n';
+							std::cout << edge->getDstNode()->Data::AbsNode::getName().toStdString() << '\n';
+
+							auto otherNode = edge->getDstNode();
+							module->addOtherBuilding(otherNode);
+							nodeIdsToDelete << otherNode->getId();
+							//currentGraph->removeNode(otherNode, true);
+							otherNode->setTargetPosition(osg::Vec3f(20.0f, 20.0f, -150.0f));
+						}
+					}
+					nodeIdsToDelete << variableNode->getId();
+					//currentGraph->removeNode(variableNode, true);
+
+				}*/
+			}
+			std::cout << "\n";
+			module->refresh();
+		}
+
+
+	}
+	//deleteNonModuleNodes();
+
+	//iterate through all nodes in graph (i.key() == id, i.value() == node)
+	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = luaGraph->getNodes()->begin(); i != luaGraph->getNodes()->end(); ++i ) {
+		if ( i.value()->getParams().getValue().type() == 0 ) {
+			continue;
+		}
+		auto node = currentGraph->getNodes()->value( i.key() );
+		if ( node == nullptr ) {
+			continue;
+		}
+
+		if ( i.value()->getParams().getValue()["root"] == true ) {
+			//connect root node to filesAnchor with invisible edge
+			auto metaLink = currentGraph->addEdge( metaEdgeName, node, filesAnchor, currentGraph->getEdgeMetaType(), false );
+			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
+			metaLink->setInvisible( true );
+
+			auto rootBuilding = new City::Building();
+			rootBuilding->setBaseSize( 10 );
+			rootBuilding->setHeight( 10 );
+			rootBuilding->setLieOnGround( false );
+			rootBuilding->setStateSet( new osg::StateSet() );
+			rootBuilding->getStateSet()->setAttribute( white );
+			rootBuilding->getStateSet()->setMode( GL_RESCALE_NORMAL, osg::StateAttribute::ON );
+			rootBuilding->getStateSet()->setTextureAttributeAndModes( 0, resMgr->getTexture( Util::ApplicationConfig::get()->getValue( "Viewer.Textures.ProjectNode" ) ), osg::StateAttribute::ON );
+			rootBuilding->refresh();
+			node->setResidence( rootBuilding );
+			std::cout << i.key() << " root \n";
+		}
+
+		else if ( i.value()->getParams().getValue()["type"] == "directory" ) {
+			auto metaLink = currentGraph->addEdge( metaEdgeName, node, filesAnchor, currentGraph->getEdgeMetaType(), false );
+			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
+			metaLink->setInvisible( true );
+
+			auto dirBuilding = new City::Building();
+			dirBuilding->setBaseSize( 10 );
+			dirBuilding->setHeight( 10 );
+			dirBuilding->setLieOnGround( false );
+			dirBuilding->setStateSet( new osg::StateSet() );
+			dirBuilding->getStateSet()->setAttribute( white );
+			dirBuilding->getStateSet()->setMode( GL_RESCALE_NORMAL, osg::StateAttribute::ON );
+			dirBuilding->getStateSet()->setTextureAttributeAndModes( 0, resMgr->getTexture( Util::ApplicationConfig::get()->getValue( "Viewer.Textures.FolderNode" ) ), osg::StateAttribute::ON );
+			dirBuilding->refresh();
+			node->setResidence( dirBuilding );
+			std::cout << i.key() << " directory \n";
+		}
+		else if ( i.value()->getParams().getValue()["type"] == "file" ) {
+			auto metaLink = currentGraph->addEdge( metaEdgeName, node, filesAnchor, currentGraph->getEdgeMetaType(), false );
+			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
+			metaLink->setInvisible( true );
+
+			auto fileBuilding = new City::Building();
+			fileBuilding->setBaseSize( 10 );
+			fileBuilding->setHeight( 10 );
+			fileBuilding->setLieOnGround( false );
+			fileBuilding->setStateSet( new osg::StateSet() );
+			fileBuilding->getStateSet()->setAttribute( white );
+			fileBuilding->getStateSet()->setMode( GL_RESCALE_NORMAL, osg::StateAttribute::ON );
+			fileBuilding->getStateSet()->setTextureAttributeAndModes( 0, resMgr->getTexture( Util::ApplicationConfig::get()->getValue( "Viewer.Textures.LuaFileNode" ) ), osg::StateAttribute::ON );
+			fileBuilding->refresh();
+			node->setResidence( fileBuilding );
+			std::cout << i.key() << " file \n";
+		}
+		/*else if ( i.value()->getParams().getValue()["type"] == "module" ) {
+			auto moduleBuilding = new City::Building();
+			moduleBuilding->setBaseSize( 20 );
+			moduleBuilding->setHeight( 4 );
+			moduleBuilding->setLieOnGround( false );
+			moduleBuilding->setStateSet( new osg::StateSet() );
+			moduleBuilding->getStateSet()->setAttribute( white );
+			moduleBuilding->getStateSet()->setMode( GL_RESCALE_NORMAL, osg::StateAttribute::ON );
+			moduleBuilding->refresh();
+			node->setResidence( moduleBuilding );
+			std::cout << i.key() << " module \n";
+		}*/
+		/*else if ( i.value()->getParams().getValue()["type"] == "function" ) {
+			//connect every function node to functionsAnchor with invisible edge
+			auto metaLink = currentGraph->addEdge( metaEdgeName, node, functionsAnchor, currentGraph->getEdgeMetaType(), false );
+			metaLink->setEdgeColor( osg::Vec4( 0,0,0,0 ) );
+			metaLink->setInvisible( true );
+			metaLink->setEdgeStrength( 0.1f );
+
+			auto functionBuilding = new City::Building();
+			functionBuilding->setBaseSize( 4 );
+			functionBuilding->setHeight( 8 );
+			functionBuilding->setLieOnGround( false );
+			functionBuilding->setStateSet( new osg::StateSet() );
+			functionBuilding->getStateSet()->setAttribute( red );
+			functionBuilding->getStateSet()->setMode( GL_RESCALE_NORMAL, osg::StateAttribute::ON );
+			functionBuilding->refresh();
+			node->setResidence( functionBuilding );
+			std::cout << i.key() << " function \n";
+		}*/
+		/*else if ( i.value()->getParams().getValue()["type"] == "global function" ) {
+			auto globFunctionBuilding = new City::Building();
+			globFunctionBuilding->setBaseSize( 4 );
+			globFunctionBuilding->setHeight( 8 );
+			globFunctionBuilding->setLieOnGround( false );
+			globFunctionBuilding->setStateSet( new osg::StateSet() );
+			globFunctionBuilding->getStateSet()->setAttribute( orange );
+			globFunctionBuilding->getStateSet()->setMode( GL_RESCALE_NORMAL, osg::StateAttribute::ON );
+			globFunctionBuilding->refresh();
+			node->setResidence( globFunctionBuilding );
+			std::cout << i.key() << " global function \n";
+		}*/
+		/*else if ( i.value()->getParams().getValue()["type"] == "local variable" ) {
+			auto locVarBuilding = new City::Building();
+			locVarBuilding->setBaseSize( 4 );
+			locVarBuilding->setHeight( 8 );
+			locVarBuilding->setLieOnGround( false );
+			locVarBuilding->setStateSet( new osg::StateSet() );
+			locVarBuilding->getStateSet()->setAttribute( yellow );
+			locVarBuilding->getStateSet()->setMode( GL_RESCALE_NORMAL, osg::StateAttribute::ON );
+			locVarBuilding->refresh();
+			node->setResidence( locVarBuilding );
+			std::cout << i.key() << " local variable \n";
+		}*/
+		/*else if ( i.value()->getParams().getValue()["type"] == "global variable" ) {
+			auto globVarBuilding = new City::Building();
+			globVarBuilding->setBaseSize( 4 );
+			globVarBuilding->setHeight( 8 );
+			globVarBuilding->setLieOnGround( false );
+			globVarBuilding->setStateSet( new osg::StateSet() );
+			globVarBuilding->getStateSet()->setAttribute( yellow );
+			globVarBuilding->getStateSet()->setMode( GL_RESCALE_NORMAL, osg::StateAttribute::ON );
+			globVarBuilding->refresh();
+			node->setResidence( globVarBuilding );
+			std::cout << i.key() << " global variable \n";
+		}*/
+		/*else if ( i.value()->getParams().getValue()["type"] == "interface" ) {
+			auto interfaceBuilding = new City::Building();
+			interfaceBuilding->setBaseSize( 4 );
+			interfaceBuilding->setHeight( 8 );
+			interfaceBuilding->setLieOnGround( false );
+			interfaceBuilding->setStateSet( new osg::StateSet() );
+			interfaceBuilding->getStateSet()->setAttribute( green );
+			interfaceBuilding->getStateSet()->setMode( GL_RESCALE_NORMAL, osg::StateAttribute::ON );
+			interfaceBuilding->refresh();
+			node->setResidence( interfaceBuilding );
+			std::cout << i.key() << " interface \n";
+		}*/
+		else {
+
+//			osg::ref_ptr<Data::Edge> newEdge1 = currentGraph->addEdge( 12, "testEdge1", node, intrfc1, edgeType, true );
+//			newEdge1->setEdgeColor(osg::Vec4f( 1,1,1,1 ));
+//			osg::ref_ptr<Data::Edge> newEdge2 = currentGraph->addEdge( 22, "testEdge2", node, intrfc2, edgeType, true );
+//			newEdge2->setEdgeColor(osg::Vec4f( 1,1,1,1 ));
+//			osg::ref_ptr<Data::Edge> newEdge3 = currentGraph->addEdge( 23, "testEdge3", node, intrfc3, edgeType, true );
+//			newEdge3->setEdgeColor(osg::Vec4f( 1,1,1,1 ));
+
+			/*auto otherBuilding = new City::Building();
+			otherBuilding->setBaseSize( 4 );
+			otherBuilding->setHeight( 8 );
+			otherBuilding->setLieOnGround( false );
+			otherBuilding->setStateSet( new osg::StateSet() );
+			otherBuilding->getStateSet()->setAttribute( black );
+			otherBuilding->getStateSet()->setMode( GL_RESCALE_NORMAL, osg::StateAttribute::ON );
+			otherBuilding->refresh();
+			node->setResidence( otherBuilding );
+			std::cout << i.key() << " other \n";*/
+		}
+
+
+
+
+	}
+
+	//QList<osg::ref_ptr<Building>> attributesBuildings;
+	//osg::ref_ptr<osg::PositionAttitudeTransform> attributesBuildingsNode;
+
+	//iterate through all edges in graph (i.key() == id, i.value() == edge)
+	/*
+	for ( QMap<qlonglong, Lua::LuaEdge*>::iterator i = g->getEdges()->begin(); i != g->getEdges()->end(); ++i ) {
+		auto edge = currentGraph->getEdges()->value( i.key() );
+		//initializes, declared, provides - hierarchical relationships
+		//assigns, contains, implements - streight relationships
+		//calls, requires, represents, contains (in table) - arc relationships
+		if ( i.value()->getParams().getValue()["type"] == "" ) {
+
+		}
+	}
+	*/
+
+	//deleteNonModuleNodes();
+}
+
+void Lua::ModuleGraphVisualizer::onUpdate()
+{
+	std::cout << "SimpleGraph update called" << std::endl;
+	Lua::LuaGraph* g = Lua::LuaGraph::loadGraph();
+	for ( QMap<qlonglong, Lua::LuaNode*>::iterator i = g->getNodes()->begin(); i != g->getNodes()->end(); ++i ) {
+		osg::ref_ptr<Data::Node> n = currentGraph->getNodes()->value( i.key() );
+		setNodeParams( n, i.value(), osg::Vec4f( 1,1,1,1 ), 8 );
+	}
+	for ( QMap<qlonglong, Lua::LuaEdge*>::iterator i = g->getEdges()->begin(); i != g->getEdges()->end(); ++i ) {
+		osg::ref_ptr<Data::Edge> e = currentGraph->getEdges()->value( i.key() );
+		setEdgeParams( e, i.value(), osg::Vec4f( 1,1,1,1 ) );
+		e->reloadLabel();
+	}
+}
+
+void Lua::ModuleGraphVisualizer::deleteNonModuleNodes()
+{
+	std::cout << "Number of nodes to be deleted: " << nodeIdsToDelete.size() << "\n";
+	int counter = 0;
+	for ( auto nodeId : nodeIdsToDelete.values() ) {
+		osg::ref_ptr<Data::Node> nodeToDelete = currentGraph->getNodes()->value( nodeId );
+		if ( nodeToDelete != nullptr ) {
+			std::cout << "Deleting... " << nodeToDelete->Data::AbsNode::getName().toStdString() << "\n";
+			currentGraph->removeNode( nodeToDelete );
+			++counter;
+		}
+	}
+	std::cout << "Number of nodes that have been deleted: " << counter << "\n";
+	nodeIdsToDelete.clear();
+}
+
+void Lua::ModuleGraphVisualizer::deleteReturnsNode()
+{
+	Lua::LuaGraph* luaGraph = Lua::LuaGraph::loadGraph();
+	QMap<qlonglong, Lua::LuaNode*>::iterator i;
+	for ( i = luaGraph->getNodes()->begin();
+			i != luaGraph->getNodes()->end();
+			++i ) {
+		if ( i.value()->getParams().getValue()["type"] == "interface" && i.value()->getLabel() == "Returns" ) {
+			auto returnsNode = currentGraph->getNodes()->value( i.key() );
+
+			osg::ref_ptr<Data::Node> moduleNode;
+			osg::ref_ptr<Data::Edge> edgeToDelete;
+			QMap<qlonglong, osg::ref_ptr<Data::Edge>>* edges = returnsNode->getEdges();
+			for ( auto edge : edges->values() ) {
+				if ( edge->getDstNode() == returnsNode ) {
+					std::cout << "should be provides... : " << edge->Data::AbsEdge::getName().toStdString() << "\n";
+					moduleNode = edge->getSrcNode();
+					edgeToDelete = edge;
+				}
+			}
+			for ( auto edge : edges->values() ) {
+				if ( edge->getSrcNode() == returnsNode ) {
+					std::cout << "should be provides... : " << edge->Data::AbsEdge::getName().toStdString() << "\n";
+					edge->setSrcNode( moduleNode );
+				}
+			}
+			currentGraph->removeEdge( edgeToDelete );
+			std::cout << "module -> Returns edge removed \n";
+			currentGraph->removeNode( returnsNode, true );
+			std::cout << "returns node removed \n";
+
+		}
+	}
+
+}

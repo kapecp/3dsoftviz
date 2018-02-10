@@ -326,6 +326,7 @@ bool QGraphicsViewAdapter::sendKeyEvent( int key, bool keyDown )
 
 bool QGraphicsViewAdapter::handleKeyEvent( int key, bool keyDown )
 {
+
 	QEvent::Type eventType = keyDown ? QEvent::KeyPress : QEvent::KeyRelease;
 
 	osg::notify( osg::INFO )<<"sendKeyEvent("<<key<<", "<<keyDown<<")"<<std::endl;

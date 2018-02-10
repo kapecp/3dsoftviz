@@ -16,6 +16,7 @@
 #include "Network/executors/WelcomeExecutor.h"
 #include "Network/executors/IncommingUserExecutor.h"
 #include "Network/executors/SendGraphExecutor.h"
+#include "Network/executors/SendHandsExecutor.h"
 #include "Network/executors/SpyUserExecutor.h"
 #include "Network/executors/UnspyUserExecutor.h"
 #include "Network/executors/RemoveNodeExecutor.h"

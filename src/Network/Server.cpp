@@ -2,8 +2,8 @@
  Client - server communication implementation inspired by http://thesmithfam.org/blog/2009/07/09/example-qt-chat-program/
  */
 
+#include "Network/UserAvatar.h"
 #include "Network/Server.h"
-
 #include "Network/Helper.h"
 #include "Network/ExecutorFactory.h"
 #include "Data/Graph.h"
@@ -16,12 +16,10 @@
 
 #include "Util/ApplicationConfig.h"
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic ignored "-Wuseless-cast"
-#endif
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+#include <leathers/push>
+#include <leathers/useless-cast>
+#include <leathers/old-style-cast>
+#include <leathers/sign-conversion>
 
 namespace Network {
 
@@ -376,7 +374,7 @@ void Server::updateUserList()
 void Server::removeAvatar( QTcpSocket* client )
 {
 
-	osg::PositionAttitudeTransform* pat = avatars.take( client );
+	Network::UserAvatar* pat = avatars.take( client );
 	if ( pat != NULL ) {
 		pat->removeChildren( 0,2 );
 	}
@@ -461,7 +459,7 @@ void Server::unSpyUser()
 
 void Server::addAvatar( QTcpSocket* socket, QString nick )
 {
-	osg::PositionAttitudeTransform* avatar = Helper::generateAvatar( nick );
+	Network::UserAvatar* avatar = new Network::UserAvatar( nick );
 	avatar->setScale( osg::Vec3d( avatarScale,avatarScale,avatarScale ) );
 
 	QLinkedList<osg::ref_ptr<osg::Node> >* nodes = coreGraph->getCustomNodeList();
@@ -515,7 +513,7 @@ void Server::centerUser( int id_user )
 	cameraManipulator->setDistance( 0 );
 
 	user_to_center = clientToCenter;
-	osg::PositionAttitudeTransform* userAvatar = avatars[user_to_center];
+	Network::UserAvatar* userAvatar = avatars[user_to_center];
 	lookAt( userAvatar->getPosition() );
 }
 
@@ -933,11 +931,57 @@ void Server::sendAttractAttention( bool attention, int idUser, QTcpSocket* clien
 void Server::setAvatarScale( int scale )
 {
 	avatarScale = scale;
-	foreach ( osg::PositionAttitudeTransform* avatar, avatars ) {
+	foreach ( Network::UserAvatar* avatar, avatars ) {
 		avatar->setScale( osg::Vec3d( avatarScale,avatarScale,avatarScale ) );
+	}
+}
+
+void Server::sendHands( Softviz::Leap::HandPalm* leftPalm, Softviz::Leap::HandPalm* rightPalm )
+{
+	QByteArray block;
+	QDataStream out( &block,QIODevice::WriteOnly );
+	out.setFloatingPointPrecision( QDataStream::SinglePrecision );
+
+	out << ( quint16 )0 << SendHandsExecutor::INSTRUCTION_NUMBER
+		<< ( int ) 0; // server ID
+
+	leftPalm->addToStream( &out );
+	rightPalm->addToStream( &out );
+
+	out.device()->seek( 0 );
+	out << ( quint16 )( block.size() - sizeof( quint16 ) );
+
+	foreach ( QTcpSocket* client, clients ) {
+
+		this->sendBlock( block, client );
+	}
+}
+
+void Server::invokeSendHands( Softviz::Leap::HandPalm* leftHand, Softviz::Leap::HandPalm* rightHand )
+{
+	QApplication::postEvent( this, new HandsUpdatedEvent( leftHand, rightHand ) );
+}
+
+void Server::customEvent( QEvent* event )
+{
+	if ( event != nullptr ) {
+		if ( event->type() == HANDS_UPDATED_EVENT ) {
+			HandsUpdatedEvent* e = static_cast<HandsUpdatedEvent*>( event );
+			this->sendHands( e->getLeftHand(), e->getRightHand() );
+		}
+		else {
+			QTcpServer::customEvent( event );
+		}
 	}
 }
 
 } // namespace Network
 
-#pragma GCC diagnostic pop
+HandsUpdatedEvent::HandsUpdatedEvent( Softviz::Leap::HandPalm* leftHand, Softviz::Leap::HandPalm* rightHand )
+	: QEvent( HANDS_UPDATED_EVENT )
+{
+	this->leftHand = leftHand;
+	this->rightHand = rightHand;
+}
+
+#include <leathers/pop>

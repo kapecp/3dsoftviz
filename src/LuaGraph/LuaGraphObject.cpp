@@ -21,25 +21,46 @@ void Lua::LuaGraphObject::setLabel( const QString& value )
 {
 	label = value;
 }
-Diluculum::LuaValue Lua::LuaGraphObject::getParams() const
+Lua::LuaValue Lua::LuaGraphObject::getParams() const
 {
 	return params;
 }
 
-void Lua::LuaGraphObject::setParams( const Diluculum::LuaValue& value )
+void Lua::LuaGraphObject::setParams( const Lua::LuaValue& value )
 {
 	params = value;
 }
 
 float Lua::LuaGraphObject::getFloatParam( std::string name, float defaultValue )
 {
-	if ( params.type() == 0 ) {
+	if ( params.getValue().type() == 0 ) {
 		return defaultValue;
 	}
-	if ( params[name].typeName() != "number" ) {
+	if ( params.getValue()[name].typeName() != "number" ) {
 		return defaultValue;
 	}
-	return static_cast<float>( params[name].asNumber() );
+	return static_cast<float>( params.getValue()[name].asNumber() );
+}
+
+float Lua::LuaGraphObject::getFloatParam( std::string tableName, std::string key, float defaultValue )
+{
+	if ( params.getValue().type() == 0 ) {
+		return defaultValue;
+	}
+	if ( params.getValue()[tableName].typeName() != "table" ) {
+		return defaultValue;
+	}
+	Lua::LuaValue tableFromParams;
+	tableFromParams.setValue( params.getValue()[tableName].asTable() );
+
+	if ( tableFromParams.getValue().type() == 0 ) {
+		return defaultValue;
+	}
+	if ( tableFromParams.getValue()[key].typeName() != "number" ) {
+		return defaultValue;
+	}
+	return static_cast<float>( tableFromParams.getValue()[key].asNumber() );
+
 }
 
 

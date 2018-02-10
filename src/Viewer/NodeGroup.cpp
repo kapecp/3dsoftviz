@@ -2,10 +2,14 @@
 
 #include "Data/Edge.h"
 #include "Util/ApplicationConfig.h"
+#include "LuaGraph/LuaGraph.h"
+#include "City/Module.h"
 
 #include <osg/ShapeDrawable>
 
 #include "typeinfo"
+#include "Data/Node.h"
+#include "Data/OsgNode.h"
 
 namespace Vwr {
 
@@ -60,7 +64,7 @@ void NodeGroup::initNodes()
 		osg::ref_ptr<osg::Group> g = getNodeGroup( i.value(), NULL, graphScale );
 
 		if ( g != NULL ) {
-			g->setNodeMask( g->getNodeMask() & ( unsigned int )~0x2 );
+			g->setNodeMask( g->getNodeMask() & static_cast< unsigned int >( ~0x2 ) );
 			nodeGroup->addChild( g );
 		}
 
@@ -135,7 +139,16 @@ osg::ref_ptr<osg::Transform> NodeGroup::wrapChild( osg::ref_ptr<Data::Node> node
 	//at->setPosition(node->getTargetPosition() * graphScale);
 	at->setPosition( node->restrictedTargetPosition() * graphScale );
 	at->addChild( node );
+	node->setNodeMask( 0x1 );
+	//node->setColor(osg::Vec4(1, 1, 1, 1));new Data::Node( id, name, type, this->getNodeScaleByType( type ), this, position );
+	osg::ref_ptr<Data::Node> queried = new Data::Node( node->getId()+10000,node->Data::AbsNode::getName(),node->getType(),node->getType()->getScale(),node->getGraph(),node->getTargetPosition() );
+	//queried->setColor(osg::Vec4(2,2,2,2));
+	//node->setColor(osg::Vec4(1, 1, 1, 1));
+	queried->setNodeMask( 0x2 );
 
+	at->addChild( queried );
+
+	nodeTransforms->insert( queried->getId(), at );
 	nodeTransforms->insert( node->getId(), at );
 
 	return at;
@@ -173,9 +186,19 @@ void NodeGroup::synchronizeNodes()
 
 void NodeGroup::updateNodeCoordinates( float interpolationSpeed )
 {
-	QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator i = nodes->constBegin();
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator i;
+	for ( i = nodes->begin();
+			i != nodes->end();
+			++i ) {
 
-	while ( i != nodes->constEnd() ) {
+		//Illes have to be updated
+		if ( i.value()->isInModule() ) {
+			continue;
+		}
+		auto modulePAT = i.value()->getModule();
+		if ( modulePAT ) {
+			modulePAT->updateNodesPosition();
+		}
 
 		//string a = typeid (i.value()).name();
 		//string b = typeid (Data::Node).name();
@@ -198,8 +221,41 @@ void NodeGroup::updateNodeCoordinates( float interpolationSpeed )
 			i.value()->getOutBall()->setPosition( ( *i )->getCurrentPosition( true, interpolationSpeed ) );
 		}
 
-		++i;
 	}
+
+//	QMap<qlonglong, osg::ref_ptr<Data::Node> >::const_iterator i = nodes->constBegin();
+
+//	while ( i != nodes->constEnd() ) {
+
+//		//Illes have to be updated
+//		if ( i.value()->isInModule() ) {
+//			++i;
+//			continue;
+//		}
+
+//		//string a = typeid (i.value()).name();
+//		//string b = typeid (Data::Node).name();
+//		//if(typeid (i.value()).name() == "aa")
+//		//;
+//		auto transform = nodeTransforms->value( i.key() ).get();
+//		auto posAttrTransform = dynamic_cast<osg::PositionAttitudeTransform*>( transform );
+//		auto autoTransform = dynamic_cast<osg::AutoTransform*>( transform );
+//		if ( posAttrTransform ) {
+//			posAttrTransform->setPosition( ( *i )->getCurrentPosition( true, interpolationSpeed ) );
+//		}
+//		else if ( autoTransform ) {
+//			autoTransform->setPosition( ( *i )->getCurrentPosition( true, interpolationSpeed ) );
+//		}
+
+//		osg::ref_ptr<osg::AutoTransform> at = NULL;
+//		at = i.value()->getOutBall();
+
+//		if ( at!=NULL ) {
+//			i.value()->getOutBall()->setPosition( ( *i )->getCurrentPosition( true, interpolationSpeed ) );
+//		}
+
+//		++i;
+//	}
 }
 
 void NodeGroup::freezeNodePositions()
@@ -213,5 +269,4 @@ void NodeGroup::freezeNodePositions()
 		++i;
 	}
 }
-
 } // namespace Vwr

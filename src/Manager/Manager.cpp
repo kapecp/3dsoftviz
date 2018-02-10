@@ -277,7 +277,7 @@ Data::Graph* Manager::GraphManager::createNewMatrixGraph( QString name )
 }
 
 
-Data::Graph* Manager::GraphManager::createNewGraph( QString name )
+Data::Graph* Manager::GraphManager::createNewGraph( QString name, bool fixedPositions )
 {
 	bool ok = true;
 
@@ -310,7 +310,7 @@ Data::Graph* Manager::GraphManager::createNewGraph( QString name )
 
 	if ( ok ) {
 		// robime zakladnu proceduru pre restartovanie layoutu
-		AppCore::Core::getInstance()->restartLayout();
+		AppCore::Core::getInstance()->restartLayout( fixedPositions );
 	}
 
 	return ( ok ? this->activeGraph.get() : NULL );
@@ -527,7 +527,7 @@ bool Manager::GraphManager::nextVersion( Layout::LayoutThread* layout )
 	lActiveGraph->setCurrentVersion( currentVersion + 1 );
 	layout->play();
 
-
+	delete lUpdater;
 	return ok;
 }
 
@@ -551,6 +551,7 @@ bool Manager::GraphManager::previousVersion( Layout::LayoutThread* layout )
 	lActiveGraph->setCurrentVersion( currentVersion - 1 );
 	layout->play();
 
+	delete lUpdater;
 	return ok;
 }
 
@@ -574,7 +575,7 @@ bool Manager::GraphManager::changeToVersion( Layout::LayoutThread* layout, int t
 	lActiveGraph->setCurrentVersion( toVersion );
 	layout->play();
 
-
+	delete lUpdater;
 	return ok;
 }
 

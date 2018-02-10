@@ -1,11 +1,16 @@
 #ifndef LEAPLISTENER_H
 #define LEAPLISTENER_H
-#include "Leap.h"
-#include "LeapLib/LeapActions.h"
+
+
+#include "LeapLib/LeapGestureHandler.h"
+
 #include "LeapLib/LeapManager.h"
+#include "CustomLeapManager.h"
 #include "LeapLib/LeapExport.h"
 
-namespace Leap {
+#include "Leap.h"
+
+namespace LeapLib {
 
 class LeapListener;
 
@@ -14,29 +19,32 @@ class LeapListener;
  * @brief The Leap listener class
  * @brief Overrides listener actions from default Listener with custom code
  */
-class LEAPLIB_EXPORT LeapListener : public Listener
+class LEAPLIB_EXPORT LeapListener : public Leap::Listener
 {
 public:
 
 	/**
 	 * @brief Class that contains Actions that should be executed after a specific gesture
 	 */
-	LeapActions* leapActions;
+
+	LeapGestureHandler* leapGestureHandler;
+	Softviz::Leap::CustomLeapManager* leapManager;
 	bool arMode;
 
 	LeapListener( LeapManager* leapManager );
 	~LeapListener( void );
 
-	void onInit( const Controller& );
-	void onConnect( const Controller& );
-	void onDisconnect( const Controller& );
-	void onExit( const Controller& );
-	void onFrame( const Controller& );
-	void onFocusGained( const Controller& );
-	void onFocusLost( const Controller& );
-	void onDeviceChange( const Controller& );
-	void onServiceConnect( const Controller& );
-	void onServiceDisconnect( const Controller& );
+	void onInit( const Leap::Controller& );
+	void onConnect( const Leap::Controller& );
+	void onDisconnect( const Leap::Controller& );
+	void onExit( const Leap::Controller& );
+	void onFrame( const Leap::Controller& );
+	void onFocusGained( const Leap::Controller& );
+	void onFocusLost( const Leap::Controller& );
+	void onDeviceChange( const Leap::Controller& );
+	void onServiceConnect( const Leap::Controller& );
+	void onServiceDisconnect( const Leap::Controller& );
+	void onImages( const Leap::Controller& controller );
 };
 }
 

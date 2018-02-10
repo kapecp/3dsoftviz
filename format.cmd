@@ -1,0 +1,1 @@
+astyle --options=C:\DP\3dsoftviz\astyle.options --recursive C:\DP\3dsoftviz\include\*.h C:\DP\3dsoftviz\src\*.cpp

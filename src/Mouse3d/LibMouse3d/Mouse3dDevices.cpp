@@ -11,9 +11,12 @@ Mouse3dDevices::Mouse3dDevices( QOSG::CoreWindow* window ) :
 	QObject::connect( mouse, SIGNAL( Move3d( std::vector<float>& ) ), window, SLOT( OnMove( std::vector<float>& ) ) );
 
 #elif defined(Q_WS_X11) || defined(Q_OS_LINUX)
-
+#if QT_VERSION >= 0x050000
+	//todo
+#elif QT_VERSION < 0x050000
 	this->mouse = new Mouse3dUnixDevice( window );
 	mouse->initMouse3d();
+#endif
 
 #elif defined(Q_OS_MAC)
 

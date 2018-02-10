@@ -42,7 +42,7 @@ public:
 		 * \fn restartLayout
 		 * \brief Restarts layouting of graph.
 		 */
-	void restartLayout();
+	void restartLayout( bool fixedPositions = false );
 
 	/**
 		 * \fn restartLayoutForMatrix
@@ -102,7 +102,7 @@ private:
 		*  \brief
 		*  \param app
 		*/
-	Core( QApplication* app );
+	explicit Core( QApplication* app );
 
 	/**
 		*  Layout::FRAlgorithm * alg

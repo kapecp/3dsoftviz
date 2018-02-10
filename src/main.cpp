@@ -6,6 +6,7 @@
 #include "Core/Core.h"
 #include "Util/Cleaner.h"
 #include "Application/Application.h"
+#include "OpenCV/TrackedLight.h"
 
 #ifdef OPENCV_FOUND
 #include <opencv2/core/core.hpp>
@@ -13,19 +14,28 @@ Q_DECLARE_METATYPE( cv::Mat )
 #endif
 
 #include <osg/Vec3d>
+#include <osg/Vec4>
 #include <osg/Quat>
 
 Q_DECLARE_METATYPE( osg::Vec3d )
 Q_DECLARE_METATYPE( osg::Quat )
 Q_DECLARE_METATYPE( Qt::MouseButton )
+Q_DECLARE_METATYPE( osg::Vec4 )
+Q_DECLARE_METATYPE( OpenCV::TrackedLight )
 
 #include "iostream"
 #include "LuaInterface/LuaInterface.h"
+
+#include <leathers/push>
+#include <leathers/exit-time-destructors>
+#include <leathers/global-constructors>
 
 #include "easylogging++.h"
 // ** FOLLOWING LINE SHOULD BE USED ONCE AND ONLY ONCE IN WHOLE APPLICATION **
 // ** THE BEST PLACE TO PUT THIS LINE IS IN main.cpp RIGHT AFTER INCLUDING easylogging++.h **
 INITIALIZE_EASYLOGGINGPP
+
+#include <leathers/pop>
 
 //#include "dirent.h"
 
@@ -35,12 +45,14 @@ int main( int argc, char* argv[] )
 	LOG( INFO ) << "3DSoftViz started.";
 
 	qRegisterMetaType< osg::Vec3d >( "osgVec3d" );
+	qRegisterMetaType< osg::Vec4 >( "osgVec4" );
 	qRegisterMetaType< osg::Quat >( "osgQuat" );
 #ifdef OPENCV_FOUND
 	qRegisterMetaType<cv::Mat>( "Mat" );
 #endif
 	qRegisterMetaType<Qt::MouseButton>( "MouseButton" );
 
+	qRegisterMetaType<OpenCV::TrackedLight>( "TrackedLight" );
 //    DIR *dir;
 //    struct dirent *ent;
 //    if ((dir = opendir (".")) != NULL) {
@@ -65,7 +77,7 @@ int main( int argc, char* argv[] )
 	// This is needed for 3DConnecetion mouse
 #if QT_VERSION >= 0x050000
 	// todo
-#elseif QT_VERSION >= 0x040700
+#elif QT_VERSION < 0x050000
 	QCoreApplication::setAttribute( Qt::AA_X11InitThreads );
 #else
 	// todo
@@ -75,7 +87,21 @@ int main( int argc, char* argv[] )
 
 	App::Application app( argc, argv );
 	new Util::Cleaner( &app );
-	AppCore::Core::getInstance( &app );
+	try {
+		AppCore::Core::getInstance( &app );
+	}
+	catch ( std::runtime_error& e ) {
+		LOG( ERROR ) << e.what();
+
+		auto res = Lua::LuaInterface::getInstance()->doString( "print(debug.traceback())" );
+		// TODO/BUG: debug.traceback() does not return anything, somehow the traceback is empty
+		// maybe Diluculum changes something during exception handling...
+		// this way we could obtain the results from debug.traceback()
+		// LOG( ERROR ) << res.at(0).asString();
+		// see http://stackoverflow.com/questions/12256455/print-stacktrace-from-c-code-with-embedded-lua
+		// for possible solution
+	}
+
 	Manager::GraphManager::getInstance();
 }
 

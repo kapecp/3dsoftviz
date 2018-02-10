@@ -13,7 +13,7 @@
 #ifndef CHECKBOXLIST_H
 #define CHECKBOXLIST_H 1
 
-#include <QtGui>
+//#include <QtGui>
 #include <QComboBox>
 
 namespace QOSG {
@@ -23,7 +23,7 @@ class CheckBoxList: public QComboBox
 	Q_OBJECT
 
 public:
-	CheckBoxList( QWidget* widget = 0 );
+	explicit CheckBoxList( QWidget* widget = 0 );
 	virtual ~CheckBoxList();
 	bool eventFilter( QObject* object, QEvent* event );
 	virtual void paintEvent( QPaintEvent* );

@@ -5,7 +5,7 @@
 #include <QDebug>
 
 Repository::Git::GitFileDiffBlock::GitFileDiffBlock()
-	: addStart( 1 ), addCount( 0 ), removeStart( 0 ), removeCount( 0 ) , gitFileDiffBlockLines( QList<Repository::Git::GitFileDiffBlockLine*>() )
+	: addStart( 1 ), addCount( 0 ), removeStart( 0 ), removeCount( 0 ), gitFileDiffBlockLines( QList<Repository::Git::GitFileDiffBlockLine*>() )
 {
 }
 

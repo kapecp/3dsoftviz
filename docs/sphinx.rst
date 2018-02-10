@@ -9,7 +9,7 @@ Python
 
 * Pre pracu so Sphinxom treba mat nainstalovany `Python <https://www.python.org/>`_.
 
-.. image:: /images/python.png
+.. image:: images/python.png
 
 .. note::
 
@@ -17,7 +17,7 @@ Python
 
 * Pre stahnutie a instalovanie externych kniznic pre Python existuje prikaz *pip*. Prikaz uz sa nachadza v oficialnych verziach Pythonu 3.4.0 alebo 2.7.9.
 
-    Ak prikaz sa nenainstaloval automaticky, treba ho stiahnut zo stranky `<https://bootstrap.pypa.io/get-pip.py>`_ a niekam ulozit. V prikazovom riadku treba prejst do adresara s *get-pip.py* a spustit nasledovny prikaz: 
+    Ak prikaz sa nenainstaloval automaticky, treba ho stiahnut zo stranky `<https://bootstrap.pypa.io/get-pip.py>`_ a niekam ulozit. V prikazovom riadku treba prejst do adresara s *get-pip.py* a spustit nasledovny prikaz:
 
     ::
 
@@ -45,7 +45,7 @@ Sphinx
 * Tymto prikazom budu vygenerovane subory *Makefile*, *make.bat* a *conf.py.in*.
 
    * Vsetky konfiguracie dokumentacie su v *conf.py.in*.
-   
+
 .. attention:: *Sphinx-quickstart* a vytvaranie tychto suborov generuju novu dokumentaciu! Ak subory *index.rst*, *Makefile*, *make.bat* a *conf.py.in* uz existovali, tak sa prepisu!
 
 * Sphinx dokumentacia generuje vystup v roznych formatoch zo suborov .rst. Podrobnejsie o `RestructuredText <http://www.sphinx-doc.org/en/stable/rest.html>`_.
@@ -60,7 +60,7 @@ HTML dokumentacia
   ::
 
     make html
-  
+
 * Inak generovanie dokumentacie sa da spustit pomocou CMake v QtCreatore
 
 PDF dokumentacia
@@ -70,12 +70,12 @@ Pre generovanie PDF dokumentacie potrebujeme najprv vytvorit Latex dokumentaciu.
 
 .. note:: Pre pracu s Latex treba mat `TeXlive <https://www.tug.org/texlive/>`_
 
-Prikazom 
+Prikazom
 
 ::
-  
+
   make latex
-  
+
 vygeneruje sa Latex dokumentacia, ktora nasledne sa moze konvertovat do PDF pomocou programu `TeXstudio <http://www.texstudio.org/>`_.
 
 .. note:: PDF dokumentacia generuje len pomocou prikazoveho riadku a externeho programu, neda sa spustat cez CMake!
@@ -89,18 +89,18 @@ Pre pracu s PlantUML nastrojmi v Sphinx treba:
 * nainstalovat `Javu <https://java.com/en/download/>`_
 * pridat Javu do premennych prostredi (environment variable)
 * nainstalovat `Graphviz <http://www.graphviz.org/pub/graphviz/stable/windows/>`_
-  
+
   * odporucana verzia je 2.28
-  
+
 * pridat Graphviz do premennych
 
-  .. image:: /images/graphviz_dot.jpg
+  .. image:: images/graphviz_dot.jpg
 
 .. note:: Hodnota premennej ma byt do *dot.exe*
 
 * pridat Graphviz do extensions v conf.py.in:
   ::
-  
+
     extensions = ['sphinx.ext.graphviz']
 * nainstalovat *sphinxcontrib-plantuml* zo `stranky <https://pypi.python.org/pypi/sphinxcontrib-plantuml>`_ alebo prikazom
   ::
@@ -108,29 +108,29 @@ Pre pracu s PlantUML nastrojmi v Sphinx treba:
     pip install sphinxcontrib-plantuml
 * pridat pantuml do extensions v conf.py.in:
   ::
-    
+
 	extensions = ['sphinxcontrib.plantuml']
 * stiahnut `plantuml.jar <http://plantuml.com/download.html>`_
 * pridat do conf.py.in prikaz
   ::
-  
-    plantuml = 'java -jar /cesta/do/plantuml.jar'
-	
+
+    plantuml = 'java -jar cesta/do/plantuml.jar'
+
   .. attention:: Dolezite je zmenit tuto cestu na spravnu, aku mate aktualnu na Vasom pocitaci!
-  
-* pridavat UML do dokumentacii je mozne pomocou 
+
+* pridavat UML do dokumentacii je mozne pomocou
   ::
-   
+
     .. uml::
-	    
+
 		!include /cesta/do/subor.wsd(txt)
-		
+
 		alebo
-		
+
 		@startuml
 		PlantUML kod
 		@enduml
-		
+
 Excel tabulky
 -------------
 
@@ -139,17 +139,17 @@ Excel tabulky
 ::
 
   pip install sphinxcontrib-exceltable
-  
+
 * Pridat *exceltable* do extensions v *conf.py.in*:
 
 ::
 
   extensions = ['sphinxcontrib.exceltable']
-  
+
 * Importovat tabulky pridanim do .rst suboru:
 
 ::
-  
+
   .. exceltable:: caption
     :file: path/to/document.xls
     :header: 1

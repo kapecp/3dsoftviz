@@ -1,19 +1,21 @@
 #ifndef LEAPCONTROLLER_H
 #define LEAPCONTROLLER_H
 
-#include "Leap.h"
+
 #include "LeapLib/LeapListener.h"
 #include "LeapLib/LeapManager.h"
 #include "LeapLib/LeapExport.h"
 
-namespace Leap {
+#include "Leap.h"
+
+namespace LeapLib {
 
 /**
  * @author Filip Mikle
  * @brief The Leap controller class
  * @brief Controls when the leap sensor starts and stops
  */
-class LEAPLIB_EXPORT LeapController:Controller
+class LEAPLIB_EXPORT LeapController : public Leap::Controller
 {
 public:
 	LeapListener* leapListener;

@@ -16,6 +16,7 @@
 #include "Layout/Shape_Cube.h"
 #include "Layout/FRAlgorithm.h"
 #include "City/Residence.h"
+#include "City/Module.h"
 
 #include "Util/ApplicationConfig.h"
 
@@ -29,8 +30,8 @@
 
 #include <string>
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wswitch-enum"
+#include <leathers/push>
+#include <leathers/switch-enum>
 
 namespace Vwr {
 
@@ -203,16 +204,16 @@ bool PickHandler::handleScroll( const osgGA::GUIEventAdapter& ea, GUIActionAdapt
 					}
 
 					if ( isXPressed ) {
-						shapeGetter->move( shapeGetter->getDistanceX() / 5.0 * moveLength,0,0 );
+						shapeGetter->move( static_cast<double>( shapeGetter->getDistanceX() ) / 5.0 * moveLength,0,0 );
 					}
 					else if ( isYPressed ) {
-						shapeGetter->move( 0,shapeGetter->getDistanceY() / 5 * moveLength,0 );
+						shapeGetter->move( 0,static_cast<double>( shapeGetter->getDistanceY() ) / 5 * moveLength,0 );
 					}
 					else if ( isZPressed ) {
-						shapeGetter->move( 0,0,shapeGetter->getDistanceZ() / 5 * moveLength );
+						shapeGetter->move( 0,0,static_cast<double>( shapeGetter->getDistanceZ() ) / 5 * moveLength );
 					}
 					else {
-						double avgDist = ( shapeGetter->getDistanceX() + shapeGetter->getDistanceY() + shapeGetter->getDistanceZ() ) / 3;
+						double avgDist = ( static_cast<double>( shapeGetter->getDistanceX() + shapeGetter->getDistanceY() + shapeGetter->getDistanceZ() ) ) / 3;
 						shapeGetter->move( avgDist / 5 * moveLength, avgDist / 5 * moveLength, avgDist / 5 * moveLength );
 					}
 
@@ -485,7 +486,7 @@ bool PickHandler::handleRelease( const osgGA::GUIEventAdapter& ea, osgGA::GUIAct
 			h = origin_mY_normalized;
 		}
 
-		pick( x, y, w, h, viewer );
+		pick( static_cast<double>( x ), static_cast<double>( y ), static_cast<double>( w ), static_cast<double>( h ), viewer );
 
 		if ( coreGraph->getCustomNodeList()->contains( group ) ) {
 			coreGraph->getCustomNodeList()->removeOne( group );
@@ -553,12 +554,12 @@ bool PickHandler::handleDrag( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 	//jurik
 	else if ( rightButtonPressed && coreGraph->isArucoRunning() ) {
 
-		coreGraph->ratata( initialX,_mX,initialY,_mY );
-		if ( _mX > initialX+5 || _mX < initialX-5 ) {
-			initialX=_mX;
+		coreGraph->ratata( initialX,static_cast<double>( _mX ),initialY,static_cast<double>( _mY ) );
+		if ( static_cast<double>( _mX ) > initialX+5 || static_cast<double>( _mX ) < initialX-5 ) {
+			initialX=static_cast<double>( _mX );
 		}
-		if ( _mY > initialY+5 || _mY < initialY-5 ) {
-			initialY=_mY;
+		if ( static_cast<double>( _mY ) > initialY+5 || static_cast<double>( _mY ) < initialY-5 ) {
+			initialY=static_cast<double>( _mY );
 		}
 	}
 	//*****
@@ -600,15 +601,15 @@ bool PickHandler::handlePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIAction
 		}
 
 		else {
-			return pick( ea.getXnormalized() - 0.00005f, ea.getYnormalized() - 0.00005f, ea.getXnormalized() + 0.00005f, ea.getYnormalized() + 0.00005f, viewer );
+			return pick( static_cast<double>( ea.getXnormalized() - 0.00005f ), static_cast<double>( ea.getYnormalized() - 0.00005f ), static_cast<double>( ea.getXnormalized() + 0.00005f ), static_cast<double>( ea.getYnormalized() + 0.00005f ), viewer );
 
 		}
 	}
 
 	if ( ea.getButtonMask() == osgGA::GUIEventAdapter::RIGHT_MOUSE_BUTTON ) {
 		rightButtonPressed = true;
-		initialX = ea.getX();
-		initialY = ea.getY();
+		initialX = static_cast<double>( ea.getX() );
+		initialY = static_cast<double>( ea.getY() );
 	}
 
 	_mX = ea.getX();
@@ -717,6 +718,34 @@ bool PickHandler::doNodePick( osg::NodePath nodePath )
 		b = dynamic_cast<City::Building*>( nodePath[i] );
 		if ( b != NULL ) {
 			break;
+		}
+	}
+
+	City::Ball* ball = nullptr;
+	for ( unsigned int i = 0; i < nodePath.size(); i++ ) {
+		ball = dynamic_cast<City::Ball*>( nodePath[i] );
+		if ( ball != NULL ) {
+			break;
+		}
+	}
+
+	//for module graph: have to get from building - through residencePAT - to Data::Node
+	if ( b != NULL ) {
+		osg::ref_ptr<osg::PositionAttitudeTransform> buildingPAT = b->getParent( 0 )->asTransform()->asPositionAttitudeTransform();
+		if ( buildingPAT != NULL ) {
+			Data::Node* node = dynamic_cast<Data::Node*>( buildingPAT->getParent( 0 )->asSwitch() );
+			if ( node != NULL ) {
+				n = node;
+			}
+		}
+	}
+	if ( ball != NULL ) {
+		osg::ref_ptr<osg::PositionAttitudeTransform> ballPAT = ball->getParent( 0 )->asTransform()->asPositionAttitudeTransform();
+		if ( ballPAT != NULL ) {
+			Data::Node* node = dynamic_cast<Data::Node*>( ballPAT->getParent( 0 )->asSwitch() );
+			if ( node != NULL ) {
+				n = node;
+			}
 		}
 	}
 
@@ -957,23 +986,23 @@ bool PickHandler::dragCluster( osgViewer::Viewer* viewer )
 
 		if ( shape != NULL ) {
 			osg::Vec3d screenPoint = shape->getCenterNode()->getTargetPosition() * compositeM;
-			osg::Vec3d newPosition = osg::Vec3d( screenPoint.x() - ( origin_mX - _mX ) / scale, screenPoint.y() - ( origin_mY - _mY ) / scale, screenPoint.z() );
+			osg::Vec3d newPosition = osg::Vec3d( screenPoint.x() - static_cast<double>( ( origin_mX - _mX ) / scale ), screenPoint.y() - static_cast<double>( ( origin_mY - _mY ) / scale ), screenPoint.z() );
 			shape->getCenterNode()->setTargetPosition( newPosition * compositeMi );
 			//shape->getCenterNode()->setCurrentPosition(newPosition * compositeMi);
 			shape->getCenterNode()->getCurrentPosition( true );
 
 			screenPoint = shape->getSurfaceNodeX()->getTargetPosition() * compositeM;
-			newPosition = osg::Vec3d( screenPoint.x() - ( origin_mX - _mX ) / scale, screenPoint.y() - ( origin_mY - _mY ) / scale, screenPoint.z() );
+			newPosition = osg::Vec3d( screenPoint.x() - static_cast<double>( ( origin_mX - _mX ) / scale ), screenPoint.y() - static_cast<double>( ( origin_mY - _mY ) / scale ), screenPoint.z() );
 			shape->getSurfaceNodeX()->setTargetPosition( newPosition * compositeMi );
 			shape->getSurfaceNodeX()->getCurrentPosition( true );
 
 			screenPoint = shape->getSurfaceNodeY()->getTargetPosition() * compositeM;
-			newPosition = osg::Vec3d( screenPoint.x() - ( origin_mX - _mX ) / scale, screenPoint.y() - ( origin_mY - _mY ) / scale, screenPoint.z() );
+			newPosition = osg::Vec3d( screenPoint.x() - static_cast<double>( ( origin_mX - _mX ) / scale ), screenPoint.y() - static_cast<double>( ( origin_mY - _mY ) / scale ), screenPoint.z() );
 			shape->getSurfaceNodeY()->setTargetPosition( newPosition * compositeMi );
 			shape->getSurfaceNodeY()->getCurrentPosition( true );
 
 			screenPoint = shape->getSurfaceNodeZ()->getTargetPosition() * compositeM;
-			newPosition = osg::Vec3d( screenPoint.x() - ( origin_mX - _mX ) / scale, screenPoint.y() - ( origin_mY - _mY ) / scale, screenPoint.z() );
+			newPosition = osg::Vec3d( screenPoint.x() - static_cast<double>( ( origin_mX - _mX ) / scale ), screenPoint.y() - static_cast<double>( ( origin_mY - _mY ) / scale ), screenPoint.z() );
 			shape->getSurfaceNodeZ()->setTargetPosition( newPosition * compositeMi );
 			shape->getSurfaceNodeZ()->getCurrentPosition( true );
 		}
@@ -1094,6 +1123,10 @@ void PickHandler::unselectPickedNodes( osg::ref_ptr<Data::Node> node )
 			auto r = ( *i )->getResidence();
 			if ( r ) {
 				r->selectAll( false );
+			}
+			auto m = ( *i )->getModule();
+			if ( m ) {
+				m->selectAll( false );
 			}
 			auto b = ( *i )->getBuilding();
 			if ( b ) {
@@ -1276,4 +1309,4 @@ osg::ref_ptr<Data::Node> PickHandler::getPickedNodeWithMinEdgeCount()
 
 } // namespace Vwr
 
-#pragma GCC diagnostic pop
+#include <leathers/pop>

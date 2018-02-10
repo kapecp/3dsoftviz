@@ -35,10 +35,10 @@ logs/
 *.lo
 
 # Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+#*.dll
+#*.so
+#*.so.*
+#*.dylib
 
 # Executables
 *.exe
@@ -138,10 +138,10 @@ luac.out
 *.exp
 
 # Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+#*.dll
+#*.so
+#*.so.*
+#*.dylib
 
 # Executables
 *.exe
@@ -201,9 +201,9 @@ Temporary Items
 *.a
 *.la
 *.lai
-*.so
-*.dll
-*.dylib
+#*.so
+#*.dll
+#*.dylib
 
 # Qt-es
 
@@ -248,9 +248,9 @@ CMakeLists.txt.user*
 *.pch
 
 # Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+#*.so
+#*.dylib
+#*.dll
 
 # Fortran module files
 *.mod

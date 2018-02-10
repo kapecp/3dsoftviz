@@ -8,9 +8,11 @@
 #include "Data/GraphLayout.h"
 
 #include <QDebug>
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wfloat-equal"
 
+#include <leathers/push>
+#include <leathers/float-equal>
+#include <leathers/old-style-cast>
+#include <leathers/used-but-marked-unused>
 
 Model::EdgeDAO::EdgeDAO( void )
 {
@@ -73,7 +75,7 @@ bool Model::EdgeDAO::addMetaEdgesToDB( QSqlDatabase* conn, QMap<qlonglong, osg::
 	QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iEdges =	edges->constBegin();
 
 	QSqlQuery* query = new QSqlQuery( *conn );
-	qlonglong nodeID1, nodeID2, edgeID;
+	qlonglong nodeID1, nodeID2, edgeID = 0;
 	QMap<qlonglong, qlonglong>::iterator nodeIdIter;
 	QMap<qlonglong, qlonglong>::iterator edgeIdIter;
 
@@ -135,7 +137,7 @@ bool Model::EdgeDAO::addMetaEdgesToDB( QSqlDatabase* conn, QMap<qlonglong, osg::
 bool Model::EdgeDAO::addEdgesColorToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout, QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta )
 {
 	QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iEdges = edges->constBegin();
-	qlonglong edgeID;
+	qlonglong edgeID = 0;
 	QMap<qlonglong, qlonglong>::iterator edgeIdIter;
 
 	while ( iEdges != edges->constEnd() ) {
@@ -169,7 +171,7 @@ bool Model::EdgeDAO::addEdgesColorToDB( QSqlDatabase* conn, QMap<qlonglong, osg:
 bool Model::EdgeDAO::addEdgesScaleToDB( QSqlDatabase* conn, QMap<qlonglong, osg::ref_ptr<Data::Edge> >* edges, Data::GraphLayout* layout,  QMap<qlonglong, qlonglong> newMetaEdgeID, bool meta, double defaultScale )
 {
 	QMap< qlonglong,osg::ref_ptr<Data::Edge> >::const_iterator iEdges = edges->constBegin();
-	qlonglong edgeID;
+	qlonglong edgeID = 0;
 	QMap<qlonglong, qlonglong>::iterator edgeIdIter;
 
 	while ( iEdges != edges->constEnd() ) {
@@ -466,7 +468,6 @@ QMap<qlonglong, osg::Vec4f> Model::EdgeDAO::getColors( QSqlDatabase* conn, bool*
 	*error = FALSE;
 	bool error2 = false;
 	osg::Vec4f color;
-	qlonglong id;
 	QMap<qlonglong, osg::Vec4f> colors;
 
 	QMap<qlonglong, QString> edgeColorR;
@@ -505,7 +506,8 @@ QMap<qlonglong, osg::Vec4f> Model::EdgeDAO::getColors( QSqlDatabase* conn, bool*
 
 	//nacitavame ulozene farby v databaze
 	for ( iter_r = edgeColorR.begin(); iter_r != edgeColorR.end(); ++iter_r ) {
-		id = iter_r.key();
+
+		qlonglong id = iter_r.key();
 		iter_g = edgeColorG.find( id );
 		iter_b = edgeColorB.find( id );
 		iter_a = edgeColorA.find( id );
@@ -521,7 +523,6 @@ QMap<qlonglong, float> Model::EdgeDAO::getScales( QSqlDatabase* conn, bool* erro
 {
 	*error = FALSE;
 	bool error2 = false;
-	qlonglong id;
 	QMap<qlonglong, float> scales;
 
 	QMap<qlonglong, QString> edgeScale;
@@ -536,7 +537,7 @@ QMap<qlonglong, float> Model::EdgeDAO::getScales( QSqlDatabase* conn, bool* erro
 
 	//nacitavame z databazy velkosti jednotlivych prvkov
 	for ( iter = edgeScale.begin(); iter != edgeScale.end(); ++iter ) {
-		id = iter.key();
+		qlonglong id = iter.key();
 
 		float scale = iter.value().toFloat();
 		scales.insert( id, scale );
@@ -632,4 +633,5 @@ bool Model::EdgeDAO::addSetings( QSqlDatabase* conn, qlonglong graphID, qlonglon
 
 	return true;
 }
-#pragma GCC diagnostic pop
+
+#include <leathers/pop>

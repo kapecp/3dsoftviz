@@ -9,6 +9,8 @@
 #include "Data/Cluster.h"
 #include "Data/Graph.h"
 
+#include "Util/CameraHelper.h"
+
 //volovar_zac
 #include "Layout/RadialLayout.h"
 //volovar_kon
@@ -19,6 +21,8 @@
 #include <sstream>
 #include <iostream>
 #include <QDebug>
+#include <leathers/push>
+#include <leathers/used-but-marked-unused>
 
 namespace Layout {
 
@@ -30,12 +34,13 @@ FRAlgorithm::FRAlgorithm() :
 	ALPHA( 0.005f ),
 	MIN_MOVEMENT( 0.05f ),
 	MAX_MOVEMENT( 30 ),
-	MAX_DISTANCE( 400 ),
+	MAX_DISTANCE( 400.0 ),
 	MIN_MOVEMENT_EDGEBUNDLING( 0.05f ),
 	ALPHA_EDGEBUNDLING( 100 ),
 	flexibility( 0 ),
 	sizeFactor( 0 ),
 	K( 0 ),
+	M( 10 ),
 	center( osg::Vec3f( 0, 0, 0 ) ),
 	state( RUNNING ),
 	stateEdgeBundling( PAUSED ),
@@ -62,9 +67,10 @@ FRAlgorithm::FRAlgorithm( Data::Graph* graph ) :
 	ALPHA( 0.005f ),
 	MIN_MOVEMENT( 0.05f ),
 	MAX_MOVEMENT( 30 ),
-	MAX_DISTANCE( 400 ),
+	MAX_DISTANCE( 400.0 ),
 	MIN_MOVEMENT_EDGEBUNDLING( 1.0f ),
 	ALPHA_EDGEBUNDLING( 100 ),
+	M( 7 ),
 	center( osg::Vec3f( 0, 0, 0 ) ),
 	state( RUNNING ),
 	stateEdgeBundling( PAUSED ),
@@ -307,14 +313,24 @@ bool FRAlgorithm::iterate()
 		//uzly
 		QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator j;
 		QMap<qlonglong, osg::ref_ptr<Data::Node> >::iterator k;
+
 		j = graph->getNodes()->begin();
 		for ( int i = 0; i < graph->getNodes()->count(); ++i,++j ) {
 			// pre vsetky uzly..
+
 			k = graph->getNodes()->begin();
 			for ( int h = 0; h < graph->getNodes()->count(); ++h,++k ) { // pre vsetky uzly..
 				if ( !j.value()->equals( k.value() ) ) {
 					// odpudiva sila beznej velkosti
-					addRepulsive( j.value(), k.value(), 1 );
+
+					//JMA ignore node cond
+					if ( !j.value()->isIgnoredByLayout() && !k.value()->isIgnoredByLayout() ) {
+						addRepulsive( j.value(), k.value(), 1 );
+
+						if ( getProjectiveForceEnabled() ) {
+							addProjectiveForce( j.value(), k.value() );
+						}
+					}
 				}
 			}
 		}
@@ -326,7 +342,11 @@ bool FRAlgorithm::iterate()
 		for ( int i = 0; i < graph->getEdges()->count(); ++i,++j ) {
 			// pre vsetky hrany..
 			// pritazliva sila beznej velkosti
+
+			//JMA ignore node cond
+			// if( !j.value()->getSrcNode()->isIgnoredByLayout() && !j.value()->getDstNode()->isIgnoredByLayout() ){
 			addAttractive( j.value(), 1 );
+			//  }
 		}
 	}
 	if ( state == PAUSED && stateEdgeBundling == PAUSED ) {
@@ -452,7 +472,12 @@ bool FRAlgorithm::applyForces( Data::Node* node )
 	}
 
 	// [GrafIT][.] using restrictions (modified and optimized for speed by Peter Sivak)
-	node->setTargetPosition( node->targetPositionConstRef() + fv );   // Compute target position
+	//JMA ignore cond
+	if ( !node->isIgnoredByLayout() ) {
+		node->setTargetPosition( node->targetPositionConstRef() + fv );   // Compute target position
+	}
+
+	//node->setTargetPosition( node->targetPositionConstRef() + fv );   // Compute target position
 	graph->getRestrictionsManager().applyRestriction( *node );        // Compute restricted target position
 
 	for ( edgeIt=node->getEdges()->begin(); edgeIt!=node->getEdges()->end(); ++edgeIt ) {
@@ -753,6 +778,81 @@ void FRAlgorithm::StopAlgEdgeBundling()
 	}
 }
 
+bool FRAlgorithm::mayOverlap( Data::Node* u, Data::Node* v )
+{
+	bool overlaps = false;
+	if ( u != NULL && v != NULL ) {
+
+		float udist = ( u->targetPosition() - Util::CameraHelper::getEye() ).length();
+		float vdist = ( v->targetPosition() - Util::CameraHelper::getEye() ).length();
+
+		if ( udist >= vdist ) {
+			overlaps = true;
+		}
+
+		if ( vdist >= udist ) {
+			overlaps = true;
+		}
+	}
+
+	return overlaps;
+}
+
+void FRAlgorithm::addProjectiveForce( Data::Node* u, Data::Node* v )
+{
+	if ( mayOverlap( u, v ) ) {
+		osg::Vec3f pvec = getProjVector( u, v );            // compute projective vector
+		if ( !qFuzzyCompare( pvec.length(), 0 ) ) {
+			float pdist = pvec.normalize();					// projective distance between nodes
+			float pideal = getMinProjDistance( u, v, pvec ); 	// minimal projective distance
+			float projF = proj( pdist, pideal );				// projective force
+			osg::Vec3f fv = pvec * projF;					// add projective force
+			u->addForce( fv );
+			v->addForce( -fv );
+			// NOTE: node weight is not accounted for, force depends on node radius
+		}
+	}
+}
+
+osg::Vec3f FRAlgorithm::getProjVector( Data::Node* u, Data::Node* v )
+{
+	osg::Vec3f up = u->getTargetPosition();
+	osg::Vec3f vp = v->getTargetPosition();
+
+	osg::Vec3f edgeDir = vp - up;
+	osg::Vec3f viewVec = Util::CameraHelper::getEye() - ( ( up + vp ) / 2.0f ); // from eye to middle of u,v
+	osg::Vec3f pv = viewVec ^ ( edgeDir ^ viewVec );
+
+	float length = edgeDir.normalize();
+	pv.normalize();
+	float dist = length * qAbs( pv * edgeDir );
+
+	if ( qFuzzyCompare( dist, 0 ) ) {
+		return osg::Vec3f( 0, 0, 0 );
+	}
+	return pv * dist;
+}
+
+float FRAlgorithm::getMinProjDistance( Data::Node* u, Data::Node* v, osg::Vec3f pv )
+{
+	float ideal = 0;
+	if ( !qFuzzyCompare( pv.length(), 0 ) ) {
+		ideal = u->getRadius() + v->getRadius() + static_cast<float>( M );
+	}
+	return ideal;
+}
+
+float FRAlgorithm::proj( float distance, float ideal )
+{
+	float f = -( 4 * ideal * ideal / distance ) + 2 * ideal;
+	if ( f > 0 ) {
+		return 0;
+	}
+	return f;
+}
+
 } // namespace Layout
+
+#include <leathers/pop>
 
 //int getRepulsiveForceVertigo();

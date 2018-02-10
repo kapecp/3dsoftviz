@@ -32,7 +32,7 @@ GraphSerializer::GraphSerializer( std::vector<Data::Node*>* in_nodes,std::vector
 	QString tEStr( "edge" );
 
 	Data::Type* nType = new Data::Type( 0,tNStr,0 );
-	Data::Type* eType = new( std::nothrow ) Data::Type( 1,tEStr,0 );
+	Data::Type* eType = new ( std::nothrow ) Data::Type( 1,tEStr,0 );
 
 	types->insert( types->end(),nType );
 	types->insert( types->end(),eType );

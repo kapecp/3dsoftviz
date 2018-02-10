@@ -8,11 +8,16 @@
 #include "Viewer/SkyTransform.h"
 #include "Viewer/TextureWrapper.h"
 #include "Viewer/DataHelper.h"
+#include "Leap/LeapLib/LeapCameraStream.h"
 
 #include <QDebug>
 #include <QMatrix4x4>
 
-#include <osgManipulator/TranslateAxisDragger>
+#include <osgManipulator/TabBoxDragger>
+#include <osgManipulator/TrackballDragger>
+#include <osgManipulator/ScaleAxisDragger>
+#include <osgManipulator/Command>
+#include <osgManipulator/Constraint>
 
 #include "Network/Server.h"
 #include "Data/Graph.h"
@@ -20,6 +25,12 @@
 #include "Clustering/Clusterer.h"
 #include "Clustering/Figures/Cube.h"
 #include "Clustering/Figures/Sphere.h"
+
+//will delete soon
+#include "Layout/LayoutAlgorithms.h"
+#include <Shapes/Cuboid.h>
+//end
+#include "City/Module.h"
 
 #include "Util/ApplicationConfig.h"
 
@@ -39,8 +50,43 @@
 #include <osgShadow/ShadowedScene>
 #include <osgShadow/ShadowMap>
 #include <osgShadow/SoftShadowMap>
+#include <QOSG/GhostSoftShadowMap.h>
+#include <osg/BlendFunc>
 
 #include <easylogging++.h>
+
+#include <osgDB/FileUtils>
+
+
+class PlaneConstraint : public osgManipulator::Constraint
+{
+public:
+	PlaneConstraint() {}
+
+	virtual bool constrain( osgManipulator::TranslateInLineCommand& command ) const
+	{
+		return true;
+	}
+	virtual bool constrain( osgManipulator::TranslateInPlaneCommand& command ) const
+	{
+		//command.setTranslation(osg::Vec3(0.0f,0.0f,0.0f));
+		return true;
+	}
+	virtual bool constrain( osgManipulator::Scale1DCommand& command ) const
+	{
+		//command.setScale(1.0f);
+		return true;
+	}
+	virtual bool constrain( osgManipulator::Scale2DCommand& command ) const
+	{
+		//command.setScale(osg::Vec2d(1.0,1.0));
+		return true;
+	}
+	virtual bool constrain( osgManipulator::ScaleUniformCommand& command ) const
+	{
+		return true;
+	}
+};
 
 namespace Vwr {
 
@@ -302,54 +348,54 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
 //    }
 
 //    qDebug() << "***** INIT test2 ";
-    testGroup = new osg::Group;
+	testGroup = new osg::Group;
 
-    if (graph != NULL) {
+	if (graph != NULL) {
 
 //    Manager::GraphManager * manager = Manager::GraphManager::getInstance();
 //    QMap<qlonglong, Data::Type*> * types = manager->getActiveGraph()->getTypes();
 //    Data::Type * type = types->value(1);
 
-    QMap<qlonglong, osg::ref_ptr<Data::Cluster> > clusters = Clustering::Clusterer::getInstance().getClusters();
+	QMap<qlonglong, osg::ref_ptr<Data::Cluster> > clusters = Clustering::Clusterer::getInstance().getClusters();
 
-    QMap<qlonglong, osg::ref_ptr<Data::Cluster> >::iterator i;
+	QMap<qlonglong, osg::ref_ptr<Data::Cluster> >::iterator i;
 //int tempID = 0;
-    for (i = clusters.begin(); i != clusters.end(); i++)
-    {
-        osg::ref_ptr<Data::Cluster> cluster = i.value();
+	for (i = clusters.begin(); i != clusters.end(); i++)
+	{
+		osg::ref_ptr<Data::Cluster> cluster = i.value();
 
-    //    osg::ref_ptr<Data::Cluster> cluster = node->getCluster();
+	//    osg::ref_ptr<Data::Cluster> cluster = node->getCluster();
 
-     //   osg::ref_ptr<Data::Cluster> cluster = new Data::Cluster(tempID++, "name", type, graph->getNodeScale(), graph, osg::Vec3f(0,0,0));
+	 //   osg::ref_ptr<Data::Cluster> cluster = new Data::Cluster(tempID++, "name", type, graph->getNodeScale(), graph, osg::Vec3f(0,0,0));
 
-    //    qDebug() << "***** test2 cluster " << cluster->getId() << " count: " << cluster->getClusteredNodesCount();
+	//    qDebug() << "***** test2 cluster " << cluster->getId() << " count: " << cluster->getClusteredNodesCount();
 
-    //    testGroup->addChild(getSphere(osg::Vec3( cluster->getId() * 10, cluster->getId() * 10, cluster->getId() * 10)));
+	//    testGroup->addChild(getSphere(osg::Vec3( cluster->getId() * 10, cluster->getId() * 10, cluster->getId() * 10)));
 
-        osg::Vec3f midPoint;
-        float radius;
+		osg::Vec3f midPoint;
+		float radius;
 
-        // ak je na tomto clusteri zaregistrovany obmedzovac, vezmi jeho tvar
-        if (cluster->getShapeGetter() != NULL) {
-            midPoint = cluster->getShapeGetter()->getCenterNode()->getCurrentPosition(true);
-            radius = (midPoint - cluster->getShapeGetter()->getSurfaceNode()->getCurrentPosition(true)).length();
-        }
-        // inak vypocitaj tvar podla zlucenych uzlov
-        else {
-            midPoint = getMidPoint(cluster->getALLClusteredNodes());
-            radius = getRadius(cluster->getALLClusteredNodes(), midPoint);
-        }
+		// ak je na tomto clusteri zaregistrovany obmedzovac, vezmi jeho tvar
+		if (cluster->getShapeGetter() != NULL) {
+			midPoint = cluster->getShapeGetter()->getCenterNode()->getCurrentPosition(true);
+			radius = (midPoint - cluster->getShapeGetter()->getSurfaceNode()->getCurrentPosition(true)).length();
+		}
+		// inak vypocitaj tvar podla zlucenych uzlov
+		else {
+			midPoint = getMidPoint(cluster->getALLClusteredNodes());
+			radius = getRadius(cluster->getALLClusteredNodes(), midPoint);
+		}
 
-        int nodesCount = cluster->getClusteredNodesCount();
+		int nodesCount = cluster->getClusteredNodesCount();
 
-        osg::Vec4 color = cluster->getColor();
-        if (clustersOpacityAutomatic) {
-            color.w() = computeOpacity(midPoint);
-        } else {
-            color.w() = clustersOpacity;
-        }
+		osg::Vec4 color = cluster->getColor();
+		if (clustersOpacityAutomatic) {
+			color.w() = computeOpacity(midPoint);
+		} else {
+			color.w() = clustersOpacity;
+		}
 
-        // todo refactoring
+		// todo refactoring
 
 //        if (nodesCount > clustersRangeMin && nodesCount <= clusters1Value) {
 //            if (cameraInsideCube(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
@@ -357,15 +403,15 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
 //            }
 //            testGroup->addChild(getCube(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
 //        } else if (nodesCount > clusters1Value && nodesCount <= clustersMiddleValue) {
-            if (cameraInsideCube(midPoint, radius)) {
-                color.w() = 1;
-            }
-            Cube * cube = new Cube(midPoint, radius, color);
-            cube->getGeode()->setUserValue("id", QString::number(cluster->getId()).toStdString());
+			if (cameraInsideCube(midPoint, radius)) {
+				color.w() = 1;
+			}
+			Cube * cube = new Cube(midPoint, radius, color);
+			cube->getGeode()->setUserValue("id", QString::number(cluster->getId()).toStdString());
 
-            cluster->setCube(cube);
+			cluster->setCube(cube);
 
-            testGroup->addChild(cube->getAT());
+			testGroup->addChild(cube->getAT());
 //        } else if (nodesCount > clustersMiddleValue && nodesCount <= clusters2Value) {
 //            if (cameraInsideSphere(midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint))) {
 //                color.w() = 1;
@@ -377,10 +423,10 @@ osg::ref_ptr<osg::Group> CoreGraph::test2() {
 //            }
 //            testGroup->addChild(getSphere(cluster->getId(), midPoint, getRadius(cluster->getALLClusteredNodes(), midPoint), color));
 //        }
-    }
+	}
 
-    }
-    return testGroup;
+	}
+	return testGroup;
 }
 */
 osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron( qlonglong id, osg::Vec3 position, double radius, osg::Vec4 color )
@@ -559,13 +605,13 @@ osg::ref_ptr<osg::AutoTransform> CoreGraph::dodecahedron( qlonglong id, osg::Vec
 	osg::ref_ptr<osg::StateSet> ss = dodecahedronGeometry->getOrCreateStateSet();
 	/*
 	// only wireframe (outline / contour)
-	    osg::ref_ptr<osg::PolygonMode> pm = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
-	    ss->setAttributeAndModes(pm.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
+		osg::ref_ptr<osg::PolygonMode> pm = new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK, osg::PolygonMode::LINE);
+		ss->setAttributeAndModes(pm.get(), osg::StateAttribute::ON | osg::StateAttribute::OVERRIDE);
 
 	// line width
-	    osg::LineWidth* linewidth = new osg::LineWidth();
-	    linewidth->setWidth(20.0f);
-	    ss->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
+		osg::LineWidth* linewidth = new osg::LineWidth();
+		linewidth->setWidth(20.0f);
+		ss->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
 	*/
 
 // transparent
@@ -612,6 +658,191 @@ void CoreGraph::setClustersShapeBoundary( int value )
 	this->clustersShapeBoundary = value;
 }
 
+void CoreGraph::setLightPosition( int index, osg::Vec3 position )
+{
+	lightTranforms[ index ]->setPosition( position );
+}
+
+void CoreGraph::setLightDiffuseColor( int index, osg::Vec4 color )
+{
+	lightSources[ index ]->getLight()->setDiffuse( color );
+}
+
+void CoreGraph::setLightActive( int index, bool active )
+{
+	getScene()->getOrCreateStateSet()->setMode( GL_LIGHT0 + static_cast<uint>( index ), active ? osg::StateAttribute::ON : osg::StateAttribute::OFF );
+}
+
+
+
+int CoreGraph::getOrCreateLight( int index )
+{
+	// already exists
+	if ( static_cast<int>( lightsGroup->getNumChildren() ) > index ) {
+		return index;
+	}
+
+	// light
+	osg::Light* pLight = new osg::Light;
+	pLight->setLightNum( static_cast<int>( uniqueLightNumber++ ) );
+	pLight->setDiffuse( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
+	pLight->setPosition( osg::Vec4( 0, 0, 0, 1 ) );		// w = 0 directional light
+	// w = 1 point light (position)
+
+	// light source
+	osg::LightSource* pLightSource = new osg::LightSource;
+	pLightSource->setLight( pLight );
+	lightSources[ index ] = pLightSource;
+
+	// ball indicating lights color
+	osg::ref_ptr<osg::AutoTransform> pLightMarker = getSphere( 0, osg::Vec3( 0, 0, 0 ), 50.0, osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
+	pLightMarker->setNodeMask( 0x0 );
+	lightMarkerTransforms[ index ] = pLightMarker;
+
+	osg::ref_ptr< osg::PositionAttitudeTransform > pLightPAT = new osg::PositionAttitudeTransform();
+	pLightPAT->addChild( pLightSource );
+	pLightPAT->addChild( pLightMarker );
+	lightTranforms[ index ] = pLightPAT;
+
+	lightsGroup->addChild( pLightPAT );
+
+	// index of the last child
+	return index;
+}
+
+void CoreGraph::setLightType( int index, bool isPointLight )
+{
+	// seems to be broken
+	lightSources[ index ]->getLight()->setPosition( osg::Vec4( 0, 0, 0, isPointLight ? 1 : 0 ) );
+}
+
+
+/// sphere mapping shader, possible to shade every object by image of a sphere...
+/// designed to grab image from ball tracker and then call dirty to update shader texture
+void CoreGraph::useSphereMappingShader( osg::ref_ptr< osg::StateSet > state )
+{
+
+	/* based on https://www.clicktorelease.com/blog/creating-spherical-environment-mapping-shader/  */
+	/* 1. Load image to be used for sphere mapping */
+	osg::Texture2D* texture = new osg::Texture2D();
+	osg::Image* foo = osgDB::readImageFile( "foo2.jpg" );
+	if ( foo == NULL ) {
+		printf( "Error: Image \"foo2.jpg\" has not been read!\n" );
+	}
+	texture->setImage( foo );
+
+	/* 2. Load the Shaders */
+	osg::ref_ptr<osg::Program> projProg( new osg::Program );
+	const std::string vertexSource =
+//		"#version 400 compatibility\n"
+		"out vec2  vN;\n"
+//		"void DynamicShadow( in vec4 ecPosition );"
+		"void main() \n"
+		"{ \n"
+		"	gl_Position  = ftransform();\n"
+		"	vec3 n       = normalize(gl_NormalMatrix * gl_Normal);\n"
+		"	vec4 p       = gl_ModelViewMatrix * gl_Vertex;\n"
+//		"	DynamicShadow( p );"
+		"	vec3 e       = p.xyz;\n"
+		"	vec3 r       = reflect(e, n);\n"
+		"	float m      = 2.0 * sqrt( pow( r.x, 2. ) + pow( r.y, 2. ) + pow( r.z + 1., 2. ) );\n"
+		"	vN           = r.xy / m + 0.5;\n"
+		"} \n";
+	osg::ref_ptr<osg::Shader> projvertexShader( new osg::Shader(
+				osg::Shader::VERTEX, vertexSource ) );
+
+	const std::string fragmentSource =
+		"#version 400 compatibility\n"
+		"uniform sampler2D tMatCap; \n"
+		"uniform vec3  BaseColor;\n"
+		"uniform float MixRatio;\n"
+		"in vec2 vN; \n"
+		"void main() \n"
+		"{ \n"
+		"	vec3 base = texture2D( tMatCap, vN ).rgb;\n"
+		"	gl_FragColor = vec4( base, 1.0 );\n"
+		"} \n";
+	osg::ref_ptr<osg::Shader> projfragShader( new osg::Shader(
+				osg::Shader::FRAGMENT, fragmentSource ) );
+
+	projProg->addShader( projvertexShader.get() );
+	projProg->addShader( projfragShader.get() );
+	/* 3. Set texture as shader uniform */
+	osg::Uniform* texUniform = new osg::Uniform( osg::Uniform::SAMPLER_2D, "tMatCap" );
+	texUniform->set( 0 );
+	state->addUniform( texUniform );
+	state->setTextureAttributeAndModes( 0,texture,osg::StateAttribute::ON );
+	/* 4. Activate shader for this state set */
+	state->setAttributeAndModes( projProg, osg::StateAttribute::ON );
+}
+
+/// bit unfinished shader that should make reflections based on fisheye image from camera
+/// requires to be rewritten using better projection math - lookup stereographic projection
+void CoreGraph::useSphereMappingDomeShader( osg::ref_ptr< osg::StateSet > state )
+{
+
+	/* based on https://www.clicktorelease.com/blog/creating-spherical-environment-mapping-shader/  */
+	/* 1. Load image to be used for sphere mapping */
+	osg::Texture2D* texture = new osg::Texture2D();
+	osg::Image* foo = osgDB::readImageFile( "foo3.jpg" );
+	if ( foo == NULL ) {
+		printf( "Error: Image \"foo2.jpg\" has not been read!\n" );
+	}
+	texture->setImage( foo );
+
+	/* 2. Load the Shaders */
+	osg::ref_ptr<osg::Program> projProg( new osg::Program );
+	const std::string vertexSource =
+		"#version 400 compatibility\n"
+		"uniform mat4 osg_ViewMatrixInverse;\n"
+		"out vec2  vN;\n"
+		"  "
+		"void main() \n"
+		"{ \n"
+		"	gl_Position  = ftransform();\n"
+		"	vec3 n       = normalize(gl_NormalMatrix * gl_Normal);\n"
+		"	vec4 p       = gl_ModelViewMatrix * gl_Vertex;\n"
+		"	vec3 e       = p.xyz;\n"
+		"	vec3 r       = reflect(e, n);\n"
+		"	r = (osg_ViewMatrixInverse * vec4(r,0)).xyz;\n"
+		"	r = vec3( r.x, r.z, -r.y );\n"
+		"	float m      = 2.0 * sqrt( pow( r.x, 2. ) + pow( r.y + 1, 2. ) + pow( r.z , 2. ) );\n"
+		"	vN           = r.xy / m;\n"
+		"	vN.x        +=  0.5;\n"
+//		"	vN.y         =  vN.y * 0.9 + 0.1;\n"
+		"	if ( vN.y < 0.1 ) {\n"
+//		"		vN.x = 0;\n"
+		"		vN.y *= vN.y * .1 + .1 ;\n"
+		"	}\n"
+		"}\n";
+	osg::ref_ptr<osg::Shader> projvertexShader( new osg::Shader(
+				osg::Shader::VERTEX, vertexSource ) );
+
+	const std::string fragmentSource =
+		"#version 400 compatibility\n"
+		"uniform sampler2D tMatCap; \n"
+		"uniform vec3  BaseColor;\n"
+		"uniform float MixRatio;\n"
+		"in vec2 vN; \n"
+		"void main() \n"
+		"{ \n"
+		"	vec3 base = texture2D( tMatCap, vN ).rgb;\n"
+		"	gl_FragColor = vec4( base, 1.0 );\n"
+		"} \n";
+	osg::ref_ptr<osg::Shader> projfragShader( new osg::Shader(
+				osg::Shader::FRAGMENT, fragmentSource ) );
+
+	projProg->addShader( projvertexShader.get() );
+	projProg->addShader( projfragShader.get() );
+	/* 3. Set texture as shader uniform */
+	osg::Uniform* texUniform = new osg::Uniform( osg::Uniform::SAMPLER_2D, "tMatCap" );
+	texUniform->set( 0 );
+	state->addUniform( texUniform );
+	state->setTextureAttributeAndModes( 0,texture,osg::StateAttribute::ON );
+	/* 4. Activate shader for this state set */
+	state->setAttributeAndModes( projProg, osg::StateAttribute::ON );
+}
+
 Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera )
 {
 	this->graph = graph;
@@ -635,27 +866,41 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	graphGroup = new osg::Group();
 	rotationMatrix = rotationMatrix.identity();
 
+	LOG( INFO ) << "EJ";
+	lightsGroup = new osg::Group();
+
+	// default while light from the top
+	int lid = getOrCreateLight( 0 );
+	setLightPosition( lid, osg::Vec3( 0, 0, 100 * static_cast<float>( baseSize ) ) );
+	setLightDiffuseColor( lid, osg::Vec4( 1, 1, 1, 1 ) );
+	setLightActive( lid, true );
+
+	root->addChild( lightsGroup );
 
 
-	//jurik
-	//lighting
-	osg::Light* pLight = new osg::Light;
-	pLight->setLightNum( 1 );
-	pLight->setDiffuse( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0f ) );
-	pLight->setPosition( osg::Vec4( 0,0,1,0 ) );		// w = 0 directional light
-	// w = 1 point light (position)
-	// light source
-	osg::LightSource* pLightSource = new osg::LightSource;
-	pLightSource->setLight( pLight );
-	root->addChild( pLightSource );
+	//*
+	//osg::ref_ptr<osg::AutoTransform> test = getSphere( 0, osg::Vec3( -100, 0, 0 ), 100.0, osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
+	//osg::ref_ptr<osg::AutoTransform> test2 = getSphere( 0, osg::Vec3( 100, 0, 0 ), 100.0, osg::Vec4( 1.0, 1.0, 1.0, 1.0 ) );
+	//useSphereMappingShader( test->getOrCreateStateSet() );
+	//useSphereMappingDomeShader( test2->getOrCreateStateSet() );
+	//root->addChild( test );
+	//root->addChild( test2 );
+	//*/
+
+
+	root->getOrCreateStateSet()->addUniform( new osg::Uniform( "ghostObject", false ) );
+
+	lightModel = new osg::LightModel();
+	setAmbientLightColor( osg::Vec4( 0.3f, 0.3f, 0.3f, 1 ) );
 
 	//shadow scene
 	//http://trac.openscenegraph.org/projects/osg//wiki/Support/ProgrammingGuide/osgShadow
+
+	ghostSoftShadowMap = new osgShadow::GhostSoftShadowMap();
 	shadowedScene = new osgShadow::ShadowedScene;
 	shadowedScene->setReceivesShadowTraversalMask( 0x1 );
 	shadowedScene->setCastsShadowTraversalMask( 0x2 );
 	root->addChild( shadowedScene );
-
 
 	//node and transform for axes
 	axesGeode = new osg::Geode();
@@ -669,9 +914,43 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 	baseGeode = new osg::Geode();
 	baseTransform = new osg::MatrixTransform();
 
+//	--------------------------------------------------------------------------------------------------------------
+
+	//    dragger->setAxisLineWidth(5.0f);
+	//    dragger->setPickCylinderRadius(0.05f);
+	//    dragger->setConeHeight(0.2f);
+
+	manipulator_scale = new osgManipulator::TabBoxDragger();
+	PlaneConstraint* planeConstrain = new PlaneConstraint();
+	manipulator_scale->addConstraint( planeConstrain );
+	manipulator_rotation = new osgManipulator::TrackballDragger();
+
+	manipulator_scale->setupDefaultGeometry();
+	manipulator_rotation->setupDefaultGeometry();
+
+	root->addChild( manipulator_scale );
+	root->addChild( manipulator_rotation );
+
+	manipulator_scale->addTransformUpdating( graphRotTransf );
+	manipulator_rotation->addTransformUpdating( graphRotTransf );
+
+	float scale = graphRotTransf->getBound().radius() * 2.0f;
+	osg::Matrix mat_rot = osg::Matrix::scale( static_cast<double>( scale ), static_cast<double>( scale ), static_cast<double>( scale ) ) * osg::Matrix::translate( graphRotTransf->getBound().center() );
+
+	manipulator_scale->setMatrix( mat_rot );
+	manipulator_rotation->setMatrix( mat_rot );
+
+	manipulator_scale->setHandleEvents( false );
+	manipulator_rotation->setHandleEvents( false );
+
+	manipulator_scale->setNodeMask( 0x0 );
+	manipulator_rotation->setNodeMask( 0x0 );
+
 	graphRotTransf->addChild( graphGroup );
 	shadowedScene->addChild( graphRotTransf );
 	root->addChild( graphRotTransf );
+
+//	-------------------------------------------------------------------------------
 
 	createBase();
 	if ( !arucoRunning ) {
@@ -687,6 +966,7 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 
 	// backgroung this must be last Node in root !!!  ( because of ortho2d background)
 	// Gloger: disabled skybox- using solid background (see setClearColor in ViewerQT)
+	leapCameraStream = nullptr;
 	root->addChild( createBackground() );
 	backgroundPosition = 2;
 
@@ -695,10 +975,11 @@ Vwr::CoreGraph::CoreGraph( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera 
 
 int CoreGraph::updateBackground( int bgVal, Data::Graph* currentGraph )
 {
-	LOG( INFO ) << "CoreGraph::updateBackground - updating background";
-
 	osg::Group* root = this->getScene();
 	if ( root->removeChild( root->getNumChildren()-1 ) == true ) {
+		leapCameraStream = nullptr;
+		mCameraStream = nullptr;
+
 		if ( bgVal == 0 ) { // default skybox
 			SkyBox* skyBox = new SkyBox;
 			root->addChild( skyBox->createSkyBox( 0 ) );
@@ -714,6 +995,9 @@ int CoreGraph::updateBackground( int bgVal, Data::Graph* currentGraph )
 			root->addChild( createOrtho2dBackground() );
 		}
 #endif
+		else if ( bgVal == 4 ) {
+			root->addChild( createLeapBackground() ); // leap
+		}
 		else if ( bgVal == -1 ) {
 			SkyBox* skyBox = new SkyBox;
 			root->addChild( skyBox->createSkyBox( -1 ) ); // black skybox
@@ -729,6 +1013,46 @@ int CoreGraph::updateBackground( int bgVal, Data::Graph* currentGraph )
 
 	return 1;
 }
+
+void CoreGraph::toggleDragger( int dragger_no, bool set )
+{
+
+	if ( dragger_no == 0 ) {
+
+		manipulator_scale->setHandleEvents( set );
+		manipulator_scale->setNodeMask( set? 0xffffffff : 0x0 );
+
+	}
+	else
+
+		if ( dragger_no == 1 ) {
+			root->removeChild( manipulator_rotation );
+			manipulator_rotation = new osgManipulator::TrackballDragger();
+			manipulator_rotation->setupDefaultGeometry();
+			root->addChild( manipulator_rotation );
+			manipulator_rotation->addTransformUpdating( graphRotTransf );
+			float scale = graphRotTransf->getBound().radius() * 1.3f;
+			osg::Matrix mat_rot = osg::Matrix::scale( static_cast<double>( scale ), static_cast<double>( scale ), static_cast<double>( scale ) ) * osg::Matrix::translate( graphRotTransf->getBound().center() );
+			manipulator_rotation->setMatrix( mat_rot );
+			manipulator_rotation->setHandleEvents( set );
+			manipulator_rotation->setNodeMask( set? 0xffffffff : 0x0 );
+
+		}
+
+}
+
+int CoreGraph::updateBackgroundStream( unsigned char* buffer )
+{
+//	LOG( INFO ) << "CoreGraph::updateBackgroundStream - updating background";
+	if ( leapCameraStream != nullptr ) {
+		leapCameraStream->dirty();
+		leapCameraStream->updateBackgroundImage( buffer );
+	}
+	return 1;
+
+	// TODO return success/fail
+}
+
 
 void CoreGraph::reload( Data::Graph* graph )
 {
@@ -767,7 +1091,6 @@ void CoreGraph::reload( Data::Graph* graph )
 	nodesPosition = currentPos++;
 
 	this->edgesGroup = new Vwr::EdgeGroup( in_edges );
-	//this->edgesGroup = new Vwr::EdgeGroup(in_edges, 10);
 	graphGroup->addChild( edgesGroup->getGroup() );
 	edgesPosition = currentPos++;
 
@@ -776,7 +1099,6 @@ void CoreGraph::reload( Data::Graph* graph )
 	qmetaNodesPosition = currentPos++;
 
 	this->qmetaEdgesGroup = new Vwr::EdgeGroup( qmetaEdges );
-	//this->qmetaEdgesGroup = new Vwr::EdgeGroup(qmetaEdges, 10);
 	graphGroup->addChild( qmetaEdgesGroup->getGroup() );
 	qmetaEdgesPosition = currentPos++;
 
@@ -786,21 +1108,21 @@ void CoreGraph::reload( Data::Graph* graph )
 	//zaciatok
 
 	/*
-	    osg::ref_ptr<osgManipulator::TranslateAxisDragger> dragger = new osgManipulator::TranslateAxisDragger();
-	    dragger->setupDefaultGeometry();
-	    graphGroup->addChild(dragger.get());
+		osg::ref_ptr<osgManipulator::TranslateAxisDragger> dragger = new osgManipulator::TranslateAxisDragger();
+		dragger->setupDefaultGeometry();
+		graphGroup->addChild(dragger.get());
 
-	    osg::ref_ptr<osg::MatrixTransform> geom1 = new osg::MatrixTransform(osg::Matrixd::scale(osg::Vec3f(1,1,1)));
-	    geom1->addChild(graphGroup);
+		osg::ref_ptr<osg::MatrixTransform> geom1 = new osg::MatrixTransform(osg::Matrixd::scale(osg::Vec3f(1,1,1)));
+		geom1->addChild(graphGroup);
 
-	    qDebug() << dragger->getMatrix().getTrans().x() << " " << dragger->getMatrix().getTrans().y();
+		qDebug() << dragger->getMatrix().getTrans().x() << " " << dragger->getMatrix().getTrans().y();
 
-	    float scale = geom1->getBound().radius() * 1.0f;
-	    osg::Matrix mat = osg::Matrix::scale(scale, scale, scale) * osg::Matrix::translate(geom1->getBound().center());
-	    dragger->setMatrix(mat);
+		float scale = geom1->getBound().radius() * 1.0f;
+		osg::Matrix mat = osg::Matrix::scale(scale, scale, scale) * osg::Matrix::translate(geom1->getBound().center());
+		dragger->setMatrix(mat);
 
-	    dragger->setHandleEvents(true);
-	    // konec
+		dragger->setHandleEvents(true);
+		// konec
 	*/
 	this->restrictionVisualizationsGroup = QSharedPointer<Vwr::RestrictionVisualizationsGroup> ( new Vwr::RestrictionVisualizationsGroup );
 	graphGroup->addChild( restrictionVisualizationsGroup->getGroup() );
@@ -830,6 +1152,11 @@ void CoreGraph::reload( Data::Graph* graph )
 	// Set browsers to be always on top
 	this->browsersGroup->getGroup()->getOrCreateStateSet()->setMode( GL_DEPTH_TEST, osg::StateAttribute::OFF );
 	this->browsersGroup->getGroup()->getOrCreateStateSet()->setRenderBinDetails( 100,"RenderBin" );
+
+	float scale = graphRotTransf->getBound().radius() * 1.5f;
+	osg::Matrix mat = osg::Matrix::scale( static_cast<double>( scale ), static_cast<double>( scale ), static_cast<double>( scale ) ) * osg::Matrix::translate( graphRotTransf->getBound().center() );
+	manipulator_scale->setMatrix( mat );
+	manipulator_rotation->setMatrix( mat );
 }
 
 void CoreGraph::cleanUp()
@@ -847,7 +1174,82 @@ void CoreGraph::cleanUp()
 	delete qmetaEdgesGroup;
 	delete edgesGroup;
 }
+osg::ref_ptr<osg::Node> CoreGraph::createLeapBackground()
+{
 
+	osg::ref_ptr<osg::Geode> GeodeHUD = new osg::Geode();
+
+	osg::ref_ptr<osg::Projection> ProjectionMatrixHUD = new osg::Projection;
+	osg::ref_ptr<osg::MatrixTransform> ModelViewMatrixHUD = new osg::MatrixTransform;
+
+	ModelViewMatrixHUD->setMatrix( osg::Matrix::identity() );
+	ModelViewMatrixHUD->setReferenceFrame( osg::Transform::ABSOLUTE_RF );
+
+	ProjectionMatrixHUD->setMatrix( osg::Matrix::ortho2D( 0,640,0,240 ) );
+	ProjectionMatrixHUD->addChild( ModelViewMatrixHUD );
+	ModelViewMatrixHUD->addChild( GeodeHUD );
+
+
+	osg::Vec3Array* coordsHUD = new osg::Vec3Array;
+	coordsHUD->push_back( osg::Vec3( 0,    0, -1 ) );
+	coordsHUD->push_back( osg::Vec3( 640,    0, -1 ) );
+	coordsHUD->push_back( osg::Vec3( 640,  240, -1 ) );
+	coordsHUD->push_back( osg::Vec3( 0,  240, -1 ) );
+
+	osg::Vec2Array* texCoords = new osg::Vec2Array( 4 );
+	( *texCoords )[0].set( 0.0f, 1.0f );
+	( *texCoords )[1].set( 1.0f, 1.0f );
+	( *texCoords )[2].set( 1.0f, 0.0f );
+	( *texCoords )[3].set( 0.0f, 0.0f );
+
+	osg::Vec3Array* normalsHUD = new osg::Vec3Array;
+	normalsHUD->push_back( osg::Vec3( 0.0f, 0.0f, 1.0f ) );
+
+
+	osg::ref_ptr<osg::Geometry> GeomHUD = new osg::Geometry();
+	GeomHUD->addPrimitiveSet( new osg::DrawArrays( osg::PrimitiveSet::POLYGON,0,4 ) );
+	GeomHUD->setVertexArray( coordsHUD );
+	GeomHUD->setNormalArray( normalsHUD );
+	GeomHUD->setNormalBinding( osg::Geometry::BIND_OVERALL );
+	GeomHUD->setTexCoordArray( 0,texCoords );
+
+
+	leapCameraStream = new LeapLib::LeapCameraStream();
+	leapCameraStream->setDataVariance( osg::Object::DYNAMIC );
+
+	osg::ref_ptr<osg::Texture2D> textureHUD = new osg::Texture2D( leapCameraStream );
+	textureHUD->setDataVariance( osg::Object::DYNAMIC );
+	textureHUD->setFilter( osg::Texture::MIN_FILTER, osg::Texture::LINEAR_MIPMAP_LINEAR );
+	textureHUD->setFilter( osg::Texture::MAG_FILTER, osg::Texture::LINEAR );
+	textureHUD->setWrap( osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE );
+	textureHUD->setWrap( osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE );
+	textureHUD->setResizeNonPowerOfTwoHint( false );
+
+
+
+	osg::ref_ptr<osg::StateSet> statesetHUD = new osg::StateSet();
+	statesetHUD->setTextureAttributeAndModes( 0, textureHUD, osg::StateAttribute::ON );
+	statesetHUD->setMode( GL_LIGHTING, osg::StateAttribute::OFF );
+	statesetHUD->setMode( GL_CULL_FACE, osg::StateAttribute::OFF );
+	statesetHUD->setMode( GL_BLEND,osg::StateAttribute::OFF );
+
+
+	osg::ref_ptr<osg::Depth> depth = new osg::Depth;
+	depth->setFunction( osg::Depth::ALWAYS );
+	depth->setRange( 1, 1 );
+	statesetHUD->setAttributeAndModes( depth, osg::StateAttribute::ON );
+	statesetHUD->setRenderBinDetails( -1, "RenderBin" );
+
+
+	GeodeHUD->setStateSet( statesetHUD );
+	GeodeHUD->addDrawable( GeomHUD );
+
+	osg::ref_ptr<osg::ClearNode> clearNode = new osg::ClearNode;
+	clearNode->setRequiresClear( false );
+	clearNode->addChild( ProjectionMatrixHUD );
+
+	return clearNode;
+}
 
 
 
@@ -883,7 +1285,7 @@ osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground()
 
 
 	// texture
-	mCameraStream = new OpenCV::CameraStream( geom );
+	mCameraStream = new OpenCV::CameraStream( );
 	mCameraStream->setDataVariance( osg::Object::DYNAMIC );
 
 	osg::ref_ptr<osg::Texture2D> skymap = new osg::Texture2D( mCameraStream );
@@ -893,7 +1295,6 @@ osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground()
 	skymap->setWrap( osg::Texture::WRAP_S, osg::Texture::CLAMP_TO_EDGE );
 	skymap->setWrap( osg::Texture::WRAP_T, osg::Texture::CLAMP_TO_EDGE );
 	skymap->setResizeNonPowerOfTwoHint( false );
-
 
 
 	// stateset
@@ -907,8 +1308,6 @@ osg::ref_ptr<osg::Node> CoreGraph::createTextureBackground()
 	depth->setFunction( osg::Depth::ALWAYS );
 	depth->setRange( 1, 1 );
 	stateset->setAttributeAndModes( depth, osg::StateAttribute::ON );
-
-
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
 	geode->setCullingActive( false );
@@ -1077,10 +1476,14 @@ osg::ref_ptr<osg::Node> CoreGraph::createBackground()
 		return createTextureBackground();
 	}
 
-	// video backgroung as rectangle in ortho2d
 	if ( background == 3 ) {
 		return createOrtho2dBackground();
 	}
+
+	if ( background == 4 ) {
+		return createLeapBackground();
+	}
+
 #endif
 
 	return NULL;
@@ -1146,7 +1549,7 @@ void CoreGraph::updateClustersCoords()
 		osg::ref_ptr<Data::Cluster> cluster = i.value();
 
 		osg::Vec3f midPoint;
-		float radius;		// BUG: nie je inicializovany, nizsie sa moze nenastaveny pouzit
+		float radius = 0;		// BUG: nie je inicializovany, nizsie sa moze nenastaveny pouzit
 		osg::Vec3f scale;
 
 		osg::Vec3f lowerPoint;
@@ -1160,9 +1563,11 @@ void CoreGraph::updateClustersCoords()
 			float distanceY = ( shapeGetter->getSurfaceNodeY()->getCurrentPosition() - midPoint ).length();
 			float distanceZ = ( shapeGetter->getSurfaceNodeZ()->getCurrentPosition() - midPoint ).length();
 			scale = osg::Vec3f( distanceX, distanceY, distanceZ );
+			//radius of sphere with center 0,0,0
+			radius = static_cast<float>( sqrt( pow( static_cast<double>( distanceX ), 2 ) + pow( static_cast<double>( distanceY ), 2 ) + pow( static_cast<double>( distanceZ ), 2 ) ) );
 
-			lowerPoint = osg::Vec3f( midPoint.x() - distanceX, midPoint.y() - distanceY, midPoint.z() - distanceZ );
-			upperPoint = osg::Vec3f( midPoint.x() + distanceX, midPoint.y() + distanceY, midPoint.z() + distanceZ );
+			lowerPoint = osg::Vec3f( midPoint.x() - radius, midPoint.y() - radius, midPoint.z() - radius );
+			upperPoint = osg::Vec3f( midPoint.x() + radius, midPoint.y() + radius, midPoint.z() + radius );
 		}
 		// inak vypocitaj tvar podla zlucenych uzlov
 		else {
@@ -1254,7 +1659,15 @@ void CoreGraph::synchronize()
 
 void CoreGraph::setEdgeLabelsVisible( bool visible )
 {
-	graphGroup->getChild( labelsPosition )->setNodeMask( visible );
+	//changed old code - Illes
+	//graphGroup->getChild( labelsPosition )->setNodeMask( visible );
+
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::const_iterator i = in_edges->constBegin();
+
+	while ( i != in_edges->constEnd() ) {
+		( *i )->showLabel( visible );
+		++i;
+	}
 }
 
 void CoreGraph::setNodeLabelsVisible( bool visible )
@@ -1333,6 +1746,7 @@ void CoreGraph::updateGraphRotByAruco( const osg::Quat quat )
 	computeGraphRotTransf();
 }
 
+
 void CoreGraph::updateGraphPosAndRotByAruco( const osg::Quat quat, osg::Vec3d pos )
 {
 	mRotAruco = quat;
@@ -1385,7 +1799,9 @@ void CoreGraph::setNodeVisual( unsigned int index )
 		++iMetaNode;
 	}
 
-	graph->setNodeVisual( index );
+	if ( graph != NULL ) {
+		graph->setNodeVisual( index );
+	}
 }
 
 void CoreGraph::setEdgeVisual( int index )
@@ -1404,18 +1820,20 @@ void CoreGraph::setEdgeVisual( int index )
 		++iMetaEdge;
 	}
 
-	graph->setEdgeVisual( index );
+	if ( graph != NULL ) {
+		graph->setEdgeVisual( index );
+	}
 }
 
 void CoreGraph::setEdgeVisualForType( int index, QString edgeTypeName )
 {
-	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iEdge = in_edges->begin();
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator edge = in_edges->begin();
 
-	while ( iEdge != in_edges->end() ) {
-		if ( !QString::compare( iEdge.value()->getType()->getName(), edgeTypeName, Qt::CaseInsensitive ) ) {
-			iEdge.value()->setVisual( index );
+	while ( edge != in_edges->end() ) {
+		if ( !QString::compare( edge.value()->getType()->getName(), edgeTypeName, Qt::CaseInsensitive ) ) {
+			edge.value()->setVisual( index );
 		}
-		++iEdge;
+		++edge;
 	}
 
 	/*QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator iMetaEdge = qmetaEdges->begin();
@@ -1430,12 +1848,34 @@ void CoreGraph::setEdgeVisualForType( int index, QString edgeTypeName )
 	graph->setEdgeVisual( index );
 }
 
+void CoreGraph::setEdgeHiddenForType( bool hidden, QString edgeTypeName )
+{
+	QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator edge = in_edges->begin();
+
+	while ( edge != in_edges->end() ) {
+		if ( !QString::compare( edge.value()->getType()->getName(), edgeTypeName, Qt::CaseInsensitive ) ) {
+			edge.value()->setInvisible( hidden );
+			if ( hidden ) {
+				edge.value()->setScale( 0 );
+			}
+			else {
+				edge.value()->setScale( 2 );
+			};
+		}
+		++edge;
+	}
+}
+
 #ifdef OPENCV_FOUND
 OpenCV::CameraStream* CoreGraph::getCameraStream() const
 {
 	return mCameraStream;
 }
 #endif
+LeapLib::LeapCameraStream* CoreGraph::getLeapCameraStream() const
+{
+	return leapCameraStream;
+}
 
 bool CoreGraph::cameraInsideCube( osg::Vec3d lowerPoint, osg::Vec3d upperPoint )
 {
@@ -1508,15 +1948,16 @@ void CoreGraph::addTranslateToGraphRotTransf( osg::Vec3d pos )
 //jurik
 void CoreGraph::turnOnShadows()
 {
-	osg::ref_ptr<osgShadow::SoftShadowMap> sm = new osgShadow::SoftShadowMap;
-	//sm->setBias(0.1);
-	//sm->setSoftnessWidth(0.1);
-	shadowedScene->setShadowTechnique( sm.get() );
+	//osg::ref_ptr<osgShadow::SoftShadowMap> sm = new osgShadow::SoftShadowMap;
+	//sm->setBias(0.01);
+	ghostSoftShadowMap->setSoftnessWidth( 0.012f );
+	shadowedScene->setShadowTechnique( ghostSoftShadowMap.get() );
 }
 
 void CoreGraph::turnOffShadows()
 {
 	shadowedScene->setShadowTechnique( NULL );
+	//ghostSoftShadowMap = NULL;
 }
 
 void CoreGraph::turnOnBase()
@@ -1547,7 +1988,7 @@ void CoreGraph::createBase()
 	//invisible untill checkbox clicked
 	baseGeode->setNodeMask( 0x0 );
 	osg::Material* material = new osg::Material();
-	material->setDiffuse( osg::Material::FRONT,  osg::Vec4( 0.8f, 0.8f, 0.8f, 0.2f ) );
+	material->setDiffuse( osg::Material::FRONT,  osg::Vec4( 0.5f, 0.5f, 0.5f, 1.0f ) );
 	// material->setEmission(osg::Material::FRONT, osg::Vec4(0, 0, 0, 1));
 	baseGeode->getOrCreateStateSet()->setAttribute( material );
 
@@ -1570,18 +2011,24 @@ void CoreGraph::createBase()
 
 	baseGeometry->addPrimitiveSet( base );
 
+	//baseGeode->getOrCreateStateSet()->setRenderingHint( osg::StateSet::OPAQUE_BIN );
+	//baseGeode->getOrCreateStateSet()->setRenderBinDetails( 1, "DepthSortedBin" );
+
+
+	baseGeode->getOrCreateStateSet()->addUniform( new osg::Uniform( "ghostObject", true ) );
 	baseGeode->getOrCreateStateSet()->setMode( GL_BLEND, osg::StateAttribute::ON );
-	baseGeode->getOrCreateStateSet()->setRenderingHint( osg::StateSet::TRANSPARENT_BIN );
-	baseGeode->getOrCreateStateSet()->setRenderBinDetails( 1, "DepthSortedBin" );
+
+	//baseGeode->getOrCreateStateSet()->setAttributeAndModes( new osg::BlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA), osg::StateAttribute::ON );
+	//osg::BlendFunc blendFunc = new
 }
 
 //set aruco modelView matrix
 void CoreGraph::recievedMVMatrix( QMatrix4x4 modelViewMatrix )
 {
-	osg::Matrixd arucoMVM( modelViewMatrix.operator()( 0,0 ),modelViewMatrix.operator()( 0,1 ),modelViewMatrix.operator()( 0,2 ),modelViewMatrix.operator()( 0,3 ),
-						   modelViewMatrix.operator()( 1,0 ),modelViewMatrix.operator()( 1,1 ),modelViewMatrix.operator()( 1,2 ),modelViewMatrix.operator()( 1,3 ),
-						   modelViewMatrix.operator()( 2,0 ),modelViewMatrix.operator()( 2,1 ),modelViewMatrix.operator()( 2,2 ),modelViewMatrix.operator()( 2,3 ),
-						   modelViewMatrix.operator()( 3,0 ),modelViewMatrix.operator()( 3,1 ),modelViewMatrix.operator()( 3,2 ),modelViewMatrix.operator()( 3,3 ) );
+	osg::Matrixd arucoMVM( static_cast<double>( modelViewMatrix.operator()( 0,0 ) ),static_cast<double>( modelViewMatrix.operator()( 0,1 ) ),static_cast<double>( modelViewMatrix.operator()( 0,2 ) ),static_cast<double>( modelViewMatrix.operator()( 0,3 ) ),
+						   static_cast<double>( modelViewMatrix.operator()( 1,0 ) ),static_cast<double>( modelViewMatrix.operator()( 1,1 ) ),static_cast<double>( modelViewMatrix.operator()( 1,2 ) ),static_cast<double>( modelViewMatrix.operator()( 1,3 ) ),
+						   static_cast<double>( modelViewMatrix.operator()( 2,0 ) ),static_cast<double>( modelViewMatrix.operator()( 2,1 ) ),static_cast<double>( modelViewMatrix.operator()( 2,2 ) ),static_cast<double>( modelViewMatrix.operator()( 2,3 ) ),
+						   static_cast<double>( modelViewMatrix.operator()( 3,0 ) ),static_cast<double>( modelViewMatrix.operator()( 3,1 ) ),static_cast<double>( modelViewMatrix.operator()( 3,2 ) ),static_cast<double>( modelViewMatrix.operator()( 3,3 ) ) );
 
 	camera->setViewMatrix( arucoMVM );
 	//update base size
@@ -1592,10 +2039,10 @@ void CoreGraph::recievedMVMatrix( QMatrix4x4 modelViewMatrix )
 //set aruco projection matrix
 void CoreGraph::recievedPMatrix( QMatrix4x4 projectionMatrix )
 {
-	osg::Matrixd arucoPM( projectionMatrix.operator()( 0,0 ),projectionMatrix.operator()( 0,1 ),projectionMatrix.operator()( 0,2 ),projectionMatrix.operator()( 0,3 ),
-						  projectionMatrix.operator()( 1,0 ),projectionMatrix.operator()( 1,1 ),projectionMatrix.operator()( 1,2 ),projectionMatrix.operator()( 1,3 ),
-						  projectionMatrix.operator()( 2,0 ),projectionMatrix.operator()( 2,1 ),projectionMatrix.operator()( 2,2 ),projectionMatrix.operator()( 2,3 ),
-						  projectionMatrix.operator()( 3,0 ),projectionMatrix.operator()( 3,1 ),projectionMatrix.operator()( 3,2 ),projectionMatrix.operator()( 3,3 ) );
+	osg::Matrixd arucoPM( static_cast<double>( projectionMatrix.operator()( 0,0 ) ),static_cast<double>( projectionMatrix.operator()( 0,1 ) ),static_cast<double>( projectionMatrix.operator()( 0,2 ) ),static_cast<double>( projectionMatrix.operator()( 0,3 ) ),
+						  static_cast<double>( projectionMatrix.operator()( 1,0 ) ),static_cast<double>( projectionMatrix.operator()( 1,1 ) ),static_cast<double>( projectionMatrix.operator()( 1,2 ) ),static_cast<double>( projectionMatrix.operator()( 1,3 ) ),
+						  static_cast<double>( projectionMatrix.operator()( 2,0 ) ),static_cast<double>( projectionMatrix.operator()( 2,1 ) ),static_cast<double>( projectionMatrix.operator()( 2,2 ) ),static_cast<double>( projectionMatrix.operator()( 2,3 ) ),
+						  static_cast<double>( projectionMatrix.operator()( 3,0 ) ),static_cast<double>( projectionMatrix.operator()( 3,1 ) ),static_cast<double>( projectionMatrix.operator()( 3,2 ) ),static_cast<double>( projectionMatrix.operator()( 3,3 ) ) );
 
 	camera->setProjectionMatrix( arucoPM );
 }
@@ -1690,15 +2137,16 @@ void CoreGraph::scaleGraphToBase()
 
 void CoreGraph::scaleGraph( int scale )
 {
+	LOG( INFO ) << "HERE";
 	osg::Matrixd scaleMatrix = graphRotTransf->getMatrix();
 	//outputMatrix( scaleMatrix);
 	switch ( scale ) {
 		case 1: {
-			graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 0.5,0.5,0.5 ) );
+			graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 0.8,0.8,0.8 ) );
 			break;
 		}
 		case 2: {
-			graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 2,2,2 ) );
+			graphRotTransf->setMatrix( scaleMatrix * scaleMatrix.scale( 1.2,1.2,1.2 ) );
 			break;
 		}
 		default:
@@ -1763,10 +2211,10 @@ void CoreGraph::ratata( double initialX,double actualX,double initialY, double a
 	}
 
 	/*if(actualY > initialY +5){
-	    rotationMatrix = rotationMatrix * rotationMatrix.rotate(-0.05,osg::Vec3f(1,0,0));
+		rotationMatrix = rotationMatrix * rotationMatrix.rotate(-0.05,osg::Vec3f(1,0,0));
 	}
 	if(actualY < initialY -5){
-	    rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.05,osg::Vec3f(1,0,0));
+		rotationMatrix = rotationMatrix * rotationMatrix.rotate(0.05,osg::Vec3f(1,0,0));
 	}*/
 
 	graphRotTransf->setMatrix( transfGraph * rotationMatrix );
@@ -1838,6 +2286,16 @@ void CoreGraph::setArucoRunning( bool isRunning )
 	this->arucoRunning = isRunning;
 }
 
+bool CoreGraph::isLeapStreamActive()
+{
+	return this->leapCameraStream != nullptr;
+}
+
+bool CoreGraph::isCameraStreamActive()
+{
+	return this->mCameraStream != nullptr;
+}
+
 void CoreGraph::drawAxes()
 {
 
@@ -1890,5 +2348,248 @@ void CoreGraph::drawAxes()
 
 }
 
+//JMA
+osg::Vec3f CoreGraph::getGrafRotTransVec()
+{
+	return graphRotTransf->getMatrix().getTrans();
+}
+osg::Vec3f CoreGraph::getGrafRotTransScale()
+{
+	return graphRotTransf->getMatrix().getScale();
+}
+
+void CoreGraph::onSetGraphZoom( int flag )
+{
+	this->scaleGraph( flag );
+}
+
+void CoreGraph::reorganizeNodesForModuleGraph()
+{
+	qDebug() << "CoreGraph::reorganizeNodesForModuleGraph() started";
+	osg::ref_ptr<osg::Group> graphNodesGroup = this->nodesGroup->getGroup();
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >* graphNodes = this->graph->getNodes();
+
+	Lua::LuaGraph* luaGraph = Lua::LuaGraph::getInstance();
+
+	// iterate through all LuaNodes and search for "module" type node
+	QMap<qlonglong, Lua::LuaNode*>::iterator node_iter;
+	for ( node_iter = luaGraph->getNodes()->begin();
+			node_iter != luaGraph->getNodes()->end();
+			++node_iter ) {
+
+		if ( node_iter.value()->getParams().getValue()["type"] == "module" ) {
+			auto moduleGraphNode = graphNodes->value( node_iter.key() );
+			osg::ref_ptr<City::Module> cityModulePAT = moduleGraphNode->getModule();
+
+			QMap<osg::ref_ptr<Data::Node>, osg::ref_ptr<Data::Node>> otherNodes = cityModulePAT->getOtherNodes();
+			QMap<osg::ref_ptr<Data::Node>, osg::ref_ptr<Data::Node>>::iterator other_iter;
+			for ( other_iter = otherNodes.begin();
+					other_iter != otherNodes.end();
+					++other_iter ) {
+				osg::ref_ptr<Data::Node> otherNode = other_iter.value();
+				otherNode->setInModule( false );
+				otherNode->setIgnoreByLayout( false );
+				auto otherNodePAT = cityModulePAT->getNodeParentPAT( otherNode );
+				graphNodesGroup->addChild( otherNodePAT );
+			}
+
+			for ( auto varNode : cityModulePAT->getVariableNodes() ) {
+				varNode->setInModule( false );
+				varNode->setIgnoreByLayout( false );
+				auto varNodePAT = cityModulePAT->getNodeParentPAT( varNode );
+				graphNodesGroup->addChild( varNodePAT );
+			}
+
+			for ( auto funcNode : cityModulePAT->getFunctionNodes() ) {
+				funcNode->setInModule( false );
+				funcNode->setIgnoreByLayout( false );
+				auto funcNodePAT = cityModulePAT->getNodeParentPAT( funcNode );
+				graphNodesGroup->addChild( funcNodePAT );
+			}
+
+			for ( auto intrfcNode : cityModulePAT->getInterfaceNodes() ) {
+				intrfcNode->setInModule( false );
+				intrfcNode->setIgnoreByLayout( false );
+				auto intrfcNodePAT = cityModulePAT->getNodeParentPAT( intrfcNode );
+				graphNodesGroup->addChild( intrfcNodePAT );
+			}
+
+			cityModulePAT->decompose();
+		}
+	}
+	//setEdgeVisualForType(Data::Edge::INDEX_LINE, Data::GraphLayout::ARC_EDGE_TYPE );
+
+}
+
+void CoreGraph::reorganizeNodesForModuleCity()
+{
+	qDebug() << "CoreGraph::reorganizeNodesForModuleCity() started";
+	osg::ref_ptr<osg::Group> graphNodesGroup = this->nodesGroup->getGroup();
+	QMap<qlonglong, osg::ref_ptr<Data::Node> >* graphNodes = this->graph->getNodes();
+
+	Lua::LuaGraph* luaGraph = Lua::LuaGraph::getInstance();
+
+	// iterate through all LuaNodes and search for "module" type node
+	QMap<qlonglong, Lua::LuaNode*>::iterator node_iter;
+	for ( node_iter = luaGraph->getNodes()->begin();
+			node_iter != luaGraph->getNodes()->end();
+			++node_iter ) {
+
+		if ( node_iter.value()->getParams().getValue()["type"] == "module" ) {
+			auto moduleGraphNode = graphNodes->value( node_iter.key() );
+			osg::ref_ptr<City::Module> cityModulePAT = new City::Module();
+
+			// get and iterate over every edge where SRC or DST is moduleNode
+			QMap<qlonglong, osg::ref_ptr<Data::Edge> >* moduleEdges = moduleGraphNode->getEdges();
+
+			QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator edge_iter;
+			for ( edge_iter = moduleEdges->begin();
+					edge_iter != moduleEdges->end();
+					++edge_iter ) {
+				auto moduleGraphEdge = edge_iter.value();
+
+				if ( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "declares" ) {
+					// funcNode should be type "function" or "global function"
+					auto funcGraphNode = moduleGraphEdge->getDstNode();
+					cityModulePAT->addFunctionNode( funcGraphNode );
+
+					// get parent PAT for funcNode and remove it from nodesGroup (will be added when called refresh())
+					auto funcGraphNodePAT = cityModulePAT->getNodeParentPAT( funcGraphNode );
+					graphNodesGroup->removeChild( funcGraphNodePAT );
+
+					// set attributes for FRA and city layout
+					funcGraphNode->setIgnoreByLayout( true );
+					funcGraphNode->setInModule( true );
+
+				}
+
+				if ( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "initializes" ) {
+					// funcNode should be type "local variable" or "global variable"
+					auto varGraphNode = moduleGraphEdge->getDstNode();
+					cityModulePAT->addVariableNode( varGraphNode );
+
+					// get parent PAT for varNode and move it from nodesGroup (will be added when called refresh())
+					auto varGraphNodePAT = cityModulePAT->getNodeParentPAT( varGraphNode );
+					graphNodesGroup->removeChild( varGraphNodePAT );
+
+					// set attributes for FRA and city layout
+					varGraphNode->setIgnoreByLayout( true );
+					varGraphNode->setInModule( true );
+
+					// get and iterate over every edge where SRC or DST is moduleNode
+					QMap<qlonglong, osg::ref_ptr<Data::Edge> >* varEdges = varGraphNode->getEdges();
+
+					QMap<qlonglong, osg::ref_ptr<Data::Edge> >::iterator edge_iter;
+					for ( edge_iter = varEdges->begin();
+							edge_iter != varEdges->end();
+							++edge_iter ) {
+						auto varGraphEdge = edge_iter.value();
+
+						if ( varGraphEdge->getSrcNode() == varGraphNode && varGraphEdge->AbsEdge::getName() == "assigns" ) {
+							// otherNode should be type "other"
+							auto otherGraphNode = varGraphEdge->getDstNode();
+							cityModulePAT->addOtherNode( varGraphNode, otherGraphNode );
+
+							// get parent PAT for otherNode and remove it from nodesGroup (will be added when called refresh())
+							auto otherGraphNodePAT = cityModulePAT->getNodeParentPAT( otherGraphNode );
+							graphNodesGroup->removeChild( otherGraphNodePAT );
+
+							// set attributes for FRA and city layout
+							otherGraphNode->setIgnoreByLayout( true );
+							otherGraphNode->setInModule( true );
+
+						}
+					}
+
+				}
+
+				if ( moduleGraphEdge->getSrcNode() == moduleGraphNode && moduleGraphEdge->AbsEdge::getName() == "provides" ) {
+					// intrfNode should be type "interface"
+					auto intrfGraphNode = moduleGraphEdge->getDstNode();
+					cityModulePAT->addInterfaceNode( intrfGraphNode );
+
+					// get parent PAT for intrfNode and move it from nodesGroup (will be added when called refresh())
+					auto intrfGraphNodePAT = cityModulePAT->getNodeParentPAT( intrfGraphNode );
+					graphNodesGroup->removeChild( intrfGraphNodePAT );
+
+					//set attributes for FRA and city layout
+					intrfGraphNode->setIgnoreByLayout( true );
+					intrfGraphNode->setInModule( true );
+				}
+			}
+			moduleGraphNode->setModule( cityModulePAT );
+			moduleGraphNode->adjustLabelForModule( 50.0f );
+			cityModulePAT->setModuleNode( moduleGraphNode );
+			cityModulePAT->refresh();
+		}
+	}
+	//setEdgeVisualForType(Data::Edge::INDEX_MATRIX_CURVE, Data::GraphLayout::ARC_EDGE_TYPE );
+}
+
+
 //*****
+
+void CoreGraph::turnOnCustomLights()
+{
+	// Detection thread will activate needed lights
+}
+
+// reset scene to basic lighing
+void CoreGraph::turnOffCustomLights()
+{
+
+	// will reset scene to default ligh
+
+	for ( uint i = 1; 0 < 8 && i <= uniqueLightNumber; ++i ) {
+		setLightActive( static_cast<int>( i ), false );
+	}
+
+	int lid = getOrCreateLight( 0 );
+	setLightPosition( lid, osg::Vec3( 0, 0, 100 * static_cast<float>( baseSize ) ) );
+	setLightDiffuseColor( lid, osg::Vec4( 1, 1, 1, 1 ) );
+	setLightActive( lid, true );
+
+	setAmbientLightColor( osg::Vec4( 0.3f, 0.3f, 0.3f, 1 ) );
+}
+
+// LightDetectionThread updates lights with this
+void CoreGraph::setLightCoords( OpenCV::TrackedLight tlight )
+{
+	//qDebug() << "incoming light id " << tlight.id;
+
+	int lid = getOrCreateLight( tlight.id );
+	setLightActive( lid, tlight.active );
+	setLightPosition( lid, tlight.positionHemisphere()* static_cast<float>( baseSize ) * static_cast<float>( roomSize ) );
+	setLightDiffuseColor( lid, tlight.color() * tlight.colorIntensity() );
+	if ( lid == 0 ) {
+		ghostSoftShadowMap->setLight( lightSources[0] );
+	}
+}
+
+// show markers indicating lights
+void CoreGraph::setShowLightMarkers( bool set )
+{
+	qDebug() << "show light markers " << set;
+
+	if ( set ) {
+		for ( uint i = 0; i < lightsGroup->getNumChildren(); ++i ) {
+			lightMarkerTransforms[i]->setNodeMask( 0x1 );
+		}
+	}
+	else {
+		for ( uint i = 0; i < lightsGroup->getNumChildren(); ++i ) {
+			lightMarkerTransforms[i]->setNodeMask( 0x0 );
+		}
+	}
+}
+
+// set ambient light color
+void CoreGraph::setAmbientLightColor( osg::Vec4 color )
+{
+	//qDebug() << "amb color r" << color.r() << " g " << color.g() << " b " << color.b() << " a " << color.a();
+	lightModel->setAmbientIntensity( color );
+	root->getOrCreateStateSet()->setAttributeAndModes( lightModel, osg::StateAttribute::ON );
+	//	shadowedScene->dirty();
+}
+
 }

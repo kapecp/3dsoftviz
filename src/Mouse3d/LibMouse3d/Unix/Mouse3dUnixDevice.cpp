@@ -1,7 +1,11 @@
 ﻿#include "Mouse3d/LibMouse3d/Unix/Mouse3dUnixDevice.h"
 
 #include <QDebug>
+#if QT_VERSION >= 0x050000
+//todo
+#elif QT_VERSION < 0x050000
 #include <QX11Info>
+#endif
 
 #include <easylogging++.h>
 
@@ -20,8 +24,11 @@ extern "C" {
 Mouse3dUnixDevice::Mouse3dUnixDevice( /*QWidget *window*/ QOSG::CoreWindow* window ) : QObject(),
 	window( window )
 {
-
+#if QT_VERSION >= 0x050000
+	//todo
+#elif QT_VERSION < 0x050000
 	this->display = QX11Info::display();
+#endif
 }
 
 Mouse3dUnixDevice::~Mouse3dUnixDevice()
@@ -31,10 +38,14 @@ Mouse3dUnixDevice::~Mouse3dUnixDevice()
 	app->stopEmitter();
 }
 
+
 void Mouse3dUnixDevice::initMouse3d()
 {
 	Window xwindow = this->window->winId();
 
+#if QT_VERSION >= 0x050000
+	//todo
+#elif QT_VERSION < 0x050000
 	if ( !MagellanInit( this->display, xwindow ) ) {
 		LOG( INFO ) << "[X11] Mouse3dDevice: MagellanInit() = Failure!" << endl;
 		LOG( INFO ) << "[X11] Mouse3dDevice: No driver is running. Exit ... " << endl;
@@ -43,13 +54,16 @@ void Mouse3dUnixDevice::initMouse3d()
 	else {
 		LOG( INFO ) << "[X11] Mouse3dDevice: MagellanInit() = Success!" << endl;
 	}
-
 	QCoreApplication* inst = App::Application::instance();
 	App::Application* app = qobject_cast<App::Application*>( inst );
 	//QObject::connect( app, SIGNAL(passDummy()), this, SLOT(translateDummy()));
 	app->startEmitter( this );
+#endif
 }
 
+#if QT_VERSION >= 0x050000
+//todo
+#elif QT_VERSION < 0x050000
 void Mouse3dUnixDevice::translateX11Event( XEvent* event )
 {
 	qDebug() << "[X11] Mouse3dDevice: eventType =" << event->type;
@@ -105,6 +119,7 @@ void Mouse3dUnixDevice::translateX11Event( XEvent* event )
 		window->OnMove( motionData );
 	}
 }
+#endif
 
 void Mouse3dUnixDevice::translateDummy()
 {

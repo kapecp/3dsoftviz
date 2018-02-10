@@ -4,7 +4,7 @@
 #include "Data/Cluster.h"
 
 #include "Util/ApplicationConfig.h"
-
+#include "Util/CameraHelper.h"
 #include <osg/Geometry>
 #include <osg/ShapeDrawable>
 #include <osg/Depth>
@@ -12,14 +12,18 @@
 #include <osg/BlendFunc>
 #include <osgText/FadeText>
 #include "City/Residence.h"
+#include "City/Module.h"
 
 #include <QTextStream>
 #include <Shapes/Cuboid.h>
 
+#include <Util/CameraHelper.h>
 
 Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Graph* graph, float scaling, osg::Vec3f position )
 	:DbNode( id,name,type,graph,scaling )
 {
+	setSize( scaling, scaling, scaling );
+
 	this->mTargetPosition = position;
 	this->currentPosition = position * Util::ApplicationConfig::get()->getValue( "Viewer.Display.NodeDistanceScale" ).toFloat();
 
@@ -27,8 +31,8 @@ Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Grap
 	this->setParentBall( NULL );
 
 
-	insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ) , false );
-	insertChild( INDEX_SQUARE, createNodeSquare( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ) , false );
+	insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ), false );
+	insertChild( INDEX_SQUARE, createNodeSquare( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 	insertChild( INDEX_SPHERE, createNodeSphere( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 	insertChild( INDEX_RESIDENCE,  createNodeResidence( this->scale ), false );
 	setValue( graph->getNodeVisual(), true );
@@ -39,6 +43,7 @@ Data::OsgNode::OsgNode( qlonglong id, QString name, Data::Type* type, Data::Grap
 	this->force = osg::Vec3f();
 	this->velocity = osg::Vec3f( 0,0,0 );
 	this->selected = false;
+	this->inModule = false;
 
 	this->usingInterpolation = true;
 
@@ -169,6 +174,38 @@ osg::ref_ptr<osg::Drawable> Data::OsgNode::createSquare( const float& scale, osg
 	return nodeRect;
 }
 
+City::Module* Data::OsgNode::getModule()
+{
+	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
+	return ( at != nullptr ) ? dynamic_cast<City::Module*>( at->asTransform()->asPositionAttitudeTransform() ) : nullptr;
+}
+
+void Data::OsgNode::setModule( City::Module* module )
+{
+	removeChild( INDEX_RESIDENCE );
+	insertChild( INDEX_RESIDENCE, module );
+	setValue( INDEX_RESIDENCE, true );
+}
+
+void Data::OsgNode::adjustLabelForModule( float scale )
+{
+	osg::ref_ptr<osg::Node> newLabel = createLabel( scale, labelText );
+	replaceChild( getLabel(), newLabel );
+}
+
+osg::ref_ptr<osg::Node> Data::OsgNode::getLabel()
+{
+	auto at = getChild( INDEX_LABEL );
+	return at ? at : nullptr;
+}
+
+osg::ref_ptr<osg::PositionAttitudeTransform> Data::OsgNode::getResidenceAsPAT()
+{
+	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
+	return at ? at->asTransform()->asPositionAttitudeTransform() : nullptr;
+
+}
+
 City::Residence* Data::OsgNode::getResidence()
 {
 	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
@@ -187,11 +224,26 @@ City::Building* Data::OsgNode::getBuilding()
 	return nullptr;
 }
 
+City::Ball* Data::OsgNode::getModuleBall()
+{
+	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
+	if ( at->getNumChildren() > 0 ) {
+		return dynamic_cast<City::Ball*>( at->getChild( 0 )->asTransform()->asPositionAttitudeTransform() );
+	}
+	return nullptr;
+}
+
 void Data::OsgNode::setResidence( osg::Node* residence )
 {
 	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
 	at->removeChildren( 0, at->getNumChildren() );
 	at->addChild( residence );
+}
+
+void Data::OsgNode::clearResidence( int fromIndex )
+{
+	auto at = getChild( INDEX_RESIDENCE )->asTransform()->asPositionAttitudeTransform();
+	at->removeChildren( static_cast<uint>( fromIndex ), at->getNumChildren() );
 }
 
 osg::Vec3f Data::OsgNode::getCurrentPosition( bool calculateNew, float interpolationSpeed )
@@ -240,12 +292,19 @@ void Data::OsgNode::setScale( float val )
 			}
 		}
 	}
+
+	// computes actual size from visual
+	computeSize();
 }
 
 bool Data::OsgNode::setInvisible( bool invisible )
 {
 	setValue( graph->getNodeVisual(), !invisible );
 	//-poriesit invisible pre label
+	setValue( INDEX_LABEL, !invisible );
+	setValue( INDEX_SQUARE, !invisible );
+	setValue( INDEX_SPHERE, !invisible );
+	setValue( INDEX_RESIDENCE, !invisible );
 	return true;
 }
 
@@ -286,18 +345,21 @@ void Data::OsgNode::setVisual( unsigned int index )
 	setValue( INDEX_SPHERE, false );
 	setValue( INDEX_RESIDENCE, false );
 	setValue( index, true );
+
+	// computes actual size from visual
+	computeSize();
 }
 
 void Data::OsgNode::reloadConfig()
 {
 	removeChildren( 0, 4 );
-	this->insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ) , false );
+	this->insertChild( INDEX_LABEL, createLabel( this->type->getScale(), labelText ), false );
 	this->insertChild( INDEX_SQUARE, createNodeSquare( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 	this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 	this->insertChild( INDEX_RESIDENCE, createNodeResidence( this->scale ), false );
 	setSelected( selected );
 	setColor( color );
-	setValue( graph->getNodeVisual(), true );
+	setVisual( graph->getNodeVisual() );
 }
 
 void Data::OsgNode::showLabel( bool visible, bool labelsForResidence )
@@ -307,6 +369,16 @@ void Data::OsgNode::showLabel( bool visible, bool labelsForResidence )
 	if ( residence ) {
 		residence->showLabels( visible && labelsForResidence );
 	}
+
+	//if it's in module node -> turn off Data::Note labels and turn on City::Building labels
+	if ( inModule ) {
+		setValue( INDEX_LABEL, false );
+	}
+	auto module = getModule();
+	if ( module ) {
+		module->showLabels( visible && labelsForResidence );
+	}
+
 }
 
 osg::ref_ptr<osg::StateSet> Data::OsgNode::createStateSet( const osg::ref_ptr<osg::Texture2D>& texture )
@@ -379,7 +451,6 @@ osg::ref_ptr<osg::Node> Data::OsgNode::createNodeSquare( const float& scaling, o
 	nodeQuad->setStateSet( bbState );
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-	geode->setNodeMask( geode->getNodeMask() & ( unsigned int )~0x2 );
 	geode->addDrawable( nodeQuad );
 
 	osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform();
@@ -417,6 +488,7 @@ osg::ref_ptr<osg::Node> Data::OsgNode::createNodeSphere( const float& scaling, o
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
 	geode->addDrawable( nodeSphere );
+	geode->setNodeMask( 0x2 );
 
 	osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform();
 	at->setAutoRotateMode( osg::AutoTransform::ROTATE_TO_SCREEN );
@@ -466,7 +538,7 @@ osg::ref_ptr<osg::Node> Data::OsgNode::createLabel( const float& scale, QString 
 //    label->setBackdropOffset(0.05f);
 
 	osg::ref_ptr<osg::Geode> geode = new osg::Geode;
-	geode->setNodeMask( geode->getNodeMask() & ( unsigned int )~0x2 );
+	geode->setNodeMask( geode->getNodeMask() & static_cast<unsigned int>( ~0x2 ) );
 	geode->addDrawable( label );
 
 	osg::ref_ptr<osg::AutoTransform> at = new osg::AutoTransform();
@@ -500,5 +572,59 @@ void Data::OsgNode::setIsFocused( bool value )
 		this->insertChild( INDEX_SPHERE, createNodeSphere( this->scale, OsgNode::createStateSet( this->type->getTypeTexture() ) ), false );
 		setDrawableColor( osg::Vec4( 1.0f, 1.0f, 1.0f, 1.0 ) );
 	}
-	setValue( graph->getNodeVisual(), true );
+
+	setVisual( graph->getNodeVisual() );
+}
+
+osg::Vec3f Data::OsgNode::getSize()
+{
+	return nodeSize;
+}
+
+void Data::OsgNode::setSize( osg::Vec3f size )
+{
+	nodeSize = size;
+}
+
+void Data::OsgNode::setSize( float width, float height, float depth )
+{
+	setSize( osg::Vec3f( width, height, depth ) );
+}
+
+void Data::OsgNode::computeSize()
+{
+	unsigned int visual = graph->getNodeVisual();
+	osg::Node* node = this->getChild( visual );
+	if ( node != NULL ) {
+
+		osg::Transform* at = node->asTransform();
+		if ( at != NULL && at->getNumChildren() > 0 ) {
+
+			osg::Geode* geo = at->getChild( 0 )->asGeode();
+			if ( geo != NULL ) {
+
+				osg::BoundingBox box = geo->getBoundingBox();
+				setSize( osg::Vec3f( ( box.xMax() - box.xMin() ),
+									 ( box.yMax() - box.yMin() ),
+									 ( box.zMax() - box.zMin() ) ) );
+			}
+		}
+	}
+}
+
+float Data::OsgNode::getRadius()
+{
+	float radius = getSize().x() / 2.f;
+	return radius;
+}
+
+bool Data::OsgNode::isOnScreen()
+{
+	bool res = true;
+	osg::Vec3f pos = this->targetPosition();
+	pos = Util::CameraHelper::byProjection( Util::CameraHelper::byView( pos ) );
+	if ( qAbs( pos.x() ) > 1 || qAbs( pos.y() ) > 1 ) {
+		res = false;
+	}
+	return res;
 }

@@ -35,6 +35,7 @@ public:
 	     * \params camera   camera for edges to face
 	     */
 	LuaGraphVisualizer( Data::Graph* graph, osg::ref_ptr<osg::Camera> camera = 0 );
+	virtual ~LuaGraphVisualizer() = default;
 
 	/**
 	     * \fn visualize

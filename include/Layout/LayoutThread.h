@@ -31,7 +31,7 @@ public:
 		 * \brief Constructor of thread for layout algorithm.
 		 *
 		 */
-	LayoutThread( Layout::FRAlgorithm* alg );
+	explicit LayoutThread( Layout::FRAlgorithm* alg );
 
 	/**
 		 *
@@ -95,6 +95,13 @@ public:
 		*  \param	  val  multipliciter of forces
 		*/
 	void setAlphaEdgeBundlingValue( float val );
+
+	/**
+	    * \fn public setProjectiveForceEnabled(bool enable)
+	    * \brief Sets if should apply projective force to nodes
+	    * \param enable
+	    */
+	void setProjectiveForceEnabled( bool enable );
 
 	/**
 		*  \fn public  pauseAllAlg

@@ -4,7 +4,7 @@
 
 #include "Leap.h"
 
-namespace Leap {
+namespace LeapLib {
 
 /**
  * @brief The DirectionDetector class
@@ -23,7 +23,7 @@ public:
 	 * @param hand - hand object from leap sensor that we want to get direction of.
 	 * @return one member of the direction enum
 	 */
-	static Direction getPalmDirection( Hand hand );
+	static Direction getPalmDirection( Leap::Hand hand );
 private:
 	/**
 	 * @brief ANGLE_LIMIT
@@ -35,13 +35,13 @@ private:
 	 * @param hand - hand object from leap sensor that we want to get pitch of.
 	 * @return returns the pitch value in degrees, can be either positive or negative
 	 */
-	static float getPitch( Hand hand );
+	static float getPitch( Leap::Hand hand );
 	/**
 	 * @brief getRoll
 	 * @param hand - hand object from leap sensor that we want to get roll of.
 	 * @return returns the roll value in degrees, can be either positive or negative
 	 */
-	static float getRoll( Hand hand );
+	static float getRoll( Leap::Hand hand );
 };
 
 }

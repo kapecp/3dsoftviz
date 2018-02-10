@@ -2,12 +2,10 @@
 #include "Network/Server.h"
 #include "Network/Client.h"
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic ignored "-Wuseless-cast"
-#endif
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+#include <leathers/push>
+#include <leathers/useless-cast>
+#include <leathers/old-style-cast>
+#include <leathers/sign-conversion>
 
 namespace Network {
 
@@ -21,8 +19,14 @@ void MoveAvatarExecutor::execute_client()
 
 	*stream >> x >> y >> z >> a >> b >> c >> d >> distance >> id;
 
-	osg::Vec3d center = osg::Vec3d( x-5,y,z );
-	osg::Quat rotation = osg::Quat( a,b,c,d );
+	double angel( M_PI/-2.0 );
+	osg::Vec3d vec( 1,0,0 );
+	osg::Quat rot;
+	rot.makeRotate( angel,vec );
+
+
+	osg::Vec3d center = osg::Vec3d( x,y,z );
+	osg::Quat rotation = osg::Quat( a,b,c,d );// * rot;
 
 	osg::Vec3d direction = rotation * osg::Vec3d( 0, 0, 1 );
 	direction *= distance;
@@ -78,8 +82,13 @@ void MoveAvatarExecutor::execute_server()
 		client->write( block );
 	}
 
-	osg::Vec3d center = osg::Vec3d( x-5,y,z );
-	osg::Quat rotation = osg::Quat( a,b,c,d );
+	double angel( M_PI/-2.0 );
+	osg::Vec3d vec( 1,0,0 );
+	osg::Quat rot;
+	rot.makeRotate( angel,vec );
+
+	osg::Vec3d center = osg::Vec3d( x,y,z );
+	osg::Quat rotation = osg::Quat( a,b,c,d );// * rot;
 
 	osg::Vec3d direction = rotation * osg::Vec3d( 0, 0, 1 );
 	direction *= distance;
@@ -103,4 +112,4 @@ void MoveAvatarExecutor::execute_server()
 
 } // namespace Network
 
-#pragma GCC diagnostic pop
+#include <leathers/pop>

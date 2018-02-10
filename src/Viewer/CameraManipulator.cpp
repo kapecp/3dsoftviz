@@ -1,5 +1,3 @@
-
-
 #include "Viewer/CameraManipulator.h"
 
 #include "Viewer/CoreGraph.h"
@@ -24,15 +22,14 @@
 #include <cmath>
 #include <list>
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wswitch-enum"
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-#pragma GCC diagnostic ignored "-Wconversion"
-#pragma GCC diagnostic ignored "-Wswitch-enum"
-#if defined(__linux) || defined(__linux__) || defined(linux)
-#pragma GCC diagnostic ignored "-Wuseless-cast"
-#endif
-#pragma GCC diagnostic ignored "-Wsign-conversion"
+#include <leathers/push>
+#include <leathers/useless-cast>
+#include <leathers/sign-conversion>
+#include <leathers/switch-enum>
+#include <leathers/old-style-cast>
+#include <leathers/conversion>
+#include <leathers/double-promotion>
+#include <leathers/used-but-marked-unused>
 
 double Vwr::CameraManipulator::EYE_MOVEMENT_SPEED;
 double Vwr::CameraManipulator::TARGET_MOVEMENT_SPEED;
@@ -127,7 +124,7 @@ void Vwr::CameraManipulator::home( double /*currentTime*/ )
 	_thrown = false;
 }
 
-void Vwr::CameraManipulator::home( const GUIEventAdapter& ea ,GUIActionAdapter& us )
+void Vwr::CameraManipulator::home( const GUIEventAdapter& ea,GUIActionAdapter& us )
 {
 	home( ea.getTime() );
 	us.requestRedraw();
@@ -408,7 +405,7 @@ void Vwr::CameraManipulator::addMouseEvent( const GUIEventAdapter& ea )
 
 void Vwr::CameraManipulator::setByMatrix( const osg::Matrixd& matrix )
 {
-	_center = osg::Vec3( 0.0f,0.0f,-_distance )*matrix;
+	_center = osg::Vec3( 0.0f,0.0f,-static_cast<float>( _distance ) )*matrix;
 	_rotation = matrix.getRotate();
 }
 
@@ -562,7 +559,7 @@ bool Vwr::CameraManipulator::calcMovement()
 
 		// pan model.
 
-		float scale = -0.3f * _distance * static_cast<float>( throwScale );
+		float scale = -0.3f * static_cast<float>( _distance ) * static_cast<float>( throwScale );
 
 		osg::Matrix rotation_matrix;
 		rotation_matrix.makeRotate( _rotation );
@@ -580,7 +577,7 @@ bool Vwr::CameraManipulator::calcMovement()
 
 		// zoom model.
 
-		float fd = _distance;
+		float fd = static_cast<float>( _distance );
 		float scale = 1.0f+ dy * static_cast<float>( throwScale );
 		if ( fd*scale>_modelScale*_minimumZoomScale ) {
 			if ( _distance * scale < 10000 ) {
@@ -766,8 +763,8 @@ bool Vwr::CameraManipulator::handleKeyUp( const osgGA::GUIEventAdapter& ea, osgG
 			break;
 		case osgGA::GUIEventAdapter::KEY_V: {
 			// Set camera position (use for debug & setting specific camera position)
-			_center.set( 15.9042 , -277.226 , -372.165 );
-			_rotation.set( 0.467275 , -0.0320081 , 0.0985734 , 0.878017 );
+			_center.set( 15.9042, -277.226, -372.165 );
+			_rotation.set( 0.467275, -0.0320081, 0.0985734, 0.878017 );
 			break;
 		}
 		default:
@@ -1139,7 +1136,7 @@ float Vwr::CameraManipulator::alterCameraTargetPoint( osgViewer::Viewer* viewer 
 
 	/*cout << "Altered target: " << eyePosition.x() << " " << eyePosition.y() << " " << eyePosition.z() << "\n";*/
 
-	return dist;
+	return static_cast<float>( dist );
 }
 
 void Vwr::CameraManipulator::alterWeights( osgViewer::Viewer* viewer, std::list<osg::ref_ptr<Data::Node> > selectedCluster )
@@ -1207,7 +1204,7 @@ void Vwr::CameraManipulator::notifyServer()
 {
 	Network::Client* client = Network::Client::getInstance();
 	if ( client->isConnected() ) {
-		client->sendMyView( _center,_rotation, _distance );
+		client->sendMyView( _center,_rotation, static_cast<float>( _distance ) );
 	}
 }
 
@@ -1383,7 +1380,7 @@ void Vwr::CameraManipulator::updateProjectionAccordingFace( const double x, cons
 osg::Vec3d Vwr::CameraManipulator::getCameraPosition()
 {
 	osg::Vec3d center = getCenter();
-	float distance = getDistance();
+	float distance = static_cast<float>( getDistance() ) ;
 	osg::Quat rotation = getRotation();
 
 	osg::Vec3 direction = rotation * osg::Vec3( 0, 0, 1 );
@@ -1490,4 +1487,4 @@ void Vwr::CameraManipulator::disableCameraMovement()
 
 } // namespace Vwr
 
-#pragma GCC diagnostic pop
+#include <leathers/pop>

@@ -7,15 +7,27 @@ Graph.Metrics.NodeDegreeWeigth=0.2
 Graph.Metrics.Regexp=*.com
 Graph.Metrics.RgexpWeigth=1
 Graph.Metrics.ViewMetrics=0
+
 City.Floor.MinHeight=0.15
 City.Floor.DivideBorderStickUp=0.1
 City.Floor.DivideBorderHeight=0.1
+City.Ball.DefaultBaseSize=1.5
+City.Ball.CaptionCharacterSize=3.0
+City.Ball.CaptionOffset=0.3
 City.Building.DefaultBaseSize=1.0
+City.Building.LuaFileBaseSize=40.0
+City.Building.LuaFileHeight=40.0
+City.Building.LuaNodeBaseSize=4.0
+City.Building.LuaNodeHeight=4.0
+City.Building.LuaNodeMaxHeight=10
 City.Building.DefaultRoofHeight=0.3
 City.Building.CaptionCharacterSize=3.0
 City.Building.CaptionOffset=0.3
 City.Residence.SectorPlaneHeight=0.2
 City.Residence.BuildingSpacing=0.5
+City.Module.SectorPlaneHeight=2.0
+City.Module.BuildingSpacing=2.5
+
 GraphMLParser.edgeTypeAttribute=relation
 GraphMLParser.nodeTypeAttribute=type
 
@@ -62,6 +74,9 @@ Viewer.Textures.JavaNode=../share/3dsoftviz/img/textures/java.png
 Viewer.Textures.JavaPackageNode=../share/3dsoftviz/img/textures/javaPackage.jpg
 Viewer.Textures.RemoveNode=../share/3dsoftviz/img/textures/Redcross.png
 Viewer.Textures.AddedNode=../share/3dsoftviz/img/textures/addedNode.png
+Viewer.Textures.LuaFileNode=../share/3dsoftviz/img/textures/lua-fill.png
+Viewer.Textures.FolderNode=../share/3dsoftviz/img/textures/dir-fill.png
+Viewer.Textures.ProjectNode=../share/3dsoftviz/img/textures/project-fill.png
 Viewer.Textures.SquareNode=../share/3dsoftviz/img/textures/nodeSquare.png
 Viewer.Textures.OrientedEdge=../share/3dsoftviz/img/textures/OrientedEdge.png
 Viewer.Textures.OrientedEdgePrefix=../share/3dsoftviz/img/textures/arrows/arrow
@@ -80,20 +95,20 @@ Viewer.SkyBox.Down=../share/3dsoftviz/img/skybox/default/rays_down.bmp
 Viewer.SkyBox.Black=../share/3dsoftviz/img/skybox/black/rays_all.bmp
 Viewer.SkyBox.White=../share/3dsoftviz/img/skybox/white/rays_all.bmp
 
-Kinect.Surface.LOG= ../share/3dsoftviz/kinectMaps/log.txt
-Kinect.Surface.DATA= ../share/3dsoftviz/kinectMaps/file4.txt
+Kinect.Surface.LOG=../share/3dsoftviz/kinectMaps/log.txt
+Kinect.Surface.DATA=../share/3dsoftviz/kinectMaps/file4.txt
 
 Kinect.RegionRotationTreshold=0.65
 Kinect.RegionRotationStep=0.05
-Kinect.OutputFolder= ../../resources/kinectMaps
-Kinect.DepthImageName= depthImage
-Kinect.ColourImageName= Image
-Kinect.DepthInfoName= depthInfo
+Kinect.OutputFolder=../../resources/kinectMaps
+Kinect.DepthImageName=depthImage
+Kinect.ColourImageName=Image
+Kinect.DepthInfoName=depthInfo
 
 FaceDecetion.EnableProjectionCorrection=0
 FaceDecetion.CameraDistancePar=3.5
 
-Aruco.MarkerSize=250
+Aruco.MarkerSize=60
 Aruco.CamDistancRatio=2.75
 Aruco.ConstDist=0.3
 Aruco.ConstHeightKoef=0.8
@@ -114,5 +129,5 @@ Display.Settings.Vuzix.Distance=3.048
 Display.Settings.Vuzix.Height=0.93
 Display.Settings.Vuzix.Width=1.66
 
-Git.ExtensionFilter= lua
+Git.ExtensionFilter=lua
 Git.ExcludeDirectories=spec

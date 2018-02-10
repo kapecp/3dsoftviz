@@ -175,7 +175,7 @@ bool Model::GraphLayoutDAO::addLayout( Data::GraphLayout* layout, QSqlDatabase* 
 	if ( !layout->getGraph()->isInDB() ) {
 		if ( !Model::GraphDAO::addGraph( layout->getGraph(), conn ) ) { //could not insert graph into DB
 			qDebug() << "[Model::GraphLayoutDAO::addType] Could not insert GraphLayout in DB. Graph is not in DB.";
-			return ( bool* )NULL;
+			return reinterpret_cast<bool*>( NULL );
 		}
 	}
 
@@ -356,7 +356,7 @@ bool Model::GraphLayoutDAO::checkIfExists( Data::GraphLayout* graphLayout, QSqlD
 {
 	if ( conn==NULL || !conn->isOpen() ) { //check if we have connection
 		qDebug() << "[Model::GraphLayoutDAO::checkIfExists] Connection to DB not opened.";
-		return ( bool* )NULL;
+		return reinterpret_cast<bool*>( NULL );
 	}
 	else if ( graphLayout==NULL ) {
 		qDebug() << "[Model::GraphLayoutDAO::checkIfExists] Invalid parameter - graphLayout is NULL.";
@@ -379,7 +379,7 @@ bool Model::GraphLayoutDAO::checkIfExists( Data::GraphLayout* graphLayout, QSqlD
 	//overujeme ci existuje layout v databaze podla ID
 	if ( !query->exec() ) {
 		qDebug() << "[Model::GraphLayoutDAO::checkIfExists] Could not perform query on DB: " << query->lastError().databaseText();
-		return ( bool* )NULL;
+		return reinterpret_cast<bool*>( NULL );
 	}
 	if ( query->next() && query->value( 0 )==1 ) {
 		return true;

@@ -1,12 +1,23 @@
-![Team #4, alphaReach](http://labss2.fiit.stuba.sk/TeamProject/2015/team04is-si/img/portfolio/preview-poster.jpg)
-## αReach
+![Team #18, Just18](https://lh6.googleusercontent.com/dFxx6EIxrdLJyNhzX2U6tSnROLOuzLQmWfzu83Q5hPTcXUqSAIjliiGV94BD24i6pByHl_INxk5l1uNsMHhU=w3360-h1736)
+## VizReal (Just18 Team)
 
-* Website: www.http://labss2.fiit.stuba.sk/TeamProject/2015/team04is-si/
+Team members:
+
+	Bc. Martin Gašpar
+	Bc. Bence Ligárt
+	Bc. Michal Knapík
+	Bc. Tomáš Krupa
+	Bc. Miloslav Slížik
+	Bc. Peter Marušin
+	Bc. Marek Škriečka
+
+* Website:
+http://labss2.fiit.stuba.sk/TeamProject/2017/team18iss-it/
 
 ### Requirements and Setup
 
-     path = doc/
-  
+Install manuals are available in doc/ direcory.
+
 ### Implemented Technologies
 
 * [Aruco](http://www.uco.es/investiga/grupos/ava/node/26)

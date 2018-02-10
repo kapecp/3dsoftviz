@@ -2,10 +2,14 @@
 *  CoreGraph.h
 *  Projekt 3DVisual
 */
+#ifndef COREGRAPH_H
+#define COREGRAPH_H
+
 #ifndef VIEWER_CORE_GRAPH_DEF
 #define VIEWER_CORE_GRAPH_DEF 1
 
 #include <osg/ref_ptr>
+#include <osg/LightModel>
 
 #include "Viewer/RestrictionVisualizationsGroup.h"
 #include "Viewer/RestrictionManipulatorsGroup.h"
@@ -14,10 +18,13 @@
 #include "Viewer/BrowserGroup.h"
 #include "Data/Edge.h"
 #include "Data/Node.h"
+#include "Leap/LeapLib/LeapCameraStream.h"
+#include "OpenCV/TrackedLight.h"
 
 #include "Data/Cluster.h"
+#include "Data/GraphLayout.h"
 
-#include <osgManipulator/Translate2DDragger>
+#include <osgManipulator/Dragger>
 
 #include <QMap>
 #include <QLinkedList>
@@ -26,6 +33,7 @@
 #include <QTime>
 #include "OsgQtBrowser/QWebViewImage.h"
 #include <osgShadow/ShadowedScene>
+#include <QOSG/GhostSoftShadowMap.h>
 #include "Hud.h"
 
 namespace Data {
@@ -100,6 +108,8 @@ public:
 
 	void onResized( int width, int height );
 
+	void toggleDragger( int dragger_no, bool set );
+
 	/**
 		*  \fn public  reload(Data::Graph * graph = 0)
 		*  \brief
@@ -130,6 +140,14 @@ public:
 		*  \return 0 - success, 1 - fail
 		*/
 	int updateBackground( int bgVal, Data::Graph* currentGraph );
+
+	/**
+	    *  \fn public updateBackgroundStream
+	    *  \brief updates background with data from leap sensor
+	    *  \param image data - one frame(image) from leap sensor
+	    *  \return 0 - success, 1 - fail
+	   */
+	int updateBackgroundStream( unsigned char* buffer );
 
 	/**
 		*  \fn inline public  getCustomNodeList
@@ -164,7 +182,6 @@ public:
 	void setCamera( osg::ref_ptr<osg::Camera> camera )
 	{
 		this->camera = camera;
-
 		QMapIterator<qlonglong, osg::ref_ptr<Data::Edge> > i( *in_edges );
 
 
@@ -257,9 +274,14 @@ public:
 		return browsersGroup;
 	}
 
+	Data::Graph* getGraph()
+	{
+		return graph;
+	}
 #ifdef OPENCV_FOUND
 	OpenCV::CameraStream* getCameraStream() const;
 #endif
+	LeapLib::LeapCameraStream* getLeapCameraStream() const;
 
 	//jurik
 	/**
@@ -297,6 +319,18 @@ public:
 	{
 		return handsGroup;
 	}
+
+
+	//JMA
+	osg::Vec3f getGrafRotTransVec();
+	osg::Vec3f getGrafRotTransScale();
+
+
+	// Karas
+
+	void turnOnCustomLights();
+	void turnOffCustomLights();
+
 
 public slots:
 
@@ -340,6 +374,11 @@ public slots:
 		 */
 	void setEdgeVisualForType( int index, QString edgeTypeName );
 
+	/**
+		 * @brief setEdgeHiddenForType Set invisibility of edges for specific type
+		 */
+	void setEdgeHiddenForType( bool hidden, QString edgeTypeName );
+
 	void recievedMVMatrix( QMatrix4x4 modelViewMatrix );
 
 	/**
@@ -351,6 +390,32 @@ public slots:
 	void updateBase( double size );
 
 	void setArucoRunning( bool isRunning );
+
+
+
+	bool isLeapStreamActive();
+
+	bool isCameraStreamActive();
+	void onSetGraphZoom( int flag );
+
+	void setLightCoords( OpenCV::TrackedLight tlight );
+
+	void setShowLightMarkers( bool set );
+
+	void setAmbientLightColor( osg::Vec4 color );
+
+	/**
+		 * @author Autor: Denis Illes
+		 * @brief move certain nodes to module node
+		 */
+	void reorganizeNodesForModuleGraph();
+
+	/**
+		 * @author Autor: Denis Illes
+		 * @brief move nodes from module node back to default place
+		 */
+	void reorganizeNodesForModuleCity();
+
 
 private:
 
@@ -471,6 +536,13 @@ private:
 		*  \return osg::ref_ptr node
 		*/
 	osg::ref_ptr<osg::Node> createSkyNoiseBox();
+	/**
+	    *  \fn private  createLeapBackground
+	    *  \brief creates background from leap video
+	    *  \return osg::ref_ptr node
+	   */
+	osg::ref_ptr<osg::Node> createLeapBackground();
+
 
 #ifdef OPENCV_FOUND
 	/**
@@ -635,7 +707,7 @@ private:
 #ifdef OPENCV_FOUND
 	osg::ref_ptr<OpenCV::CameraStream> mCameraStream;
 #endif
-
+	osg::ref_ptr<LeapLib::LeapCameraStream> leapCameraStream;
 	bool clustersOpacityAutomatic;
 	bool clustersOpacitySelected;
 	double clustersOpacity;
@@ -651,7 +723,8 @@ private:
 	bool cameraInsideSphere( osg::Vec3d midPoint, float radius );
 	bool cameraInsideCube( osg::Vec3d lowerPoint, osg::Vec3d upperPoint );
 
-	osgManipulator::Translate2DDragger* manipulator;
+	osgManipulator::Dragger* manipulator_scale;
+	osgManipulator::Dragger* manipulator_rotation;
 
 	//jurik
 	/**
@@ -659,6 +732,11 @@ private:
 		*  \brief node for shadows definition
 		*/
 	osg::ref_ptr<osgShadow::ShadowedScene> shadowedScene;
+	/**
+	 * @brief ghostSoftShadowMap custom shadowmap shader, which can cast shadows onto transparent objects
+	 * used to cast shadow on base geode
+	 */
+	osg::ref_ptr<osgShadow::GhostSoftShadowMap> ghostSoftShadowMap;
 
 	/**
 		* osg::Geode* baseGeode
@@ -673,7 +751,63 @@ private:
 	osg::ref_ptr<osg::MatrixTransform> axesTransform;
 
 	//*****
+
+	int roomSize = 100;
+
+	osg::ref_ptr< osg::LightModel >									lightModel;
+
+	osg::ref_ptr< osg::LightSource >								lightSources[8];
+	osg::ref_ptr< osg::PositionAttitudeTransform >					lightTranforms[8];
+	osg::ref_ptr< osg::AutoTransform >								lightMarkerTransforms[8];
+
+	/**
+	 * @brief lightTranformGroup all PositionAttitudeTransforms for lights with their markers
+	 */
+	osg::ref_ptr<osg::Group> lightsGroup;
+
+	uint uniqueLightNumber = 0;
+
+	int getOrCreateLight( int id );
+
+	/**
+	 * @brief setLightPosition changes the position of the light
+	 * @param index light to be altered (GL lights from 0 to 8 exclusive)
+	 * @param position desired position
+	 */
+	void setLightPosition( int index, osg::Vec3 position );
+
+	/**
+	 * @brief setLightDiffuseColor sets the diffuse component of the light
+	 * @param index light to be altered (GL lights from 0 to 8 exclusive)
+	 * @param color desired light color
+	 */
+	void setLightDiffuseColor( int index, osg::Vec4 color );
+
+	/**
+	 * @brief setLightActive enable or disable GL light
+	 * @param index light to be enabled (GL lights from 0 to 8 exclusive)
+	 * @param active on/off
+	 */
+	void setLightActive( int index, bool active );
+
+	/**
+	 * @brief setLightType sets GL light to directional light or point light, point light has position,
+	 *  where directional light acts as light infinitely far away with specified direction
+	 * @param index light to be turned (GL lights from 0 to 8 exclusive)
+	 * @param isPointLight 0 spot light, 1 point light
+	 */
+	void setLightType( int index, bool isPointLight );
+
+	/**
+	 * @brief useSphereMappingShader changes state set to use custom shader which renders objects using spherical map (environment mapping)
+	 * @param state state to be altered
+	 */
+	void useSphereMappingShader( osg::ref_ptr< osg::StateSet > state );
+
+	void useSphereMappingDomeShader( osg::ref_ptr< osg::StateSet > state );
+
 };
 }
 
 #endif
+#endif // COREGRAPH_H

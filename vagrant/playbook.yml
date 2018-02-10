@@ -1,0 +1,63 @@
+- hosts: all
+  become: yes
+  become_method: sudo
+  
+  tasks:
+  - name: install aptitude
+    apt: name=aptitude state=present
+  - apt_repository:
+      repo: 'ppa:ethereum/ethereum-qt'
+  - name: install python-minimal
+    apt: name=python-minimal state=present
+  - name: update
+    apt:
+      upgrade: yes
+      update_cache: yes
+  - name: install ssh
+    apt: name=ssh state=present
+  #- name: Creates directory .ssh
+  #  file: path=~/.ssh state=directory
+  #  become: true
+  #  become_user: vagrant
+  #- name: add github to known hosts
+  #  shell: ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+  #  become: true
+  #  become_user: vagrant
+  #- name: chcek if ssh agent works
+  #  shell: git clone git@github.com:pmarusin/3dsoftviz
+  #  become: true
+  #  become_user: vagrant
+  - name: install webengine
+    apt: name=libqt5webengine5-dev state=present
+  - name: install doxygen
+    apt: name=doxygen state=present
+  - name: install sphinx
+    apt: name=sphinx-common state=present
+  - name: install cppcheck
+    apt: name=cppcheck state=present
+  - name: install python-pip
+    apt: name=python-pip state=present
+  - name: install cpplint
+    pip: name=cpplint
+  - name: install qtbase5-dev
+    apt: name=qtbase5-dev state=present
+  - name: install build essential
+    apt: name=build-essential state=present	
+  - name: install git
+    apt: name=git state=present
+  - name: install libopenscenegraph-dev
+    apt: name=libopenscenegraph-dev state=present
+  - name: install qtcreator
+    apt: name=qtcreator state=present
+  - name: install libboost-all-dev
+    apt: name=libboost-all-dev state=present
+  - name: install liblua5.1-0-dev
+    apt: name=liblua5.1-0-dev state=present
+  - name: install libopencv-dev
+    apt: name=libopencv-dev state=present
+  - name: install freeglut3-dev
+    apt: name=freeglut3-dev state=present
+  - name: install xfce4
+    apt: name=xubuntu-desktop state=present
+  - name: install cmake
+    apt: name=cmake state=present
